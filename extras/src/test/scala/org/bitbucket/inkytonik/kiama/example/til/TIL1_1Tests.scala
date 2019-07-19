@@ -11,12 +11,14 @@
 package org.bitbucket.inkytonik.kiama
 package example.til
 
-import org.bitbucket.inkytonik.kiama.util.ParseTests
+import org.bitbucket.inkytonik.kiama.util.{Config, ParseTests}
 
 class TIL1_1Tests extends ParseTests {
 
     import TILTree._
     import org.bitbucket.inkytonik.kiama.util.StringSource
+
+    val config = new Config(Vector())
 
     val til1_1 = new TIL1_1
 
@@ -61,7 +63,7 @@ write "\n";"""
                     Write(Str("\"\\n\""))
                 )
             )
-        parse(StringSource(input)) should parseTo(tree)
+        parse(StringSource(input), config) should parseTo(tree)
     }
 
     test("parse factors program") {
@@ -103,7 +105,7 @@ end"""
                     )
                 )
             )
-        parse(StringSource(input)) should parseTo(tree)
+        parse(StringSource(input), config) should parseTo(tree)
     }
 
     test("parse multiples program") {
@@ -126,7 +128,7 @@ end
                         ))
                 )
             )
-        parse(StringSource(input)) should parseTo(tree)
+        parse(StringSource(input), config) should parseTo(tree)
     }
 
 }

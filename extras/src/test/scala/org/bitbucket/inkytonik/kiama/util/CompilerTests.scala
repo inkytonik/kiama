@@ -27,7 +27,7 @@ class CompilerTests extends KiamaTests with Compiler[Any, Any] with TestCompiler
         val dummy : Parser[String] = "dummy".r
     }
 
-    def parse(source : Source) : ParseResult[String] = {
+    def parse(source : Source, config : Config) : ParseResult[String] = {
         val parsers = new SyntaxAnalyser(positions)
         parsers.parseAll(parsers.dummy, source)
     }

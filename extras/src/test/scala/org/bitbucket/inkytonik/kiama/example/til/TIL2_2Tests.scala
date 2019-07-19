@@ -11,7 +11,7 @@
 package org.bitbucket.inkytonik.kiama
 package example.til
 
-import org.bitbucket.inkytonik.kiama.util.TransformerTests
+import org.bitbucket.inkytonik.kiama.util.{Source, Config, TransformerTests}
 
 class TIL2_2Tests extends TransformerTests {
 
@@ -23,11 +23,15 @@ class TIL2_2Tests extends TransformerTests {
 
     import til2_2.transform
 
+    val config = new Config(Vector())
+    val parsec = parse(_ : Source, config)
+
     test("transform a single for loop") {
         val x = Id("x")
         val upperx = Id("Upperx")
+
         "for x := 1 to n do write x; end" should transformTo(
-            parse, transform,
+            parsec, transform,
             Program(List(
                 Decl(x),
                 Assign(x, Num(1)),
@@ -47,7 +51,7 @@ class TIL2_2Tests extends TransformerTests {
         val j = Id("j")
         val upperj = Id("Upperj")
         "for i := 1 to 9 do for j := 1 to 10 do write i*j; end end" should transformTo(
-            parse, transform,
+            parsec, transform,
             Program(List(
                 Decl(i),
                 Assign(i, Num(1)),

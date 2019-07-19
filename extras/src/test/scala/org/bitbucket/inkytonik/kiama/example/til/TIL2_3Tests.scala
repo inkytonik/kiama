@@ -11,7 +11,7 @@
 package org.bitbucket.inkytonik.kiama
 package example.til
 
-import org.bitbucket.inkytonik.kiama.util.TransformerTests
+import org.bitbucket.inkytonik.kiama.util.{Source, Config, TransformerTests}
 
 class TIL2_3Tests extends TransformerTests {
 
@@ -19,7 +19,9 @@ class TIL2_3Tests extends TransformerTests {
 
     val til2_3 = new TIL2_3
 
-    def parse = til2_3.parse _
+    val config = new Config(Vector())
+
+    def parse = til2_3.parse(_ : Source, config)
 
     import til2_3.transform
 

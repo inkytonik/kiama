@@ -19,9 +19,9 @@ class TIL2_2 extends TransformingMain {
     import TILTree._
     import org.bitbucket.inkytonik.kiama.parsing.ParseResult
     import org.bitbucket.inkytonik.kiama.rewriting.Rewriter._
-    import org.bitbucket.inkytonik.kiama.util.Source
+    import org.bitbucket.inkytonik.kiama.util.{Config, Source}
 
-    def parse(source : Source) : ParseResult[Program] = {
+    def parse(source : Source, config : Config) : ParseResult[Program] = {
         val parsers = new TIL1_1Parsers(positions)
         parsers.parseAll(parsers.program, source)
     }

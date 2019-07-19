@@ -46,7 +46,7 @@ class Driver extends CompilerWithConfig[ObrNode, ObrInt, ObrConfig] {
 
     val name = "obr"
 
-    def parse(source : Source) : ParseResult[ObrInt] = {
+    def parse(source : Source, config : ObrConfig) : ParseResult[ObrInt] = {
         val parsers = new SyntaxAnalyser(positions)
         parsers.parseAll(parsers.program, source)
     }

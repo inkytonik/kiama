@@ -134,9 +134,9 @@ class TIL1_1Parsers(positions : Positions) extends ListParsers(positions) {
 class TIL1_1 extends ParsingMain {
 
     import org.bitbucket.inkytonik.kiama.parsing.ParseResult
-    import org.bitbucket.inkytonik.kiama.util.Source
+    import org.bitbucket.inkytonik.kiama.util.{Config, Source}
 
-    def parse(source : Source) : ParseResult[TILTree.Program] = {
+    def parse(source : Source, config : Config) : ParseResult[TILTree.Program] = {
         val parsers = new TIL1_1Parsers(positions)
         parsers.parseAll(parsers.program, source)
     }

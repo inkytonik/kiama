@@ -23,7 +23,7 @@ class Driver extends Compiler[JSONNode, JValue] {
 
     val name = "json"
 
-    def parse(source : Source) : ParseResult[JValue] = {
+    def parse(source : Source, config : Config) : ParseResult[JValue] = {
         val parsers = new SyntaxAnalyser(positions)
         parsers.parseAll(parsers.jvalue, source)
     }

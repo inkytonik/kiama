@@ -11,13 +11,14 @@
 package org.bitbucket.inkytonik.kiama
 package example.til
 
-import org.bitbucket.inkytonik.kiama.util.TransformerTests
+import org.bitbucket.inkytonik.kiama.util.{Source, Config, TransformerTests}
 
 class TIL2_1Tests extends TransformerTests {
 
     import TILTree._
 
     val til2_1 = new TIL2_1
+    val config = new Config(Vector())
 
     def parse = til2_1.parse _
 
@@ -27,9 +28,11 @@ class TIL2_1Tests extends TransformerTests {
     val y = Id("y")
     val n = Id("n")
 
+    def parsec = parse(_ : Source, config)
+
     test("transform a single for loop") {
         "for x := 1 to n do write x; end" should transformTo(
-            parse, transform,
+            parsec, transform,
             Program(List(
                 Decl(x),
                 For(x, Num(1), Var(n), List(
@@ -41,7 +44,7 @@ class TIL2_1Tests extends TransformerTests {
 
     test("transform a for loop that occurs first in a sequence") {
         "for x := 1 to n do write x; end write x;" should transformTo(
-            parse, transform,
+            parsec, transform,
             Program(List(
                 Decl(x),
                 For(x, Num(1), Var(n), List(
@@ -54,7 +57,7 @@ class TIL2_1Tests extends TransformerTests {
 
     test("transform a for loop that occurs last in a sequence") {
         "write x; for x := 1 to n do write x; end" should transformTo(
-            parse, transform,
+            parsec, transform,
             Program(List(
                 Write(Var(x)),
                 Decl(x),
@@ -67,7 +70,7 @@ class TIL2_1Tests extends TransformerTests {
 
     test("transform a for loop that occurs in the middle of a sequence") {
         "write x; for x := 1 to n do write x; end write x;" should transformTo(
-            parse, transform,
+            parsec, transform,
             Program(List(
                 Write(Var(x)),
                 Decl(x),
@@ -81,7 +84,7 @@ class TIL2_1Tests extends TransformerTests {
 
     test("transform nested for loops") {
         "for x := 1 to n do for y := 0 to x do write y; end end" should transformTo(
-            parse, transform,
+            parsec, transform,
             Program(List(
                 Decl(x),
                 For(x, Num(1), Var(n), List(

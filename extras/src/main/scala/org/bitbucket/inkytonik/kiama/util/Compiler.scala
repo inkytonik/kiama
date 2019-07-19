@@ -303,7 +303,7 @@ trait CompilerWithConfig[N, T <: N, C <: Config] extends CompilerBase[N, T, C] {
      */
     def makeast(source : Source, config : C) : Either[T, Messages] = {
         try {
-            parse(source) match {
+            parse(source, config) match {
                 case Success(ast, _) =>
                     Left(ast)
                 case res : NoSuccess =>
@@ -322,7 +322,7 @@ trait CompilerWithConfig[N, T <: N, C <: Config] extends CompilerBase[N, T, C] {
     /**
      * Parse a source, returning a parse result.
      */
-    def parse(source : Source) : ParseResult[T]
+    def parse(source : Source, config : C) : ParseResult[T]
 
 }
 

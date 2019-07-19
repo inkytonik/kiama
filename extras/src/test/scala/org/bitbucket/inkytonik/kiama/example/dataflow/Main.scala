@@ -26,7 +26,7 @@ class Driver extends Compiler[Stm, Stm] {
 
     val name = "dataflow"
 
-    def parse(source : Source) : ParseResult[Stm] = {
+    def parse(source : Source, config : Config) : ParseResult[Stm] = {
         val parsers = new SyntaxAnalyser(positions)
         parsers.parseAll(parsers.stm, source)
     }

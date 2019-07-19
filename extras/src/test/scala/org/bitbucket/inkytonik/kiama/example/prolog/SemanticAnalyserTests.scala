@@ -29,7 +29,7 @@ class SemanticAnalyserTests extends Compiler[PrologNode, Program] with TestCompi
 
     val name = "prolog"
 
-    def parse(source : Source) : ParseResult[Program] = {
+    def parse(source : Source, config : Config) : ParseResult[Program] = {
         val parsers = new SyntaxAnalyser(positions)
         parsers.parseAll(parsers.program, source)
     }

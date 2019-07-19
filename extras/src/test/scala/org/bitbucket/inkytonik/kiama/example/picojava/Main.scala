@@ -36,7 +36,7 @@ class Driver extends CompilerWithConfig[PicoJavaNode, Program, PicojavaConfig] {
 
     val name = "picojava"
 
-    def parse(source : Source) : ParseResult[Program] = {
+    def parse(source : Source, config : PicojavaConfig) : ParseResult[Program] = {
         val parsers = new SyntaxAnalyser(positions)
         parsers.parseAll(parsers.program, source)
     }

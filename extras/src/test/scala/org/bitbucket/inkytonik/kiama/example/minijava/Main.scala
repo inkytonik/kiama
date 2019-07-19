@@ -50,8 +50,8 @@ trait Driver extends Compiler[MiniJavaNode, Program] with Server {
     /**
      * Parse a MiniJava program.
      */
-    def parse(source : Source) : ParseResult[Program] = {
-        val parsers = new SyntaxAnalyser(positions)
+    val parsers = new SyntaxAnalyser(positions)
+    def parse(source : Source, config : Config) : ParseResult[Program] = {
         parsers.parseAll(parsers.program, source)
     }
 

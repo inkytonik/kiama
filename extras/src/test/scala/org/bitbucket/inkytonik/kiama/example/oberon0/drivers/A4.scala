@@ -27,7 +27,7 @@ trait A4Phases extends L4.source.SourcePrettyPrinter
     def langlevel : Int = 4
     def tasklevel : Int = 6
 
-    def parse(source : Source) : ParseResult[ModuleDecl] = {
+    def parse(source : Source, config : base.Oberon0Config) : ParseResult[ModuleDecl] = {
         val parsers = new L4.SyntaxAnalyser(positions)
         parsers.parseAll(parsers.moduledecl, source)
     }
