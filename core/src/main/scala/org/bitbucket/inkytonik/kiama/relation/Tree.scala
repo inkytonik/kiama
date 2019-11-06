@@ -95,7 +95,7 @@ case object EnsureTree extends TreeShape
  * Thanks to Len Hamey for the idea to use lazy cloning to restore the tree
  * structure instead of requiring that the input trees contain no sharing.
  */
-class Tree[T <: Product, +R <: T](val originalRoot : R, shape : TreeShape = LeaveAlone) {
+class Tree[T <: AnyRef with Product, +R <: T](val originalRoot : R, shape : TreeShape = LeaveAlone) {
 
     tree =>
 

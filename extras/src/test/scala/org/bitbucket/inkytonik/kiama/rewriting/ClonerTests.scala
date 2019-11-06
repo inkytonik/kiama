@@ -26,7 +26,7 @@ class ClonerTests extends KiamaTests {
      * Predicate for trees that works by making a `Tree` and trapping the
      * exception that results if it's not actually a tree structure.
      */
-    def isATree[T <: Product](value : T) : Boolean =
+    def isATree[T <: AnyRef with Product](value : T) : Boolean =
         try {
             new Tree[T, T](value)
             true

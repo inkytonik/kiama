@@ -115,80 +115,6 @@ class AttributionTests extends KiamaTests {
 
     }
 
-    test("attributes of a value type are correctly evaluated") {
-        val definitions = new Definitions
-        import definitions._
-
-        inc.hasBeenComputedAt(1) shouldBe false
-        inc.hasBeenComputedAt(2) shouldBe false
-        count shouldBe 0
-        inc(1) shouldBe 2
-        count shouldBe 1
-        inc.hasBeenComputedAt(1) shouldBe true
-        inc.hasBeenComputedAt(2) shouldBe false
-        inc(2) shouldBe 3
-        count shouldBe 2
-        inc.hasBeenComputedAt(1) shouldBe true
-        inc.hasBeenComputedAt(2) shouldBe true
-        inc(1) shouldBe 2
-        inc(2) shouldBe 3
-        count shouldBe 2
-    }
-
-    test("parameterised attributes of a value type are correctly evaluated") {
-        val definitions = new Definitions
-        import definitions._
-
-        concat.hasBeenComputedAt(1, 0) shouldBe false
-        concat.hasBeenComputedAt(2, 0) shouldBe false
-        concat.hasBeenComputedAt(3, 0) shouldBe false
-        concat.hasBeenComputedAt(4, 0) shouldBe false
-        concat.hasBeenComputedAt(1, 1) shouldBe false
-        concat.hasBeenComputedAt(2, 1) shouldBe false
-        concat.hasBeenComputedAt(3, 1) shouldBe false
-        concat.hasBeenComputedAt(4, 1) shouldBe false
-        concat.hasBeenComputedAt(1, 2) shouldBe false
-        concat.hasBeenComputedAt(2, 2) shouldBe false
-        concat.hasBeenComputedAt(3, 2) shouldBe false
-        concat.hasBeenComputedAt(4, 2) shouldBe false
-        count shouldBe 0
-
-        concat(1)(0) shouldBe 1
-        concat(2)(0) shouldBe 999
-        concat(3)(0) shouldBe 0
-        concat(1)(1) shouldBe 2
-        concat(2)(1) shouldBe 3
-        concat(3)(1) shouldBe 1
-        concat(1)(2) shouldBe 3
-        concat(2)(2) shouldBe 4
-        concat(3)(2) shouldBe 4
-
-        concat.hasBeenComputedAt(1, 0) shouldBe true
-        concat.hasBeenComputedAt(2, 0) shouldBe true
-        concat.hasBeenComputedAt(3, 0) shouldBe true
-        concat.hasBeenComputedAt(4, 0) shouldBe false
-        concat.hasBeenComputedAt(1, 1) shouldBe true
-        concat.hasBeenComputedAt(2, 1) shouldBe true
-        concat.hasBeenComputedAt(3, 1) shouldBe true
-        concat.hasBeenComputedAt(4, 1) shouldBe false
-        concat.hasBeenComputedAt(1, 2) shouldBe true
-        concat.hasBeenComputedAt(2, 2) shouldBe true
-        concat.hasBeenComputedAt(3, 2) shouldBe true
-        concat.hasBeenComputedAt(4, 2) shouldBe false
-        count shouldBe 9
-
-        concat(1)(0) shouldBe 1
-        concat(2)(0) shouldBe 999
-        concat(3)(0) shouldBe 0
-        concat(1)(1) shouldBe 2
-        concat(2)(1) shouldBe 3
-        concat(3)(1) shouldBe 1
-        concat(1)(2) shouldBe 3
-        concat(2)(2) shouldBe 4
-        concat(3)(2) shouldBe 4
-
-    }
-
     test("cached attributes are correctly evaluated") {
         val definitions = new Definitions
         import definitions._
@@ -798,6 +724,169 @@ class AttributionTests extends KiamaTests {
         i.getMessage shouldBe "exception in attribute definition"
         val key = new ParamAttributeKey(arg, t)
         exceptionParam.memo.hasBeenComputedAt(key) shouldBe false
+    }
+
+    // Thread safety
+
+    {
+        import java.util.concurrent.Executors
+        import org.bitbucket.inkytonik.kiama.rewriting.Rewriter.collectl
+        import scala.concurrent.{Await, ExecutionContext, Future}
+        import scala.concurrent.duration._
+
+        def makeContext(n : Int) =
+            ExecutionContext.fromExecutor(Executors.newFixedThreadPool(n))
+
+        // Single attributes
+        // Core of the single attribute tests was contributed by Fred Teunissen
+
+        trait AstBase extends Product
+        case class Node(childs : AstBase*) extends AstBase
+        case class Leaf(value : Int) extends AstBase
+
+        val root : Node =
+            Node(
+                Node(
+                    Node(Leaf(1), Leaf(2), Leaf(3)),
+                    Node(Leaf(4), Leaf(5), Leaf(6)),
+                    Node(Leaf(7), Leaf(8), Leaf(9))
+                ),
+                Node(
+                    Node(Leaf(11), Leaf(12), Leaf(13)),
+                    Node(Leaf(14), Leaf(15), Leaf(16)),
+                    Node(Leaf(17), Leaf(18), Leaf(19))
+                ),
+                Node(
+                    Node(Leaf(21), Leaf(22), Leaf(23)),
+                    Node(Leaf(24), Leaf(25), Leaf(26)),
+                    Node(Leaf(27), Leaf(28), Leaf(29))
+                )
+            )
+
+        val expectedValues : Seq[Int] =
+            Seq(
+                405, 45, 135, 36, 45, 54, 225, 66, 75, 26, 84, 27, 28, 29,
+                405, 135, 54, 225, 66, 75, 84, 405, 135, 225, 405, 225
+            )
+
+        case class Compiler(root : Node) extends Attribution {
+
+            def aggregateValues(astTestBase : AstBase) : Int =
+                astTestBase.synchronized {
+                    aggregateValuesAttr(astTestBase)
+                }
+
+            val body : AstBase => Int =
+                {
+                    case node : Leaf =>
+                        node.value
+                    case node : Node =>
+                        node.childs.map(aggregateValuesAttr(_)).sum
+                }
+
+            val aggregateValuesAttr : CachedAttribute[AstBase, Int] =
+                attr(body)
+
+            val aggregateValuesParamAttr : CachedParamAttribute[Int, AstBase, Int] =
+                paramAttr(_ => body)
+
+            val aggregateValuesDynAttr : CachedDynamicAttribute[AstBase, Int] =
+                dynAttr(body)
+
+            def filterByThresholds(
+                attribute : AstBase => Int,
+                thresholds : Seq[Int]
+            )(implicit executionContext : ExecutionContext) : Future[Seq[Int]] =
+                Future.sequence(thresholds.map(
+                    threshold =>
+                        filterByThreshold(attribute, threshold)
+                )).map(_.flatten)
+
+            def filterByThreshold(
+                attribute : AstBase => Int,
+                threshold : Int
+            )(implicit executionContext : ExecutionContext) : Future[Seq[Int]] =
+                Future {
+                    collectl {
+                        case node : AstBase if aggregateValuesAttr(node) > threshold =>
+                            Some(attribute(node))
+                        case node =>
+                            None
+                    }(root).flatten
+                }
+
+            def filterByThresholdsAttr(
+                thresholds : Seq[Int]
+            )(implicit executionContext : ExecutionContext) : Future[Seq[Int]] =
+                filterByThresholds(aggregateValuesAttr, thresholds)
+
+            def filterByThresholdsParamAttr(
+                thresholds : Seq[Int]
+            )(implicit executionContext : ExecutionContext) : Future[Seq[Int]] =
+                filterByThresholds(aggregateValuesParamAttr(1), thresholds)
+
+            def filterByThresholdsDynAttr(
+                thresholds : Seq[Int]
+            )(implicit executionContext : ExecutionContext) : Future[Seq[Int]] =
+                filterByThresholds(aggregateValuesParamAttr(1), thresholds)
+
+        }
+
+        def checkResult(filtered : Future[Seq[Int]]) : Unit = {
+            val validations = Await.result(filtered, 20.seconds)
+            validations should contain theSameElementsAs expectedValues
+        }
+
+        val thresholds = Seq(25, 50, 100, 200)
+
+        for (n <- 1 to 4) {
+            test(s"cached attribute thread safety ($n threads)") {
+                implicit val executionContext = makeContext(n)
+                checkResult(Compiler(root).filterByThresholdsAttr(thresholds))
+            }
+
+            test(s"cached parameterised attribute thread safety ($n threads)") {
+                implicit val executionContext = makeContext(n)
+                checkResult(Compiler(root).filterByThresholdsParamAttr(thresholds))
+            }
+
+            test(s"cached dynamic attribute thread safety ($n threads)") {
+                implicit val executionContext = makeContext(n)
+                checkResult(Compiler(root).filterByThresholdsDynAttr(thresholds))
+            }
+        }
+
+        // Circular attributes
+
+        import org.bitbucket.inkytonik.kiama.example.dataflow.{DataflowTests, DataflowTree}
+
+        import DataflowTree.Stm
+
+        val dataflowTests = new DataflowTests
+        import dataflowTests.{dataflow, s1, s2, s3, s4, s5}
+
+        def computeDataflow(
+            stmts : Seq[Stm]
+        )(implicit executionContext : ExecutionContext) =
+            Future.sequence(stmts.map(
+                stmt =>
+                    Future { dataflow.out(stmt) }
+            ))
+
+        val stmts = Seq(s1, s2, s3, s4, s5)
+        val expectedOuts =
+            List(
+                Set("y", "v", "w"), Set("v", "w"), Set("x", "w", "v"),
+                Set("x", "w", "v"), Set()
+            )
+
+        for (n <- 1 to 4) {
+            test(s"circular attribute thread safety ($n threads)") {
+                implicit val executionContext = makeContext(n)
+                val result = Await.result(computeDataflow(stmts), 20.seconds)
+                result shouldBe expectedOuts
+            }
+        }
     }
 
 }

@@ -109,7 +109,7 @@ object Messaging {
      * Recursively collect all messages in the given tree using the partial
      * function `messages` at all nodes where it is defined.
      */
-    def collectMessages[T <: Product, U <: T](tree : Tree[T, U])(messages : T ==> Messages) : Messages =
+    def collectMessages[T <: AnyRef with Product, U <: T](tree : Tree[T, U])(messages : T ==> Messages) : Messages =
         tree.nodes.flatMap(messages.orElse { case _ => noMessages }).toVector
 
     /**

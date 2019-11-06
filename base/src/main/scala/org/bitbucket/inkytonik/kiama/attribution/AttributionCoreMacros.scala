@@ -18,16 +18,16 @@ object AttributionCoreMacros {
 
     // Macros for the builder methods
 
-    def attrMacro[T, U, A](c : blackbox.Context)(f : c.Expr[T => U]) : c.Expr[A] =
+    def attrMacro[T <: AnyRef, U, A](c : blackbox.Context)(f : c.Expr[T => U]) : c.Expr[A] =
         makeCallWithName(c, "this.attrWithName")
 
-    def circularMacro[T, U, A](c : blackbox.Context)(init : c.Expr[U])(f : c.Expr[T => U]) : c.Expr[A] =
+    def circularMacro[T <: AnyRef, U, A](c : blackbox.Context)(init : c.Expr[U])(f : c.Expr[T => U]) : c.Expr[A] =
         makeCallWithName(c, "this.circularWithName")
 
-    def dynAttrMacro[T, U, A](c : blackbox.Context)(f : c.Expr[T => U]) : c.Expr[A] =
+    def dynAttrMacro[T <: AnyRef, U, A](c : blackbox.Context)(f : c.Expr[T => U]) : c.Expr[A] =
         makeCallWithName(c, "this.dynAttrWithName")
 
-    def paramAttrMacro[V, T, U, P](c : blackbox.Context)(f : c.Expr[V => T => U]) : c.Expr[P] =
+    def paramAttrMacro[V, T <: AnyRef, U, P](c : blackbox.Context)(f : c.Expr[V => T => U]) : c.Expr[P] =
         makeCallWithName(c, "this.paramAttrWithName")
 
 }

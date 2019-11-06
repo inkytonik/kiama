@@ -47,7 +47,7 @@ trait Rewriter extends RewriterCore {
      * when creating the new tree. The default is `EnsureTree` since it is
      * likely that rewrites will result in node sharing that should be removed.
      */
-    def rewriteTree[T <: Product, U <: T](s : Strategy)(t : Tree[T, U], shape : TreeShape = EnsureTree) : Tree[T, U] = {
+    def rewriteTree[T <: AnyRef with Product, U <: T](s : Strategy)(t : Tree[T, U], shape : TreeShape = EnsureTree) : Tree[T, U] = {
         s(t.root) match {
             case Some(t1) =>
                 new Tree[T, U](t1.asInstanceOf[U], shape)

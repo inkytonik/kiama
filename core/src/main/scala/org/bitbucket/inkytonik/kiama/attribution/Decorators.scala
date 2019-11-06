@@ -18,7 +18,7 @@ import org.bitbucket.inkytonik.kiama.relation.Tree
  * tree attribution based on simple attributes or functions. A `Tree` must
  * be supplied to give the decorators access to the tree structure.
  */
-class Decorators[T <: Product, R <: T](tree : Tree[T, R]) {
+class Decorators[T <: AnyRef with Product, R <: T](tree : Tree[T, R]) {
 
     import org.bitbucket.inkytonik.kiama.attribution.Attribution
     import scala.PartialFunction
