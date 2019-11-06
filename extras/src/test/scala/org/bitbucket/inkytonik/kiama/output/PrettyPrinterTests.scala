@@ -42,6 +42,11 @@ class PrettyPrinterTests extends org.bitbucket.inkytonik.kiama.util.PrettyPrinte
         layout(string("one\ntwo\nthree")) shouldBe "one\ntwo\nthree"
     }
 
+    test("prtty-print string with a large number of newlines") {
+        val s = (0 to 100000).map(_.toString).mkString("\n")
+        layout(string(s)) shouldBe s
+    }
+
     test("pretty-print string starting with and including newlines") {
         layout(string("\none\ntwo\nthree")) shouldBe "\none\ntwo\nthree"
     }

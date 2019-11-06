@@ -96,6 +96,7 @@ object PrettyPrinterTypes {
 trait PrettyPrinterBase {
 
     import org.bitbucket.inkytonik.kiama.relation.Bridge
+    import org.bitbucket.inkytonik.kiama.util.StringOps.lines
     import PrettyPrinterTypes.{Document, Indent, Layout, Links, Width}
     import scala.collection.immutable.Seq
 
@@ -279,13 +280,16 @@ trait PrettyPrinterBase {
      * use `text` directly instead.
      */
     def string(s : String) : Doc =
-        if (s == "") {
+        if (s.isEmpty) {
             emptyDoc
-        } else if (s(0) == '\n') {
-            line <> string(s.tail)
         } else {
-            val (xs, ys) = s.span(_ != '\n')
-            text(xs) <> string(ys)
+            val iter = lines(s)
+            val head = iter.next()
+            val out = iter.foldLeft[Doc](head)(_ <> line <> _)
+            if (s.last == '\n')
+                out <> line
+            else
+                out
         }
 
     /**

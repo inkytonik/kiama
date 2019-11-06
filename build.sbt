@@ -59,11 +59,15 @@ val commonSettings =
             val sourceDir = (sourceDirectory in Compile).value
             CrossVersion.partialVersion(scalaVersion.value) match {
                 case Some((2, 10)) =>
-                    Seq(sourceDir / "scala-2.10", sourceDir / "scala-2.12-")
+                    Seq(sourceDir / "scala-2.10", sourceDir / "scala-2.not11", sourceDir / "scala-2.12-")
+                case Some((2, 11)) =>
+                    Seq(sourceDir / "scala-2.11", sourceDir / "scala-2.11+", sourceDir / "scala-2.12-")
+                case Some((2, 12)) =>
+                    Seq(sourceDir / "scala-2.not11", sourceDir / "scala-2.11+", sourceDir / "scala-2.12-")
                 case Some((2, 13)) =>
-                    Seq(sourceDir / "scala-2.11+", sourceDir / "scala-2.13")
-                case _ =>
-                    Seq(sourceDir / "scala-2.11+", sourceDir / "scala-2.12-")
+                    Seq(sourceDir / "scala-2.not11", sourceDir / "scala-2.11+", sourceDir / "scala-2.13")
+                case version =>
+                    sys.error(s"unexpected Scala version $version")
             }
         },
 
