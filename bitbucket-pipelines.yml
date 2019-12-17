@@ -7,4 +7,4 @@ pipelines:
             - sbt
             - ivy2
         script:
-          - java -XX:+UnlockDiagnosticVMOptions -XX:+PrintFlagsFinal -version -XX:+UseG1GC | grep Metaspace
+          - sbt +test
