@@ -11,7 +11,8 @@
 package org.bitbucket.inkytonik.kiama
 package util
 
-import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, BeforeAndAfterEach, Matchers}
+import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, BeforeAndAfterEach}
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatest.matchers.{Matcher, MatchResult}
 import org.scalatestplus.scalacheck.Checkers

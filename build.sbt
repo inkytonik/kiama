@@ -8,8 +8,8 @@ ThisBuild/version := "2.3.0-SNAPSHOT"
 
 ThisBuild/organization := "org.bitbucket.inkytonik.kiama"
 
-ThisBuild/scalaVersion := "2.12.8"
-ThisBuild/crossScalaVersions := Seq("2.13.0", "2.12.8", "2.11.12", "2.10.7")
+ThisBuild/scalaVersion := "2.13.0"
+ThisBuild/crossScalaVersions := Seq("2.13.0", "2.12.10", "2.11.12", "2.10.7")
 
 ThisBuild/scalacOptions := {
     // Turn on all lint warnings, except:
@@ -73,9 +73,9 @@ val commonSettings =
 
         libraryDependencies :=
             Seq(
-                "org.scalacheck" %% "scalacheck" % "1.14.0" % "test",
-                "org.scalatest" %% "scalatest" % "3.0.8" % "test",
-                "org.scalatestplus" %% "scalatestplus-scalacheck" % "1.0.0-SNAP8" % "test"
+                "org.scalacheck" %% "scalacheck" % "1.14.3" % "test",
+                "org.scalatest" %% "scalatest" % "3.1.0" % "test",
+                "org.scalatestplus" %% "scalatestplus-scalacheck" % "3.1.0.0-RC2" % "test"
             ),
 
         // Formatting
