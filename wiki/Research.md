@@ -8,7 +8,7 @@ The following research papers have been published and presentations have been gi
 
 Sloane, A. M. and Roberts, M. [Oberon-0 in Kiama](http://www.sciencedirect.com/science/article/pii/S0167642315003032). Science of Computer Programming 114 (2015) 20-32.
 
-Sloane, A. M and Roberts, M. Kiama: Domain-Specific Languages for Language Implementation in Scala. Talk and workshop at [YOW! LambdaJam, Brisbane, May 2013](http://www.yowconference.com.au/lambdajam/index.html). [Slides](https://speakerdeck.com/inkytonik/kiama-domain-specific-languages-for-language-implementation-in-scala) [Repository](https://bitbucket.org/inkytonik/lambdajam13) [Video](http://www.youtube.com/watch?v=eDlYT3DOM0s).
+Sloane, A. M and Roberts, M. Kiama: Domain-Specific Languages for Language Implementation in Scala. Talk and workshop at [YOW! LambdaJam, Brisbane, May 2013](http://www.yowconference.com.au/lambdajam/index.html). [Slides](https://speakerdeck.com/inkytonik/kiama-domain-specific-languages-for-language-implementation-in-scala) [Video](http://www.youtube.com/watch?v=eDlYT3DOM0s).
 
 Sloane, A. M. Overview of the Kiama Language Processing Library. Presentation at [ScalaSyd September 14, 2011](http://www.meetup.com/scalasyd/events/28797911/). [Slides](https://speakerdeck.com/inkytonik/overview-of-the-kiama-language-processing-library).
 
@@ -48,9 +48,9 @@ Sloane, A. M. Functional Pretty Printing Combinators in Scala. Talk at [fp-syd](
 
 ## Examples
 
-Sloane, A. M. Introduction to Partial Evaluation. Talk at [fp-syd](http://groups.google.com/group/fp-syd), October 20, 2011. [Slides](https://speakerdeck.com/inkytonik/introduction-to-partial-evaluation). [Code](https://bitbucket.org/inkytonik/partialeval). This code makes use of Kiama's pretty-printing and REPL features, plus shows state monads in Scala.  Based on [Cook and Laemmel's DSL 2011 tutorial](http://softlang.uni-koblenz.de/dsl11/).
+Sloane, A. M. Introduction to Partial Evaluation. Talk at [fp-syd](http://groups.google.com/group/fp-syd), October 20, 2011. [Slides](https://speakerdeck.com/inkytonik/introduction-to-partial-evaluation). This code makes use of Kiama's pretty-printing and REPL features, plus shows state monads in Scala.  Based on [Cook and Laemmel's DSL 2011 tutorial](http://softlang.uni-koblenz.de/dsl11/).
 
-Sloane, A. M. Launchbury's Natural Semantics for Lazy Evaluation.  Talk at [fp-syd](http://groups.google.com/group/fp-syd), September 16, 2010. [Slides](https://speakerdeck.com/inkytonik/launchburys-natural-semantics-for-lazy-evaluation). [Code](https://bitbucket.org/inkytonik/natural-lazy). This code makes some use of Kiama's rewriting library.
+Sloane, A. M. Launchbury's Natural Semantics for Lazy Evaluation.  Talk at [fp-syd](http://groups.google.com/group/fp-syd), September 16, 2010. [Slides](https://speakerdeck.com/inkytonik/launchburys-natural-semantics-for-lazy-evaluation). This code makes some use of Kiama's rewriting library.
 
 ## Related libraries and tools
 

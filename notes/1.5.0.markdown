@@ -2,9 +2,9 @@ The Kiama team are pleased to bring you the next release of the library.
 
 ### New features
 * General
-    * The API methods that create rewriting strategies and attributes are now defined by macros. We use our [`dsinfo`](https://bitbucket.org/inkytonik/dsinfo) library to provide easy access to the names of these domain objects. Strategies and attributes now have a `name` member that can be used for debugging messages and profiling (see below).
+    * The API methods that create rewriting strategies and attributes are now defined by macros. We use our [`dsinfo`](https://github.com/inkytonik/dsinfo) library to provide easy access to the names of these domain objects. Strategies and attributes now have a `name` member that can be used for debugging messages and profiling (see below).
     * This new dependence on macros means that we do not support Kiama on Scala 2.9 any more.
-    * Kiama now uses our [`dsprofile`](https://bitbucket.org/inkytonik/dsprofile) library to provide domain-specific profiling reports about strategy and attribute evaluation. See the [Profiling wiki page](https://code.google.com/p/kiama/wiki/Profiling) for more information on Kiama's profiling support.
+    * Kiama now uses our [`dsprofile`](https://github.com/inkytonik/dsprofile) library to provide domain-specific profiling reports about strategy and attribute evaluation. See the [Profiling wiki page](https://code.google.com/p/kiama/wiki/Profiling) for more information on Kiama's profiling support.
 * [Attribution](http://wiki.kiama.googlecode.com/hg/doc/1.5.0/api/index.html#org.kiama.attribution.package)
     * Circular attributes now support the same `reset` and `hasBeenComputedAt` interface as other cached attributes.
     * Dynamic attributes can now be properly reset.

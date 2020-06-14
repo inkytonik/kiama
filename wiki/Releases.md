@@ -25,8 +25,8 @@ them manually when building from source.
     * [2.3.0 API documentation](http://www.javadoc.io/doc/org.bitbucket.inkytonik.kiama/kiama_2.13/2.3.0)
     * Compatible tools and libraries:
       * [Scala 2.10.x/2.11.x/2.12.x/2.13.x](http://www.scala-lang.org)
-      * [dsinfo 0.3.0/0.4.0](https://bitbucket.org/inkytonik/dsinfo)
-      * [dsprofile 0.3.0/0.4.0](https://bitbucket.org/inkytonik/dsprofile)
+      * [dsinfo 0.3.0/0.4.0](https://github.com/inkytonik/dsinfo)
+      * [dsprofile 0.3.0/0.4.0](https://github.com/inkytonik/dsprofile)
       * [Guava collections 21.0](https://github.com/google/guava)
       * To use the read-eval-print loops:
         * [JLine 2.14.6](https://github.com/jline/jline2)
@@ -41,8 +41,8 @@ them manually when building from source.
     * [2.2.1 API documentation](http://www.javadoc.io/doc/org.bitbucket.inkytonik.kiama/kiama_2.12/2.2.1)
     * Compatible tools and libraries:
       * [Scala 2.10.x/2.11.x/2.12.x](http://www.scala-lang.org)
-      * [dsinfo 0.3.0/0.4.0](https://bitbucket.org/inkytonik/dsinfo)
-      * [dsprofile 0.3.0/0.4.0](https://bitbucket.org/inkytonik/dsprofile)
+      * [dsinfo 0.3.0/0.4.0](https://github.com/inkytonik/dsinfo)
+      * [dsprofile 0.3.0/0.4.0](https://github.com/inkytonik/dsprofile)
       * [Guava collections 27.1-jre](https://github.com/google/guava)
       * To use the read-eval-print loops:
         * [JLine 2.14.6](https://github.com/jline/jline2)
@@ -57,8 +57,8 @@ them manually when building from source.
     * [2.2.0 API documentation](http://www.javadoc.io/doc/org.bitbucket.inkytonik.kiama/kiama_2.12/2.2.0)
     * Compatible tools and libraries:
       * [Scala 2.10.x/2.11.x/2.12.x](http://www.scala-lang.org)
-      * [dsinfo 0.3.0/0.4.0](https://bitbucket.org/inkytonik/dsinfo)
-      * [dsprofile 0.3.0/0.4.0](https://bitbucket.org/inkytonik/dsprofile)
+      * [dsinfo 0.3.0/0.4.0](https://github.com/inkytonik/dsinfo)
+      * [dsprofile 0.3.0/0.4.0](https://github.com/inkytonik/dsprofile)
       * [Guava collections 24](https://github.com/google/guava)
       * To use the read-eval-print loops:
         * [JLine 2.14.6](https://github.com/jline/jline2)
@@ -73,8 +73,8 @@ them manually when building from source.
     * [2.1.0 API documentation](http://www.javadoc.io/doc/org.bitbucket.inkytonik.kiama/kiama_2.12/2.1.0)
     * Compatible tools and libraries:
       * [Scala 2.10.x/2.11.x/2.12.x](http://www.scala-lang.org)
-      * [dsinfo 0.3.0/0.4.0](https://bitbucket.org/inkytonik/dsinfo)
-      * [dsprofile 0.3.0/0.4.0](https://bitbucket.org/inkytonik/dsprofile)
+      * [dsinfo 0.3.0/0.4.0](https://github.com/inkytonik/dsinfo)
+      * [dsprofile 0.3.0/0.4.0](https://github.com/inkytonik/dsprofile)
       * [Guava collections 21](https://github.com/google/guava)
       * To use the read-eval-print loops:
         * [JLine 2.14.3](https://github.com/jline/jline2)
@@ -89,8 +89,8 @@ them manually when building from source.
     * [2.0.0 API documentation](http://www.javadoc.io/doc/org.bitbucket.inkytonik.kiama/kiama_2.11/2.0.0)
     * Compatible tools and libraries:
       * [Scala 2.10.x/2.11.x](http://www.scala-lang.org)
-      * [dsinfo 0.3.0/0.4.0](https://bitbucket.org/inkytonik/dsinfo)
-      * [dsprofile 0.3.0/0.4.0](https://bitbucket.org/inkytonik/dsprofile)
+      * [dsinfo 0.3.0/0.4.0](https://github.com/inkytonik/dsinfo)
+      * [dsprofile 0.3.0/0.4.0](https://github.com/inkytonik/dsprofile)
       * [Guava collections 19](https://github.com/google/guava)
       * To use the read-eval-print loops:
         * [JLine 2.14.1](https://github.com/jline/jline2)
@@ -105,8 +105,8 @@ them manually when building from source.
     * [1.8.0 API documentation](http://www.javadoc.io/doc/com.googlecode.kiama/kiama_2.11/1.8.0)
     * Compatible tools and libraries:
       * [Scala 2.10.x/2.11.x](http://www.scala-lang.org)
-      * [dsinfo 0.3.0/0.4.0](https://bitbucket.org/inkytonik/dsinfo)
-      * [dsprofile 0.3.0/0.4.0](https://bitbucket.org/inkytonik/dsprofile)
+      * [dsinfo 0.3.0/0.4.0](https://github.com/inkytonik/dsinfo)
+      * [dsprofile 0.3.0/0.4.0](https://github.com/inkytonik/dsprofile)
       * [Guava collections 17](https://github.com/google/guava)
       * To use the read-eval-print loops:
         * [JLine 2.12](https://github.com/jline/jline2)
@@ -121,8 +121,8 @@ them manually when building from source.
     * [1.7.0 API documentation](http://www.javadoc.io/doc/com.googlecode.kiama/kiama_2.11/1.7.0)
     * Compatible tools and libraries:
       * [Scala 2.10.x/2.11.x](http://www.scala-lang.org)
-      * [dsinfo 0.3.0/0.4.0](https://bitbucket.org/inkytonik/dsinfo)
-      * [dsprofile 0.3.0/0.4.0](https://bitbucket.org/inkytonik/dsprofile)
+      * [dsinfo 0.3.0/0.4.0](https://github.com/inkytonik/dsinfo)
+      * [dsprofile 0.3.0/0.4.0](https://github.com/inkytonik/dsprofile)
       * [Guava collections 17](https://github.com/google/guava)
       * To use the read-eval-print loops:
         * [JLine 2.12](https://github.com/jline/jline2)
@@ -137,8 +137,8 @@ them manually when building from source.
     * [1.6.0 API documentation](http://www.javadoc.io/doc/com.googlecode.kiama/kiama_2.11/1.6.0)
     * Compatible tools and libraries:
       * [Scala 2.10.x/2.11.x](http://www.scala-lang.org)
-      * [dsinfo 0.3.0/0.4.0](https://bitbucket.org/inkytonik/dsinfo)
-      * [dsprofile 0.3.0/0.4.0](https://bitbucket.org/inkytonik/dsprofile)
+      * [dsinfo 0.3.0/0.4.0](https://github.com/inkytonik/dsinfo)
+      * [dsprofile 0.3.0/0.4.0](https://github.com/inkytonik/dsprofile)
       * [Guava collections 17](https://github.com/google/guava)
       * To use the read-eval-print loops:
         * [JLine 2.11](https://github.com/jline/jline2)
@@ -153,8 +153,8 @@ them manually when building from source.
     * [1.5.3 API documentation](http://www.javadoc.io/doc/com.googlecode.kiama/kiama_2.11/1.5.3)
     * Compatible tools and libraries:
       * [Scala 2.11.x](http://www.scala-lang.org)
-      * [dsinfo 0.4.0](https://bitbucket.org/inkytonik/dsinfo)
-      * [dsprofile 0.4.0](https://bitbucket.org/inkytonik/dsprofile)
+      * [dsinfo 0.4.0](https://github.com/inkytonik/dsinfo)
+      * [dsprofile 0.4.0](https://github.com/inkytonik/dsprofile)
       * To use the read-eval-print loops:
         * [JLine 2.11](https://github.com/jline/jline2)
       * Command-line support in examples:
@@ -168,8 +168,8 @@ them manually when building from source.
     * [1.5.2 API documentation](http://www.javadoc.io/doc/com.googlecode.kiama/kiama_2.10/1.5.2)
     * Compatible tools and libraries:
       * [Scala 2.10.x](http://www.scala-lang.org)
-      * [dsinfo 0.2.0](https://bitbucket.org/inkytonik/dsinfo)
-      * [dsprofile 0.3.0](https://bitbucket.org/inkytonik/dsprofile)
+      * [dsinfo 0.2.0](https://github.com/inkytonik/dsinfo)
+      * [dsprofile 0.3.0](https://github.com/inkytonik/dsprofile)
       * To use the read-eval-print loops:
         * [JLine 2.11](https://github.com/jline/jline2)
       * Command-line support in examples:
@@ -183,8 +183,8 @@ them manually when building from source.
     * [1.5.1 API documentation](http://www.javadoc.io/doc/com.googlecode.kiama/kiama_2.10/1.5.1)
     * Compatible tools and libraries:
       * [Scala 2.10.x](http://www.scala-lang.org)
-      * [dsinfo 0.2.0](https://bitbucket.org/inkytonik/dsinfo)
-      * [dsprofile 0.2.0](https://bitbucket.org/inkytonik/dsprofile)
+      * [dsinfo 0.2.0](https://github.com/inkytonik/dsinfo)
+      * [dsprofile 0.2.0](https://github.com/inkytonik/dsprofile)
       * To use the read-eval-print loops:
         * [JLine 1.0](http://jline.sourceforge.net/)
       * To run Kiama tests:
@@ -196,8 +196,8 @@ them manually when building from source.
     * [1.5.0 API documentation](http://www.javadoc.io/doc/com.googlecode.kiama/kiama_2.10/1.5.0)
     * Compatible tools and libraries:
       * [Scala 2.10.x](http://www.scala-lang.org)
-      * [dsinfo 0.2.0](https://bitbucket.org/inkytonik/dsinfo)
-      * [dsprofile 0.2.0](https://bitbucket.org/inkytonik/dsprofile)
+      * [dsinfo 0.2.0](https://github.com/inkytonik/dsinfo)
+      * [dsprofile 0.2.0](https://github.com/inkytonik/dsprofile)
       * To use the read-eval-print loops:
         * [JLine 1.0](http://jline.sourceforge.net/)
       * To run Kiama tests:

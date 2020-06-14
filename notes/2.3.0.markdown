@@ -1,10 +1,10 @@
-[Kiama](https://bitbucket.org/inkytonik/kiama) is a Scala library for language processing including attribute grammars, term rewriting, abstract state machines and pretty printing.
+[Kiama](https://github.com/inkytonik/kiama) is a Scala library for language processing including attribute grammars, term rewriting, abstract state machines and pretty printing.
 
 This is a major release with an important attribution bug fix, support for Scala 2.13, preliminary interfacing with the Language Server Protocol, plus some minor enhancements and updates.
 
 ### Bug Fixes
 
-* `Attribution`: [Issue 83](https://bitbucket.org/inkytonik/kiama/issues/83/cached-attributes-arent-thread-safe) Cached attributes are now synchronized so that cache management is now thread safe. As a side effect of this change, it is no longer possible to define attribute types that are not inheriting from `AnyRef`. Thanks to Fred Teunissen for reporting and helping with testing.
+* `Attribution`: [Issue 83](https://github.com/inkytonik/kiama/issues/83/cached-attributes-arent-thread-safe) Cached attributes are now synchronized so that cache management is now thread safe. As a side effect of this change, it is no longer possible to define attribute types that are not inheriting from `AnyRef`. Thanks to Fred Teunissen for reporting and helping with testing.
 
 * `PrettyPrinter`: The `string` method now uses an iterator instead of recursion to avoid stack overflow for strings that contain many newlines. Thanks to Anton Panasenko for reporting and supplying a fix.
 
@@ -12,7 +12,7 @@ This is a major release with an important attribution bug fix, support for Scala
 
 * This version of Kiama comes with basic support for interfacing between Kiama's `Compiler` framework and the Language Server Protocol. The result is a relatively low-effort mechanism to send information from a Kiama-based processor to an LSP-based editor. We have only tested with VSCode so far.
 
-* A demonstration instance of using Kiama's LSP support can be found in our [MiniJava example](https://bitbucket.org/inkytonik/kiama/src/master/extras/src/test/scala/org/bitbucket/inkytonik/kiama/example/minijava/Server.scala). It complements a [simple VSCode client](https://bitbucket.org/inkytonik/minijava-vscode).
+* A demonstration instance of using Kiama's LSP support can be found in our [MiniJava example](https://github.com/inkytonik/kiama/blob/master/extras/src/test/scala/org/bitbucket/inkytonik/kiama/example/minijava/Server.scala). It complements a [simple VSCode client](https://github.com/inkytonik/minijava-vscode).
 
 * Services that are at least partially supported are:
   * Diagnostic messages

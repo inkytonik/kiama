@@ -1,4 +1,4 @@
-[Kiama](https://bitbucket.org/inkytonik/kiama) is a Scala library for language processing including attribute grammars, term rewriting, abstract state machines and pretty printing.
+[Kiama](https://github.com/inkytonik/kiama) is a Scala library for language processing including attribute grammars, term rewriting, abstract state machines and pretty printing.
 
 This is a maintenance release that only updates the library dependencies. It is feature identical to 2.2.0.
 

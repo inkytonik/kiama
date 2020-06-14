@@ -1,54 +1,79 @@
-<p><a href="https://bitbucket.org/inkytonik/kiama">Kiama</a> is a Scala library for language processing including attribute grammars, term rewriting, abstract state machines and pretty printing.</p>
+<p><a href="https://github.com/inkytonik/kiama">Kiama</a> is a Scala library for language processing including attribute
+  grammars, term rewriting, abstract state machines and pretty printing.</p>
 
-<p>This is a major release cross-published for both Scala 2.10 and 2.11. It’s been a while and there are lots of changes, so these notes are crazy long.</p>
+<p>This is a major release cross-published for both Scala 2.10 and 2.11. It’s been a while and there are lots of
+  changes, so these notes are crazy long.</p>
 
-<p>Since June 2015, Kiama has been based at <a href="https://bitbucket.org/inkytonik/kiama">Bitbucket</a> instead of Google code. Please raise issues on the <a href="https://bitbucket.org/inkytonik/kiama/issues?status=new&amp;status=open">Bitbucket site</a>.</p>
+<p>Since June 2015, Kiama has been based at <a href="https://github.com/inkytonik/kiama">Bitbucket</a> instead of Google
+  code. Please raise issues on the <a
+    href="https://github.com/inkytonik/kiama/issues?status=new&amp;status=open">Bitbucket site</a>.</p>
 
 <h3 id="breaking-changes">Breaking changes</h3>
 
 <ul>
   <li>
-    <p>To reflect the move from Google Code to Bitbucket, the group ID under which Kiama is published on Maven Central is now <code>org.bitbucket.inkytonik.kiama</code> instead of <code>com.googlecode.kiama</code> and the top-level package is now also <code>org.bitbucket.inkytonik.kiama</code> instead of <code>org.kiama</code>.</p>
+    <p>To reflect the move from Google Code to Bitbucket, the group ID under which Kiama is published on Maven Central
+      is now <code>org.bitbucket.inkytonik.kiama</code> instead of <code>com.googlecode.kiama</code> and the top-level
+      package is now also <code>org.bitbucket.inkytonik.kiama</code> instead of <code>org.kiama</code>.</p>
   </li>
   <li>
-    <p><code>Attribution</code>: The <code>Attributable</code> trait that provided generic tree access has been removed and replaced with a new approach based on tree relations. See the “What happened to Attributable?” section below for details.</p>
+    <p><code>Attribution</code>: The <code>Attributable</code> trait that provided generic tree access has been removed
+      and replaced with a new approach based on tree relations. See the “What happened to Attributable?” section below
+      for details.</p>
   </li>
   <li>
-    <p><code>Attribution</code> and <code>Rewriting</code>: Deep cloning was previously implemented in  <code>Attribution</code> using <code>Attributable</code>. It is now provided by <code>Rewriting</code> and does not rely on any attribution.</p>
+    <p><code>Attribution</code> and <code>Rewriting</code>: Deep cloning was previously implemented in
+      <code>Attribution</code> using <code>Attributable</code>. It is now provided by <code>Rewriting</code> and does
+      not rely on any attribution.</p>
   </li>
   <li>
-    <p><code>Attribution</code>: Replaced <code>Attribution</code> object with a class so that it is now necessary to instantiate it (or sub-class) rather than using a single default global <code>Attribution</code> instance.</p>
+    <p><code>Attribution</code>: Replaced <code>Attribution</code> object with a class so that it is now necessary to
+      instantiate it (or sub-class) rather than using a single default global <code>Attribution</code> instance.</p>
   </li>
   <li>
-    <p><code>Output</code>: Removed <code>pretty_any</code> pretty-printing method, use <code>pretty</code> and <code>any</code> individually instead.</p>
+    <p><code>Output</code>: Removed <code>pretty_any</code> pretty-printing method, use <code>pretty</code> and
+      <code>any</code> individually instead.</p>
   </li>
   <li>
-    <p><code>Output</code>: Removed <code>PrettyPrintable</code> class and related implicit conversions and methods (<code>plist</code> and <code>pseq</code>) since they were hardly ever used and complicated the pretty-printer interface.</p>
+    <p><code>Output</code>: Removed <code>PrettyPrintable</code> class and related implicit conversions and methods
+      (<code>plist</code> and <code>pseq</code>) since they were hardly ever used and complicated the pretty-printer
+      interface.</p>
   </li>
   <li>
     <p><code>Output</code>: Removed <code>product</code> pretty-printer combinator. Use <code>any</code> instead.</p>
   </li>
   <li>
-    <p><code>Output</code>: Renamed <code>empty</code> pretty-printer combinator to <code>emptyDoc</code> to avoid clashes with other libraries, particularly ScalaTest.</p>
+    <p><code>Output</code>: Renamed <code>empty</code> pretty-printer combinator to <code>emptyDoc</code> to avoid
+      clashes with other libraries, particularly ScalaTest.</p>
   </li>
   <li>
-    <p><code>Utility</code>: Removed the global <code>resetMemo</code> operation for all memoised data since it doesn’t play well with concurrent execution.</p>
+    <p><code>Utility</code>: Removed the global <code>resetMemo</code> operation for all memoised data since it doesn’t
+      play well with concurrent execution.</p>
   </li>
   <li>
-    <p><code>Utility</code>: Removed the <code>resetEnvironments</code> operation from the <code>Environments</code> trait. It is better to create different environments than reuse one.</p>
+    <p><code>Utility</code>: Removed the <code>resetEnvironments</code> operation from the <code>Environments</code>
+      trait. It is better to create different environments than reuse one.</p>
   </li>
   <li>
-    <p><code>Utility</code>: As a result of the move to our own parsing library (see below), the old Kiama <code>ParserUtilities</code> and <code>PositionedParserUtilities</code> traits have been removed. Their functionality is now provided directly by the parsing library.</p>
+    <p><code>Utility</code>: As a result of the move to our own parsing library (see below), the old Kiama
+      <code>ParserUtilities</code> and <code>PositionedParserUtilities</code> traits have been removed. Their
+      functionality is now provided directly by the parsing library.</p>
   </li>
   <li>
-    <p><code>Utility</code>: The new parsing library uses vectors to hold repetitive constructs instead of lists as in the old parsing library. Other parts of Kiama have also standardised on using vectors instead of lists for this purpose.</p>
+    <p><code>Utility</code>: The new parsing library uses vectors to hold repetitive constructs instead of lists as in
+      the old parsing library. Other parts of Kiama have also standardised on using vectors instead of lists for this
+      purpose.</p>
   </li>
   <li>
-    <p><code>Utility</code>: The definition of whitespace for the new parsers must also now match “no whitespace” instead of assuming that there was at least some whitespace present as in previous versions. This new definition allows two constructs to be separated by “no whitespace” provided the parser for the first construct doesn’t consume any of the second construct. Previously it was necessary to have actual whitespace between them.</p>
+    <p><code>Utility</code>: The definition of whitespace for the new parsers must also now match “no whitespace”
+      instead of assuming that there was at least some whitespace present as in previous versions. This new definition
+      allows two constructs to be separated by “no whitespace” provided the parser for the first construct doesn’t
+      consume any of the second construct. Previously it was necessary to have actual whitespace between them.</p>
   </li>
   <li>
-    <p><code>Utility</code>: configuration of output emitters for Kiama-based programs is now done using the command-line option <code>--Koutput</code> instead of via specialised configuration code. Error emitters
-have been removed since they were not really needed and never actually output to standard error.</p>
+    <p><code>Utility</code>: configuration of output emitters for Kiama-based programs is now done using the
+      command-line option <code>--Koutput</code> instead of via specialised configuration code. Error emitters
+      have been removed since they were not really needed and never actually output to standard error.</p>
   </li>
   <li>
     <p>We now rely less on general <code>Seq</code> and <code>Stack</code> types where there is really no benefit.</p>
@@ -59,28 +84,44 @@ have been removed since they were not really needed and never actually output to
 
 <ul>
   <li>
-    <p><code>Parsing</code>: Kiama no longer uses the Scala parser combinator library. The new <code>parsing</code> package contains a parsing combinator library with a very similar interface to the Scala library one. Ours has a simpler implementation and interfaces more easily with the rest of Kiama on things like positions. Many features that we didn’t need have been omitted (e.g., there is no distinction between <code>RegexParsers</code> and other ones). We use the new parsing library for our examples, teaching and testing but wouldn’t recommend it for production use. Instead, you may be interested in our <a href="https://bitbucket.org/inkytonik/sbt-rats">sbt-rats parser generator</a> for Scala.</p>
+    <p><code>Parsing</code>: Kiama no longer uses the Scala parser combinator library. The new <code>parsing</code>
+      package contains a parsing combinator library with a very similar interface to the Scala library one. Ours has a
+      simpler implementation and interfaces more easily with the rest of Kiama on things like positions. Many features
+      that we didn’t need have been omitted (e.g., there is no distinction between <code>RegexParsers</code> and other
+      ones). We use the new parsing library for our examples, teaching and testing but wouldn’t recommend it for
+      production use. Instead, you may be interested in our <a href="https://github.com/inkytonik/sbt-rats">sbt-rats
+        parser generator</a> for Scala.</p>
   </li>
   <li>
     <p><code>Output</code>: Added support for parenthesised pretty-printing of n-ary expressions.</p>
   </li>
   <li>
-    <p><code>Output</code>: Added <code>arguments</code> method which embodies how a parenthesised sequence of arguments should be pretty-printed. Previously this was built-in to the <code>seq</code> combinator but now can be accessed separately.</p>
+    <p><code>Output</code>: Added <code>arguments</code> method which embodies how a parenthesised sequence of arguments
+      should be pretty-printed. Previously this was built-in to the <code>seq</code> combinator but now can be accessed
+      separately.</p>
   </li>
   <li>
-    <p><code>Output</code>: Added a form of origin tracking that makes available a map between source objects and pretty-printed text ranges as a result of pretty-printing. Rendering operations now return a <code>Document</code> which combines the pretty-printed layout with the mapping information.</p>
+    <p><code>Output</code>: Added a form of origin tracking that makes available a map between source objects and
+      pretty-printed text ranges as a result of pretty-printing. Rendering operations now return a <code>Document</code>
+      which combines the pretty-printed layout with the mapping information.</p>
   </li>
   <li>
     <p><code>Utility</code>: Added <code>defineIfNew</code> operation and pretty-printing to environments.</p>
   </li>
   <li>
-    <p><code>Utility</code>: Some details of messaging have changed with a view to generalizing the implementation. <code>formats</code> is now called <code>formatMessages</code>. <code>sortmessages</code> has been removed in favour of just using <code>.sorted</code> on a message list with a provided <code>Ordering</code>. There are now some helper methods <code>dropPrefix</code> and <code>dropCurrentPath</code> for reducing the lengths of names in messages.</p>
+    <p><code>Utility</code>: Some details of messaging have changed with a view to generalizing the implementation.
+      <code>formats</code> is now called <code>formatMessages</code>. <code>sortmessages</code> has been removed in
+      favour of just using <code>.sorted</code> on a message list with a provided <code>Ordering</code>. There are now
+      some helper methods <code>dropPrefix</code> and <code>dropCurrentPath</code> for reducing the lengths of names in
+      messages.</p>
   </li>
   <li>
-    <p><code>Utility</code>: A new <code>Source</code> abstraction is used to encapsulate the source of text used by a processor and to provide facilities used by messaging. It comes in file and string varieties.</p>
+    <p><code>Utility</code>: A new <code>Source</code> abstraction is used to encapsulate the source of text used by a
+      processor and to provide facilities used by messaging. It comes in file and string varieties.</p>
   </li>
   <li>
-    <p><code>Utility</code>: Position handling is now provided by a <code>PositionStore</code> trait rather than a single global position store. Positions now include a filename component as well as line and column.</p>
+    <p><code>Utility</code>: Position handling is now provided by a <code>PositionStore</code> trait rather than a
+      single global position store. Positions now include a filename component as well as line and column.</p>
   </li>
   <li>
     <p><code>Utility</code>: Added support for testing REPLs.</p>
@@ -91,13 +132,17 @@ have been removed since they were not really needed and never actually output to
 
 <ul>
   <li>
-    <p><code>Rewriting</code>: In the core don’t duplicate singleton objects such as <code>Nil</code> but return the same instance. The previous approach didn’t cause problems in rewriting since the generic traversals avoided this kind of duplication, but it was a problem when writing other general operations including deep cloning.</p>
+    <p><code>Rewriting</code>: In the core don’t duplicate singleton objects such as <code>Nil</code> but return the
+      same instance. The previous approach didn’t cause problems in rewriting since the generic traversals avoided this
+      kind of duplication, but it was a problem when writing other general operations including deep cloning.</p>
   </li>
   <li>
-    <p><code>Utility</code>: When printing positions, a blank line is now no longer included before the pointer line.</p>
+    <p><code>Utility</code>: When printing positions, a blank line is now no longer included before the pointer line.
+    </p>
   </li>
   <li>
-    <p><code>Utility</code>: The <code>keywords</code> helper method in the parser utilities now correctly deals with keywords that occur at the end of the input.</p>
+    <p><code>Utility</code>: The <code>keywords</code> helper method in the parser utilities now correctly deals with
+      keywords that occur at the end of the input.</p>
   </li>
 </ul>
 
@@ -105,14 +150,15 @@ have been removed since they were not really needed and never actually output to
 
 <ul>
   <li>
-    <p>The <a href="https://bitbucket.org/inkytonik/kiama">Bitbucket project page</a> now shows build status from
-<a href="https://inkytonik.ci.cloudbees.com/job/Kiama/">latest nightly SNAPSHOT build on CloudBees</a>.</p>
+    <p>The <a href="https://github.com/inkytonik/kiama">Bitbucket project page</a> now shows build status from
+      <a href="https://inkytonik.ci.cloudbees.com/job/Kiama/">latest nightly SNAPSHOT build on CloudBees</a>.</p>
   </li>
   <li>
     <p>Many other minor adjustments, behind-the-scenes fixes and improvements to examples.</p>
   </li>
   <li>
-    <p>Moved to sbt 0.13.11, Scala 2.11.8 and 2.10.6, ScalaCheck 1.12.5, ScalaTest 2.2.5, jline 2.14.1, Guava 19, Scallop 1.0.0, Findbugs jsr305 3.0.1</p>
+    <p>Moved to sbt 0.13.11, Scala 2.11.8 and 2.10.6, ScalaCheck 1.12.5, ScalaTest 2.2.5, jline 2.14.1, Guava 19,
+      Scallop 1.0.0, Findbugs jsr305 3.0.1</p>
   </li>
   <li>
     <p>The code base is also compatible with Scala 2.12.0-M3.</p>
@@ -121,25 +167,41 @@ have been removed since they were not really needed and never actually output to
 
 <h3 id="what-happened-to-attributable">What happened to Attributable?</h3>
 
-<p>In Kiama 1.x you could use abstract syntax trees reflexively by accessing fields such as <code>parent</code>, <code>next</code> or <code>isRoot</code>. These fields were provided by the <code>Attributable</code> trait that you had to mix in to your AST classes. You also had to call <code>initTree</code> on the root of your AST to setup these fields before you tried to use them.</p>
+<p>In Kiama 1.x you could use abstract syntax trees reflexively by accessing fields such as <code>parent</code>,
+  <code>next</code> or <code>isRoot</code>. These fields were provided by the <code>Attributable</code> trait that you
+  had to mix in to your AST classes. You also had to call <code>initTree</code> on the root of your AST to setup these
+  fields before you tried to use them.</p>
 
-<p>Kiama 2.x changes this aspect of the library quite a bit, so we devote some space here to describing the migration path. The Kiama examples have all been updated so you can consult them for more detail.</p>
+<p>Kiama 2.x changes this aspect of the library quite a bit, so we devote some space here to describing the migration
+  path. The Kiama examples have all been updated so you can consult them for more detail.</p>
 
-<p>In a nutshell, <code>Attributable</code> and <code>initTree</code> no longer exist. Instead, you can use a mechanism called <em>tree relations</em> to achieve a similar goal. A key property of the new approach is that the relations exist outside your AST so that no modification of the AST classes is necessary. Thus, you can now do full attribution of structures that come from elsewhere for which mixing in <code>Attributable</code> would have been impossible.</p>
+<p>In a nutshell, <code>Attributable</code> and <code>initTree</code> no longer exist. Instead, you can use a mechanism
+  called <em>tree relations</em> to achieve a similar goal. A key property of the new approach is that the relations
+  exist outside your AST so that no modification of the AST classes is necessary. Thus, you can now do full attribution
+  of structures that come from elsewhere for which mixing in <code>Attributable</code> would have been impossible.</p>
 
-<p>Since <code>Attributable</code> no longer exists, the accompanying <code>n-&gt;a</code> notation for evaluating an attribute <code>a</code> on a node <code>n</code> has also gone. Instead, just use the normal function call notation <code>a(n)</code>.</p>
+<p>Since <code>Attributable</code> no longer exists, the accompanying <code>n-&gt;a</code> notation for evaluating an
+  attribute <code>a</code> on a node <code>n</code> has also gone. Instead, just use the normal function call notation
+  <code>a(n)</code>.</p>
 
-<p>Attribution that doesn’t need to access the tree reflexively (i.e., doesn’t use<code>parent</code>, <code>isRoot</code>, etc.) can be written as before.</p>
+<p>Attribution that doesn’t need to access the tree reflexively (i.e., doesn’t use<code>parent</code>,
+  <code>isRoot</code>, etc.) can be written as before.</p>
 
-<p>If you want the equivalent of the <code>parent</code>, <code>isRoot</code>, etc fields of 1.x in 2.x you need to create a <code>Tree</code> object for your AST.  Suppose that you have a tree rooted at a node <code>root</code> that you wish to attribute. You create the <code>Tree</code> for this structure as follows:</p>
+<p>If you want the equivalent of the <code>parent</code>, <code>isRoot</code>, etc fields of 1.x in 2.x you need to
+  create a <code>Tree</code> object for your AST. Suppose that you have a tree rooted at a node <code>root</code> that
+  you wish to attribute. You create the <code>Tree</code> for this structure as follows:</p>
 
 <pre><code>import org.bitbucket.inkytonik.kiama.relation.Tree
 val tree = new Tree(root)
 </code></pre>
 
-<p>The <code>Tree</code> object traverses the structure to set up relations that give reflective access to the structure. E.g., <code>tree.parent</code> is a relation that relates each node to its parent (if there is one).</p>
+<p>The <code>Tree</code> object traverses the structure to set up relations that give reflective access to the
+  structure. E.g., <code>tree.parent</code> is a relation that relates each node to its parent (if there is one).</p>
 
-<p>The easiest way to use the relations such as <code>tree.parent</code> is via pattern matching. Suppose that you want to write a <code>depth</code> attribute whose value is zero if the node is the root of the tree (i.e., has no parent) and one more than its parent’s value otherwise. Assuming you have access to a relevant <code>Tree</code> via the variable <code>tree</code> you can define the attribute as follows:</p>
+<p>The easiest way to use the relations such as <code>tree.parent</code> is via pattern matching. Suppose that you want
+  to write a <code>depth</code> attribute whose value is zero if the node is the root of the tree (i.e., has no parent)
+  and one more than its parent’s value otherwise. Assuming you have access to a relevant <code>Tree</code> via the
+  variable <code>tree</code> you can define the attribute as follows:</p>
 
 <pre><code>val depth =
   attr {
@@ -150,19 +212,37 @@ val tree = new Tree(root)
   }
 </code></pre>
 
-<p>The first case will only succeed if the matched node has a parent and it will bind <code>p</code> to that parent node for use in the recursive call. If the first case fails, then there is no parent and we use the default case for the root of the tree.</p>
+<p>The first case will only succeed if the matched node has a parent and it will bind <code>p</code> to that parent node
+  for use in the recursive call. If the first case fails, then there is no parent and we use the default case for the
+  root of the tree.</p>
 
-<p>Each relation also comes with a <code>pair</code> method that enables you to match on both parts of a relational tuple at the same time. For example, the following case uses the <code>tree.next</code> relation to match if the current node is an assignment statement node and the next one at the same level is a while loop statement node:</p>
+<p>Each relation also comes with a <code>pair</code> method that enables you to match on both parts of a relational
+  tuple at the same time. For example, the following case uses the <code>tree.next</code> relation to match if the
+  current node is an assignment statement node and the next one at the same level is a while loop statement node:</p>
 
 <pre><code>case tree.next.pair(_ : AsgnStmt, _ : WhileStmt) =&gt;
 </code></pre>
 
-<p>Of course, patterns can be nested so very powerful matching up and down trees can be expressed using these relations.</p>
+<p>Of course, patterns can be nested so very powerful matching up and down trees can be expressed using these relations.
+</p>
 
-<p>The tree relation approach brings a disciplined approach to programs that combine attribution and rewriting. In Kiama 1.x you had to be very careful if you rewrote an AST and then wanted to perform attribution on it. Because the old and new ASTs could share nodes, it was not always clear what the appropriate value of an attribute should be. E.g., imagine that the depth of a node changes. The safest way out was to clear the attribute values before computing any in the new AST, which was a brute force solution and didn’t allow you to go back and access attributes on the old AST.</p>
+<p>The tree relation approach brings a disciplined approach to programs that combine attribution and rewriting. In Kiama
+  1.x you had to be very careful if you rewrote an AST and then wanted to perform attribution on it. Because the old and
+  new ASTs could share nodes, it was not always clear what the appropriate value of an attribute should be. E.g.,
+  imagine that the depth of a node changes. The safest way out was to clear the attribute values before computing any in
+  the new AST, which was a brute force solution and didn’t allow you to go back and access attributes on the old AST.
+</p>
 
-<p>In Kiama 2.x you are forced to use a <code>Tree</code> value to access the AST structure (other than children). Hence you can have a <code>Tree</code> for the old AST and another one for the new <code>AST</code> and can perform well-defined attribution on either whenever you want. In a future version of Kiama we plan to support some form of incremental computation of attributes where <code>Tree</code> relations overlap.</p>
+<p>In Kiama 2.x you are forced to use a <code>Tree</code> value to access the AST structure (other than children). Hence
+  you can have a <code>Tree</code> for the old AST and another one for the new <code>AST</code> and can perform
+  well-defined attribution on either whenever you want. In a future version of Kiama we plan to support some form of
+  incremental computation of attributes where <code>Tree</code> relations overlap.</p>
 
-<p>To make rewriting a little easier than before, it is no longer necessary to clone nodes when rewriting to avoid creating sharing in the rewritten tree. Just create the sharing and move on. If later you decide to perform some sharing-sensitive attribution on the AST that contains shared nodes, the <code>Tree</code> that you create will clone nodes as necessary to avoid sharing in the relations.</p>
+<p>To make rewriting a little easier than before, it is no longer necessary to clone nodes when rewriting to avoid
+  creating sharing in the rewritten tree. Just create the sharing and move on. If later you decide to perform some
+  sharing-sensitive attribution on the AST that contains shared nodes, the <code>Tree</code> that you create will clone
+  nodes as necessary to avoid sharing in the relations.</p>
 
-<p>For more information on how to use tree relations, please consult the Kiama 2.x examples. In particular, the semantic analysis modules of the compiler examples (e.g., MiniJava and Oberon-0) show how reusable collections of attribute definitions can be defined.</p>
+<p>For more information on how to use tree relations, please consult the Kiama 2.x examples. In particular, the semantic
+  analysis modules of the compiler examples (e.g., MiniJava and Oberon-0) show how reusable collections of attribute
+  definitions can be defined.</p>

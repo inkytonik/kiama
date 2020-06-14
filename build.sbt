@@ -98,7 +98,7 @@ val commonSettings =
         Test/publishArtifact := true,
         pomIncludeRepository := { _ => false },
         pomExtra := (
-            <url>https://bitbucket.org/inkytonik/kiama</url>
+            <url>https://github.com/inkytonik/kiama</url>
             <licenses>
                 <license>
                     <name>Mozilla Public License, v. 2.0</name>
@@ -107,14 +107,14 @@ val commonSettings =
                 </license>
             </licenses>
             <scm>
-                <url>https://bitbucket.org/inkytonik/kiama</url>
-                <connection>scm:hg:https://bitbucket.org/inkytonik/kiama</connection>
+                <url>https://github.com/inkytonik/kiama</url>
+                <connection>scm:hg:https://github.com/inkytonik/kiama</connection>
             </scm>
             <developers>
                 <developer>
                    <id>inkytonik</id>
                    <name>Tony Sloane</name>
-                   <url>https://bitbucket.org/inkytonik</url>
+                   <url>https://github.com/inkytonik</url>
                 </developer>
             </developers>
         )
@@ -226,7 +226,7 @@ lazy val core =
                 else
                     "-Ymacro-expand:none",
                 "-doc-source-url",
-                    "https://bitbucket.org/inkytonik/kiama/src/master€{FILE_PATH}.scala"
+                    "https://github.com/inkytonik/kiama/blob/master€{FILE_PATH}.scala"
             ),
         TestScalaUnidoc/unidoc/scalacOptions := (ScalaUnidoc/unidoc/scalacOptions).value,
         ScalaUnidoc/unidoc/unidocProjectFilter := inAnyProject -- inProjects(extrasProject),
@@ -267,7 +267,7 @@ lazy val extras =
                 else
                     "-Ymacro-expand:none",
                 "-doc-source-url",
-                    "https://bitbucket.org/inkytonik/kiama/src/master€{FILE_PATH}.scala"
+                    "https://github.com/inkytonik/kiama/blob/master€{FILE_PATH}.scala"
             ),
         Test/doc/scalacOptions := (Compile/doc/scalacOptions).value
     ).settings(

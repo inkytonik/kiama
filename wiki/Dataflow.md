@@ -14,7 +14,7 @@ calculation over the control flow graph to compute variable liveness.
 
 ## Abstract syntax
 
-File: [org.bitbucket.inkytonik.kiama.example.dataflow.DataflowTree.scala](https://bitbucket.org/inkytonik/kiama/src/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/dataflow/DataflowTree.scala)
+File: [org.bitbucket.inkytonik.kiama.example.dataflow.DataflowTree.scala](https://github.com/inkytonik/kiama/blob/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/dataflow/DataflowTree.scala)
 
 Programs for this example consist of a single statement.
 
@@ -44,7 +44,7 @@ type Var = String
 
 ## Control flow graph
 
-File: [org.bitbucket.inkytonik.kiama.example.dataflow.Dataflow.scala](https://bitbucket.org/inkytonik/kiama/src/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/dataflow/Dataflow.scala)
+File: [org.bitbucket.inkytonik.kiama.example.dataflow.Dataflow.scala](https://github.com/inkytonik/kiama/blob/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/dataflow/Dataflow.scala)
 
 The control flow graph is defined by the `succ` attribute. `s->succ`
 is the set of statements to which control can flow from statement `s`.
@@ -101,7 +101,7 @@ indicated by `=>`, not partial functions.)
 
 ## Variable definitions and uses
 
-File: [org.bitbucket.inkytonik.kiama.example.dataflow.Dataflow.scala](https://bitbucket.org/inkytonik/kiama/src/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/dataflow/Dataflow.scala)
+File: [org.bitbucket.inkytonik.kiama.example.dataflow.Dataflow.scala](https://github.com/inkytonik/kiama/blob/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/dataflow/Dataflow.scala)
 
 The next step is to specify the variables that are defined and used
 directly by each kind of statement. We specify two attributes
@@ -136,7 +136,7 @@ val uses : Stm ==> Set[Var] =
 
 ## Variable liveness
 
-File: [org.bitbucket.inkytonik.kiama.example.dataflow.Dataflow.scala](https://bitbucket.org/inkytonik/kiama/src/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/dataflow/Dataflow.scala)
+File: [org.bitbucket.inkytonik.kiama.example.dataflow.Dataflow.scala](https://github.com/inkytonik/kiama/blob/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/dataflow/Dataflow.scala)
 
 The standard approach to calculating variable liveness is to compute
 `in` and `out` sets for each statement. `in (s)` contains all
@@ -181,7 +181,7 @@ equations.
 
 ## Tests
 
-File: [org.bitbucket.inkytonik.kiama.example.dataflow.DataflowTests.scala](https://bitbucket.org/inkytonik/kiama/src/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/dataflow/DataflowTests.scala)
+File: [org.bitbucket.inkytonik.kiama.example.dataflow.DataflowTests.scala](https://github.com/inkytonik/kiama/blob/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/dataflow/DataflowTests.scala)
 
 A test of live variable computations for a small program involving a
 while loop.

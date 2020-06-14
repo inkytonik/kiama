@@ -13,7 +13,7 @@ package org.bitbucket.inkytonik
 /**
  * Kiama is a Scala library for language processing. It is a project of the
  * Programming Languages Research Group at Macquarie University. For full
- * project details see the web site `http://bitbucket.org/inkytonik/kiama`.
+ * project details see the web site `http://github.com/inkytonik/kiama`.
  *
  * Kiama's main components address tree decoration via attribute grammars
  * (package `attribution`), tree transformation via strategic term rewriting

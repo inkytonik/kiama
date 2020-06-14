@@ -1,8 +1,8 @@
-[Kiama](https://bitbucket.org/inkytonik/kiama) is a Scala library for language processing including attribute grammars, term rewriting, abstract state machines and pretty printing.
+[Kiama](https://github.com/inkytonik/kiama) is a Scala library for language processing including attribute grammars, term rewriting, abstract state machines and pretty printing.
 
 This is a major release cross-published for both Scala 2.10 and 2.11. It's been a while and there are lots of changes, so these notes are crazy long.
 
-Since June 2015, Kiama has been based at [Bitbucket](https://bitbucket.org/inkytonik/kiama) instead of Google code. Please raise issues on the [Bitbucket site](https://bitbucket.org/inkytonik/kiama/issues?status=new&status=open).
+Since June 2015, Kiama has been based at [Bitbucket](https://github.com/inkytonik/kiama) instead of Google code. Please raise issues on the [Bitbucket site](https://github.com/inkytonik/kiama/issues?status=new&status=open).
 
 ### Breaking changes
 
@@ -39,7 +39,7 @@ have been removed since they were not really needed and never actually output to
 
 ### Enhancements
 
-* `Parsing`: Kiama no longer uses the Scala parser combinator library. The new `parsing` package contains a parsing combinator library with a very similar interface to the Scala library one. Ours has a simpler implementation and interfaces more easily with the rest of Kiama on things like positions. Many features that we didn't need have been omitted (e.g., there is no distinction between `RegexParsers` and other ones). We use the new parsing library for our examples, teaching and testing but wouldn't recommend it for production use. Instead, you may be interested in our [sbt-rats parser generator](https://bitbucket.org/inkytonik/sbt-rats) for Scala.
+* `Parsing`: Kiama no longer uses the Scala parser combinator library. The new `parsing` package contains a parsing combinator library with a very similar interface to the Scala library one. Ours has a simpler implementation and interfaces more easily with the rest of Kiama on things like positions. Many features that we didn't need have been omitted (e.g., there is no distinction between `RegexParsers` and other ones). We use the new parsing library for our examples, teaching and testing but wouldn't recommend it for production use. Instead, you may be interested in our [sbt-rats parser generator](https://github.com/inkytonik/sbt-rats) for Scala.
 
 * `Output`: Added support for parenthesised pretty-printing of n-ary expressions.
 
@@ -67,7 +67,7 @@ have been removed since they were not really needed and never actually output to
 
 ### Other
 
-* The [Bitbucket project page](https://bitbucket.org/inkytonik/kiama) now shows build status from
+* The [Bitbucket project page](https://github.com/inkytonik/kiama) now shows build status from
 [latest nightly SNAPSHOT build on CloudBees](https://inkytonik.ci.cloudbees.com/job/Kiama/).
 
 * Many other minor adjustments, behind-the-scenes fixes and improvements to examples.
