@@ -4,6 +4,7 @@
 [![License: MPL v2.0](https://img.shields.io/badge/License-MPL%20v2-blue.svg)](http://mozilla.org/MPL/2.0/)
 [![Sonatype Nexus (Releases)](https://img.shields.io/nexus/r/https/oss.sonatype.org/org.bitbucket.inkytonik.kiama/kiama_2.12.svg?label=Sonatype%20Nexus%20Release)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.bitbucket.inkytonik.kiama%22)
 [![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/https/oss.sonatype.org/org.bitbucket.inkytonik.kiama/kiama_2.12.svg?label=Sonatype%20Nexus%20Snapshot)]()
+![Test](https://github.com/inkytonik/kiama/workflows/Test/badge.svg)
 
 Kiama is a Scala library for language processing.
 In the Kiama project we are investigating embedding of language processing formalisms such as grammars, parsers, rewriters and analysers into general-purpose programming languages.
