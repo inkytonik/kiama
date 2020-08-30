@@ -22,7 +22,6 @@ class Config(args : Seq[String]) extends ScallopConf(args) {
 
     import org.bitbucket.inkytonik.kiama.util.{FileConsole, JLineConsole, StringConsole}
     import org.rogach.scallop.{ArgType, ValueConverter}
-    import scala.reflect.runtime.universe.TypeTag
 
     /**
      * The string emitter to use if a '--Koutput string' option is seen.
@@ -48,9 +47,6 @@ class Config(args : Seq[String]) extends ScallopConf(args) {
                     case _ =>
                         Right(None)
                 }
-
-            val tag = implicitly[TypeTag[Emitter]]
-
         }
 
     /**
@@ -85,9 +81,6 @@ class Config(args : Seq[String]) extends ScallopConf(args) {
                     case _ =>
                         Right(None)
                 }
-
-            val tag = implicitly[TypeTag[Console]]
-
         }
 
     /**
