@@ -174,9 +174,7 @@ def baseLibraryDependencies (scalaVersion : String) : Seq[ModuleID] = {
         // DSL support:
         "org.bitbucket.inkytonik.dsinfo" %% "dsinfo" % dsinfoVersion,
         // Profiling:
-        "org.bitbucket.inkytonik.dsprofile" %% "dsprofile" % dsprofileVersion,
-        // Reflection
-        "org.scala-lang" % "scala-reflect" % scalaVersion
+        "org.bitbucket.inkytonik.dsprofile" %% "dsprofile" % dsprofileVersion
     )
 }
 
