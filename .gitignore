@@ -3,3 +3,4 @@ target
 .metals/
 .ammonite/
 metals.sbt
+.vscode/
