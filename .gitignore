@@ -1,3 +1,5 @@
 target
-.bloop
-.metals
+.bloop/
+.metals/
+.ammonite/
+metals.sbt
