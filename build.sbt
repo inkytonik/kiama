@@ -241,7 +241,7 @@ lazy val extras =
         libraryDependencies ++=
             Seq(
                 // Command-line handling:
-                "org.rogach" %% "scallop" % "3.3.2",
+                "org.rogach" %% "scallop" % "3.5.1",
                 // Language server protocol:
                 "org.eclipse.lsp4j" % "org.eclipse.lsp4j" % "0.8.1",
                 "com.google.code.gson" % "gson" % "2.7",
