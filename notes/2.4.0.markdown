@@ -1,0 +1,11 @@
+[Kiama](https://github.com/inkytonik/kiama) is a Scala library for language processing including attribute grammars, term rewriting, abstract state machines and pretty printing.
+
+This is a minor release to eliminate some unused code and a dependency.
+
+### Enhancements
+
+* `Config`: Remove an unused runtime type tag that was needed by an earlier version of the Scallop library. This also removes our dependency on the `scala-reflect` library. (Contributed by @b-studios.)
+
+### Other
+
+* Move to sbt 1.3.13.
