@@ -21,7 +21,6 @@ trait RewriterCore {
     import org.bitbucket.inkytonik.kiama.util.{Emitter, OutputEmitter}
     import org.bitbucket.inkytonik.kiama.util.Collections.{CanBuildFrom, Factory, newBuilder}
     import scala.collection.immutable.Seq
-    import scala.language.higherKinds
     import scala.language.experimental.macros
 
     /**

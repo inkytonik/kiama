@@ -25,6 +25,7 @@ ThisBuild/scalacOptions := {
     Seq(
         "-deprecation",
         "-feature",
+        "-language:higherKinds",
         "-sourcepath", baseDirectory.value.getAbsolutePath,
         "-unchecked",
         "-Xcheckinit",

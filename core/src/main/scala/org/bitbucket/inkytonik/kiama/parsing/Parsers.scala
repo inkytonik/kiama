@@ -12,7 +12,6 @@ package org.bitbucket.inkytonik.kiama
 package parsing
 
 import org.bitbucket.inkytonik.kiama.util.Positions
-import scala.language.higherKinds
 
 /**
  * Simple packrat parsing combinator suite. These combinators are

@@ -23,7 +23,6 @@ trait Rewriter extends RewriterCore {
 
     import org.bitbucket.inkytonik.kiama.relation.{EnsureTree, Tree, TreeShape}
     import org.bitbucket.inkytonik.kiama.util.Collections.{Factory, newBuilder}
-    import scala.language.higherKinds
 
     /**
      * Rewrite a term.  Apply the strategy `s` to a term returning the result term

@@ -16,7 +16,6 @@ object RewriterCoreMacros {
     import org.bitbucket.inkytonik.dsinfo.DSInfo.{makeCallWithName, makeThisCallWithName}
     import org.bitbucket.inkytonik.kiama.util.Collections.Factory
     import org.bitbucket.inkytonik.kiama.util.Emitter
-    import scala.language.higherKinds
     import scala.reflect.macros._
 
     // Macros for the builder methods
