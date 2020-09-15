@@ -130,7 +130,7 @@ trait TestDriverWithConfig[C <: Config] extends KiamaTests {
         */
     def filetest(name : String, path : String, rp : String, args : Seq[String], rt : String,
         extra : String = "") : Unit = {
-        val ct = args.mkString(" ").replaceAllLiterally(path + "/", "")
+        val ct = args.mkString(" ").replace(path + "/", "")
         val title = s"$name: $ct, expecting $rt$extra"
         test(title) {
             createAndInitConfig("--Koutput" +: "string" +: args) match {
@@ -144,7 +144,7 @@ trait TestDriverWithConfig[C <: Config] extends KiamaTests {
                             info("failed with an exception ")
                             throw (e)
                     }
-                    val cc = config.stringEmitter.result
+                    val cc = config.stringEmitter.result()
                     val rc = Source.fromFile(rp).mkString
                     sanitise(cc) shouldBe sanitise(rc)
             }

@@ -43,7 +43,7 @@ trait Tests extends AnyFunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
      */
     def suitePackagePath : String = {
         val pkgName = Option(getClass.getPackage).map(_.getName).getOrElse("")
-        pkgName.replaceAllLiterally(".", "/")
+        pkgName.replace(".", "/")
     }
 
     /**
