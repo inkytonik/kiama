@@ -35,7 +35,7 @@ trait AttributionCore extends AttributionCommon {
         /**
          * Backing memo table.
          */
-        val memo = makeIdMemoiser[T, Option[U]]
+        val memo = makeIdMemoiser[T, Option[U]]()
 
         /**
          * Return the value of this attribute for node `t`, raising an error if

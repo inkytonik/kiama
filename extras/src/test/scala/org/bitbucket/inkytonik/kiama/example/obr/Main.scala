@@ -88,7 +88,7 @@ class Driver extends CompilerWithConfig[ObrNode, ObrInt, ObrConfig] {
             if (config.execute()) {
                 val code = encoder.getcode
                 val machine = new RISC(code, config.console(), config.output())
-                machine.run
+                machine.run()
             }
         }
 

@@ -516,7 +516,7 @@ class ParsersBase(positions : Positions) {
                                 buf += t
                                 loop(t, next)
                             case _ =>
-                                Success(buf.result, in)
+                                Success(buf.result(), in)
                         }
 
                     loop(last, in)

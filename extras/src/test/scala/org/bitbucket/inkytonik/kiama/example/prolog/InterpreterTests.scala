@@ -45,7 +45,7 @@ class InterpreterTests extends ParseTests {
                                 val interpreter = new Interpreter
                                 val emitter = new StringEmitter
                                 interpreter.interpret(query, program, emitter)
-                                val value = emitter.result
+                                val value = emitter.result()
                                 MatchResult(
                                     value == expected,
                                     s""""$term" evaluated to "$value" not expected "$expected"""",

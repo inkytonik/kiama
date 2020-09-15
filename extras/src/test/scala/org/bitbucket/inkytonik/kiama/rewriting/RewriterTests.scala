@@ -111,7 +111,7 @@ class RewriterTests(val rewriter : Rewriter) extends KiamaTests with Generator {
         def pickdesc(t : Any) : Any =
             t match {
                 case p : Product =>
-                    if (random.nextBoolean) {
+                    if (random.nextBoolean()) {
                         pickchild(p)
                     } else {
                         val child = pickchild(p)
@@ -1121,7 +1121,7 @@ class RewriterTests(val rewriter : Rewriter) extends KiamaTests with Generator {
         val s = debug("hello there: ", e)
         val t = Asgn(Var("i"), Add(Num(1), Var("i")))
         s(t) should beSomeOf(t)
-        e.result shouldBe s"hello there: $t\n"
+        e.result() shouldBe s"hello there: $t\n"
     }
 
     {
@@ -1134,7 +1134,7 @@ class RewriterTests(val rewriter : Rewriter) extends KiamaTests with Generator {
             val t = Asgn(Var("i"), Add(Num(1), Var("i")))
             val u = Asgn(Var("i"), Num(42))
             s(t) shouldBe Some(u)
-            e.result shouldBe s"test log $t succeeded with $u\n"
+            e.result() shouldBe s"test log $t succeeded with $u\n"
         }
 
         test("log strategy produces the expected message and result on failure") {
@@ -1142,7 +1142,7 @@ class RewriterTests(val rewriter : Rewriter) extends KiamaTests with Generator {
             val s = log(r, "test log ", e)
             val t = Add(Num(1), Var("i"))
             s(t) should beFailure
-            e.result shouldBe s"test log $t failed\n"
+            e.result() shouldBe s"test log $t failed\n"
         }
 
         test("logfail strategy produces no message but the right result on success") {
@@ -1151,7 +1151,7 @@ class RewriterTests(val rewriter : Rewriter) extends KiamaTests with Generator {
             val t = Asgn(Var("i"), Add(Num(1), Var("i")))
             val u = Asgn(Var("i"), Num(42))
             s(t) shouldBe Some(u)
-            e.result shouldBe ""
+            e.result() shouldBe ""
         }
 
         test("logfail strategy produces the expected message and result on failure") {
@@ -1159,7 +1159,7 @@ class RewriterTests(val rewriter : Rewriter) extends KiamaTests with Generator {
             val s = logfail(r, "test log ", e)
             val t = Add(Num(1), Var("i"))
             s(t) should beFailure
-            e.result shouldBe s"test log $t failed\n"
+            e.result() shouldBe s"test log $t failed\n"
         }
     }
 

@@ -29,7 +29,7 @@ class MachineTests extends KiamaTests {
     def makeMachine(emitter : Emitter = new StringEmitter) : Machine =
         new Machine("m", emitter) {
             override def debug = true
-            def main : Unit = {}
+            def main() : Unit = {}
         }
 
     // Scalar state
@@ -52,11 +52,11 @@ class MachineTests extends KiamaTests {
     test("state can be made undefined") {
         val m = makeMachine()
         val s = new m.State[Int]("s")
-        m.reset
+        m.reset()
         s := 42
-        m.performUpdates
+        m.performUpdates()
         !s.isUndefined shouldBe true
-        s.undefine
+        s.undefine()
         s.isUndefined shouldBe true
     }
 
@@ -72,7 +72,7 @@ class MachineTests extends KiamaTests {
         val m = makeMachine()
         val s = new m.State[Int]("s")
         s := 0
-        m.performUpdates
+        m.performUpdates()
         s =:= 0 shouldBe true
         !(s =:= 42) shouldBe true
         !(s =:= 99) shouldBe true
@@ -87,9 +87,9 @@ class MachineTests extends KiamaTests {
     test("defined state toStrings to its value") {
         val m = makeMachine()
         val s = new m.State[Int]("s")
-        m.reset
+        m.reset()
         s := 42
-        m.performUpdates
+        m.performUpdates()
         s.toString shouldBe "42"
     }
 
@@ -98,24 +98,24 @@ class MachineTests extends KiamaTests {
         val m = makeMachine(memitter)
         val s = new m.State[Int]("s")
         val t = new m.State[Int]("t")
-        memitter.clear
-        m.reset
+        memitter.clear()
+        m.reset()
         s := 88
         t := 99
-        m.performUpdates
-        m.reset
+        m.performUpdates()
+        m.reset()
         s := 44
-        m.performUpdates
-        memitter.result shouldBe "m.t := 99\nm.s := 88\nm.s := 44\n"
+        m.performUpdates()
+        memitter.result() shouldBe "m.t := 99\nm.s := 88\nm.s := 44\n"
     }
 
     test("multiple consistent state updates are allowed") {
         val m = makeMachine()
         val s = new m.State[Int]("s")
-        m.reset
+        m.reset()
         s := 0
         s := 0
-        m.performUpdates
+        m.performUpdates()
         s =:= 0 shouldBe true
         !(s =:= 1) shouldBe true
     }
@@ -123,14 +123,14 @@ class MachineTests extends KiamaTests {
     test("inconsistent state updates in differents steps are allowed") {
         val m = makeMachine()
         val s = new m.State[Int]("s")
-        m.reset
+        m.reset()
         s := 0
-        m.performUpdates
+        m.performUpdates()
         s =:= 0 shouldBe true
         !(s =:= 1) shouldBe true
-        m.reset
+        m.reset()
         s := 1
-        m.performUpdates
+        m.performUpdates()
         !(s =:= 0) shouldBe true
         s =:= 1 shouldBe true
     }
@@ -138,11 +138,11 @@ class MachineTests extends KiamaTests {
     test("inconsistent state updates in one step trigger an exception") {
         val m = makeMachine()
         val s = new m.State[Int]("s")
-        m.reset
+        m.reset()
         s := 0
         s := 1
         val i = intercept[InconsistentUpdateException] {
-            m.performUpdates
+            m.performUpdates()
         }
         i.getMessage shouldBe "Machine = m, updates = List(m.s := 1, m.s := 0)"
     }
@@ -169,9 +169,9 @@ class MachineTests extends KiamaTests {
     test("asking for the value of parameterised state at an undefined value gives an error") {
         val m = makeMachine()
         val p = new m.ParamState[Int, Int]("p")
-        m.reset
+        m.reset()
         p(0) := 42
-        m.performUpdates
+        m.performUpdates()
         val i = intercept[RuntimeException] {
             p.value(12)
         }
@@ -181,9 +181,9 @@ class MachineTests extends KiamaTests {
     test("parameterised state can be made undefined") {
         val m = makeMachine()
         val p = new m.ParamState[Int, Int]("p")
-        m.reset
+        m.reset()
         p(0) := 42
-        m.performUpdates
+        m.performUpdates()
         !(p.isUndefined(0)) shouldBe true
         p.undefine(0)
         p.isUndefined(0) shouldBe true
@@ -200,15 +200,15 @@ class MachineTests extends KiamaTests {
     test("defined parameterised state is only equal to its value") {
         val m = makeMachine()
         val p = new m.ParamState[String, Int]("p")
-        m.reset
+        m.reset()
         p("one") := 42
-        m.performUpdates
+        m.performUpdates()
         !(p("one") =:= 0) shouldBe true
         p("one") =:= 42 shouldBe true
         !(p("one") =:= 99) shouldBe true
-        m.reset
+        m.reset()
         p("two") := 99
-        m.performUpdates
+        m.performUpdates()
         !(p("one") =:= 0) shouldBe true
         p("one") =:= 42 shouldBe true
         !(p("one") =:= 99) shouldBe true
@@ -222,18 +222,18 @@ class MachineTests extends KiamaTests {
         val m = makeMachine(memitter)
         val p = new m.ParamState[String, Int]("p")
         val q = new m.ParamState[Int, Int]("q")
-        memitter.clear
-        m.reset
+        memitter.clear()
+        m.reset()
         p("one") := 1
         p("two") := 2
         q(0) := 0
-        m.performUpdates
-        m.reset
+        m.performUpdates()
+        m.reset()
         p("one") := 3
         q(0) := 1
         q(1) := 2
-        m.performUpdates
-        memitter.result shouldBe
+        m.performUpdates()
+        memitter.result() shouldBe
             """m.q(0) := 0
               |m.p(two) := 2
               |m.p(one) := 1
@@ -246,10 +246,10 @@ class MachineTests extends KiamaTests {
     test("multiple consistent parameterised state updates are allowed") {
         val m = makeMachine()
         val p = new m.ParamState[String, Int]("p")
-        m.reset
+        m.reset()
         p("one") := 0
         p("one") := 0
-        m.performUpdates
+        m.performUpdates()
         p("one") =:= 0 shouldBe true
         !(p("one") =:= 1) shouldBe true
     }
@@ -257,14 +257,14 @@ class MachineTests extends KiamaTests {
     test("inconsistent parameterised state updates in different steps are allowed") {
         val m = makeMachine()
         val p = new m.ParamState[String, Int]("p")
-        m.reset
+        m.reset()
         p("one") := 0
-        m.performUpdates
+        m.performUpdates()
         p("one") =:= 0 shouldBe true
         !(p("one") =:= 1) shouldBe true
-        m.reset
+        m.reset()
         p("one") := 1
-        m.performUpdates
+        m.performUpdates()
         !(p("one") =:= 0) shouldBe true
         p("one") =:= 1 shouldBe true
     }
@@ -272,11 +272,11 @@ class MachineTests extends KiamaTests {
     test("inconsistent parameterised state updates in one step trigger an exception") {
         val m = makeMachine()
         val p = new m.ParamState[String, Int]("p")
-        m.reset
+        m.reset()
         p("one") := 0
         p("one") := 1
         val i = intercept[InconsistentUpdateException] {
-            m.performUpdates
+            m.performUpdates()
         }
         i.getMessage shouldBe "Machine = m, updates = List(m.p(one) := 1, m.p(one) := 0)"
     }
@@ -293,7 +293,7 @@ class MachineTests extends KiamaTests {
             val t = new State[String]("t")
             val p = new ParamState[String, Int]("p")
 
-            def main : Unit = {
+            def main() : Unit = {
                 if (s.isUndefined) {
                     s := 0
                     p("one") := 42
@@ -308,8 +308,8 @@ class MachineTests extends KiamaTests {
         }
 
         test("running multiple steps produces a suitable trace") {
-            MM.run
-            mmemitter.result shouldBe
+            MM.run()
+            mmemitter.result() shouldBe
                 """MM step 0
                   |MM.p(two) := 99
                   |MM.p(one) := 42

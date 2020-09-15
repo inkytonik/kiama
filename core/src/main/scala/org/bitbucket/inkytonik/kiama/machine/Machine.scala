@@ -371,7 +371,7 @@ abstract class Machine(val name : String, emitter : Emitter = new OutputEmitter)
                         throw new InconsistentUpdateException(this, keyUpdates)
             }
             // Actually perform the updates
-            updates.map(_.perform)
+            updates.map(_.perform())
             true
         }
     }
@@ -388,9 +388,9 @@ abstract class Machine(val name : String, emitter : Emitter = new OutputEmitter)
      * made or false if none.
      */
     def step : Boolean = {
-        reset
-        main
-        performUpdates
+        reset()
+        main()
+        performUpdates()
     }
 
     /**
@@ -410,10 +410,10 @@ abstract class Machine(val name : String, emitter : Emitter = new OutputEmitter)
      * its steps.
      */
     def run() : Unit = {
-        init
-        performUpdates
+        init()
+        performUpdates()
         steps(0)
-        finit
+        finit()
     }
 
 }

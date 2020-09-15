@@ -82,7 +82,7 @@ class ObrExecTests extends Driver with TestCompilerWithConfig[ObrNode, ObrInt, O
                             info("failed with an exception ")
                             throw (e)
                     }
-                    config.stringEmitter.result shouldBe s"$expect\n"
+                    config.stringEmitter.result() shouldBe s"$expect\n"
             }
         }
     }

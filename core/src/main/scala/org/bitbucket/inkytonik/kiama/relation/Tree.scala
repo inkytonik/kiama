@@ -175,7 +175,7 @@ class Tree[T <: AnyRef with Product, +R <: T](val originalRoot : R, shape : Tree
                 }
             }
             if (!msgBuilder.isEmpty)
-                throw (new StructureIsNotATreeException(msgBuilder.result))
+                throw (new StructureIsNotATreeException(msgBuilder.result()))
         }
 
         // All ok

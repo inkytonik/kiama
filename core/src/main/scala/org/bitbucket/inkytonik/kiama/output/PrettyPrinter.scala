@@ -1228,7 +1228,7 @@ trait PrettyPrinter extends PrettyPrinterBase {
                         }
                 }
 
-        Document(stringBuilder.result, links)
+        Document(stringBuilder.result(), links)
 
     }
 

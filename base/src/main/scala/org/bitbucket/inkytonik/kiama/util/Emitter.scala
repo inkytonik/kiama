@@ -64,7 +64,7 @@ class OutputEmitter extends Emitter {
      * Emit a new line.
      */
     def emitln() : Unit = {
-        println
+        println()
     }
 
 }
@@ -78,8 +78,8 @@ class StringEmitter extends Emitter {
     override def emit(any : Any) : Unit = { b.append(any.toString) }
     override def emitln(any : Any) : Unit = { b.append(any.toString).append('\n') }
     override def emitln() : Unit = { b.append('\n') }
-    def clear() : Unit = { b.clear }
-    def result() : String = b.result
+    def clear() : Unit = { b.clear() }
+    def result() : String = b.result()
 }
 
 /**

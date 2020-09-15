@@ -617,7 +617,7 @@ trait Rewriter extends RewriterCore {
             val b = newBuilder(cbf)
             val add = (u : U) => { b += u; () }
             (everywhere(query(f andThen add)))(t)
-            b.result
+            b.result()
         }
 
     /**
@@ -630,7 +630,7 @@ trait Rewriter extends RewriterCore {
             val b = newBuilder(cbf)
             val addall = (us : CC[U]) => { b ++= us; () }
             (everywhere(query(f andThen addall)))(t)
-            b.result
+            b.result()
         }
 
     /**

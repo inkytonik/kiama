@@ -52,7 +52,7 @@ trait Lifter extends base.Transformer {
                     // buffer already. Create a new module with all of the
                     // accumulated declarations.
                     case ModuleDecl(i1, Block(Vector(), ss), i2) =>
-                        ModuleDecl(i1, Block(decls.result, ss), i2)
+                        ModuleDecl(i1, Block(decls.result(), ss), i2)
 
                 }
             )

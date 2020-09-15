@@ -70,7 +70,7 @@ class RISC(code : Code, console : Console, emitter : Emitter)
     /**
      * Initialise the machine.
      */
-    override def init : Unit = {
+    override def init() : Unit = {
         PC := 0
         R(0) := 0
         Z := false
@@ -81,7 +81,7 @@ class RISC(code : Code, console : Console, emitter : Emitter)
     /**
      * The main rule of this machine.
      */
-    def main : Unit = {
+    def main() : Unit = {
         if (!halt)
             execute(code(PC))
     }
@@ -194,7 +194,7 @@ class RISC(code : Code, console : Console, emitter : Emitter)
             case RD(a)  => R(a) := console.readInt("Enter integer: ")
             case WRD(c) => emitter.emit(R(c))
             case WRH(c) => emitter.emit((R(c) : Int).toHexString)
-            case WRL()  => emitter.emitln
+            case WRL()  => emitter.emitln()
             case _      =>
         }
     }

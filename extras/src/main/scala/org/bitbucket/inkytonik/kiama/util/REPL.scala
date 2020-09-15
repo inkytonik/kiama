@@ -97,7 +97,7 @@ trait REPLBase[C <: REPLConfig] {
                 else
                     processlines(config)
 
-                config.output().emitln
+                config.output().emitln()
         }
     }
 

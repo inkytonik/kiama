@@ -48,7 +48,7 @@ class RISCEncoder(labels : RISCLabels) extends Attribution {
      * Reset the code cache
      */
     def resetcode() : Unit = {
-        code.clear
+        code.clear()
     }
 
     /**
@@ -60,7 +60,7 @@ class RISCEncoder(labels : RISCLabels) extends Attribution {
     def getcode : Code = {
 
         // Get the final instruction sequence
-        val instrs = code.result
+        val instrs = code.result()
 
         // Pass 1: compile mappings between labels and offsets
         val (labels, _) =
@@ -113,7 +113,7 @@ class RISCEncoder(labels : RISCLabels) extends Attribution {
      * Return the raw assembler code
      */
     def getassem : AssemCode =
-        code.result
+        code.result()
 
     /**
      * Register allocations:

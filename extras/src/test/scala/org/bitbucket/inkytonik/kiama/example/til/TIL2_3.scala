@@ -35,7 +35,7 @@ class TIL2_3 extends TransformingMain {
                     ss
             })
         val Program(stmts) = rewrite(getandremovedecls)(ast)
-        Program(decls.result.toList ++ stmts)
+        Program(decls.result().toList ++ stmts)
     }
 
 }

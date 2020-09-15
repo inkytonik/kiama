@@ -89,7 +89,7 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp, LambdaConfig] {
                     if (mech == config.mechanism)
                         output.emitln(" (current)")
                     else
-                        output.emitln
+                        output.emitln()
                 }
                 Some(config)
 

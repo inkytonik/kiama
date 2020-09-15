@@ -55,10 +55,10 @@ trait ServerWithConfig[N, T <: N, C <: Config] {
     }
 
     def setting[V](key : String, get : JsonElement => V, default : V) : V =
-        if (settings == null)
+        if (settings() == null)
             default
         else {
-            val value = settings.get(key)
+            val value = settings().get(key)
             if (value == null)
                 default
             else

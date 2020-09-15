@@ -50,7 +50,7 @@ class CompilerTests extends KiamaTests with Compiler[Any, Any] with TestCompiler
                     else
                         "No such file or directory"
                 testdriver(config)
-                config.stringEmitter.result shouldBe s"IDoNotExist.txt ($expectedMsg)\n"
+                config.stringEmitter.result() shouldBe s"IDoNotExist.txt ($expectedMsg)\n"
         }
     }
 

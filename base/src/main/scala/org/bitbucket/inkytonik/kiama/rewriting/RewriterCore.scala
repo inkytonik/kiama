@@ -570,7 +570,7 @@ trait RewriterCore {
                             b += (if (j == i - 1) ti else ct)
                             j + 1
                     }
-                    Some(b.result)
+                    Some(b.result())
                 case None =>
                     None
             }
@@ -637,7 +637,7 @@ trait RewriterCore {
                         }
                 }
             if (changed)
-                Some(r.reconstruct(newchildren.result))
+                Some(r.reconstruct(newchildren.result()))
             else
                 Some(r)
         }
@@ -664,7 +664,7 @@ trait RewriterCore {
                         }
                 }
             if (changed)
-                Some(dup(p, newchildren.result))
+                Some(dup(p, newchildren.result()))
             else
                 Some(p)
         }
@@ -691,7 +691,7 @@ trait RewriterCore {
                         }
                 }
             if (changed)
-                Some(b.result)
+                Some(b.result())
             else
                 Some(t)
         }
@@ -717,7 +717,7 @@ trait RewriterCore {
                         }
                 }
             if (changed)
-                Some(b.result)
+                Some(b.result())
             else
                 Some(t)
         }
@@ -831,7 +831,7 @@ trait RewriterCore {
         if (add)
             None
         else
-            Some(b.result)
+            Some(b.result())
     }
 
     /**
@@ -862,7 +862,7 @@ trait RewriterCore {
         if (add)
             None
         else
-            Some(b.result)
+            Some(b.result())
     }
 
     /**
@@ -929,7 +929,7 @@ trait RewriterCore {
                 }
             if (success)
                 if (changed)
-                    Some(r.reconstruct(newchildren.result))
+                    Some(r.reconstruct(newchildren.result()))
                 else
                     Some(r)
             else
@@ -960,7 +960,7 @@ trait RewriterCore {
                 }
             if (success)
                 if (changed)
-                    Some(dup(p, newchildren.result))
+                    Some(dup(p, newchildren.result()))
                 else
                     Some(p)
             else
@@ -991,7 +991,7 @@ trait RewriterCore {
                 }
             if (success)
                 if (changed)
-                    Some(b.result)
+                    Some(b.result())
                 else
                     Some(t)
             else
@@ -1021,7 +1021,7 @@ trait RewriterCore {
                 }
             if (success)
                 if (changed)
-                    Some(b.result)
+                    Some(b.result())
                 else
                     Some(t)
             else
@@ -1077,7 +1077,7 @@ trait RewriterCore {
                         }
                 }
             if (changed)
-                Some(dup(p, newchildren.result))
+                Some(dup(p, newchildren.result()))
             else
                 Some(p)
         } else

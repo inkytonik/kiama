@@ -115,8 +115,8 @@ class Decorators[T <: AnyRef with Product, R <: T](tree : Tree[T, R]) {
     ) : Chain[U] = {
 
         def error(t : T) : Nothing = {
-            in.reset
-            out.reset
+            in.reset()
+            out.reset()
             sys.error(s"chain root of tree reached at $t")
         }
 

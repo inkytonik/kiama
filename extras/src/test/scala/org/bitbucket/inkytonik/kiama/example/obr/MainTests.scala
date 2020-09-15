@@ -69,7 +69,7 @@ trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrNode, ObrInt,
             case IntDatum(num) =>
                 realised += num
             case n : RISCProg =>
-                realised.result shouldBe expected
+                realised.result() shouldBe expected
         }))(code)
     }
 
