@@ -159,7 +159,7 @@ trait Environments[E <: Entity] {
                 else if (isDefinedInScope(env, i))
                     s(i)
                 else
-                    lookup(t, i, e)
+                    lookup(t, i, e, local)
             case _ =>
                 e
         }
