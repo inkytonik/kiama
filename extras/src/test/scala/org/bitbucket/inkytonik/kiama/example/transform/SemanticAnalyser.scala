@@ -37,7 +37,7 @@ class SemanticAnalyser(tree : TransformTree) extends Attribution {
                 case tree.parent(p) =>
                     prio(op)(p)
                 case p : Program =>
-                    prioenv(p) getOrElse (op, 0)
+                    prioenv(p).getOrElse(op, 0)
             }
         )
 
