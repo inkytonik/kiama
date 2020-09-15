@@ -33,7 +33,7 @@ class PlusStrategy(name : String, p : => Strategy, q : => Strategy) extends Stra
     /**
      * The strategy itself (lazily computed).
      */
-    private lazy val s = left <+ (name, right)
+    private lazy val s = left.lessPlusWithName(name, right)
 
     /**
      * Implementation of this strategy. Just apply `s`.

@@ -13,7 +13,7 @@ package rewriting
 
 object RewriterCoreMacros {
 
-    import org.bitbucket.inkytonik.dsinfo.DSInfo.{makeCallWithName, makeThisCallWithName}
+    import org.bitbucket.inkytonik.dsinfo.DSInfo.makeCallWithName
     import org.bitbucket.inkytonik.kiama.util.Collections.Factory
     import org.bitbucket.inkytonik.kiama.util.Emitter
     import scala.reflect.macros._
@@ -30,7 +30,7 @@ object RewriterCoreMacros {
         makeCallWithName(c)
 
     def condMacro(c : blackbox.Context)(lr : c.Expr[PlusStrategy]) : c.Expr[Strategy] =
-        makeThisCallWithName(c)
+        makeCallWithName(c, "this.lessWithName")
 
     def congruenceMacro(c : blackbox.Context)(ss : c.Expr[Strategy]*) : c.Expr[Strategy] =
         makeCallWithName(c)
@@ -39,7 +39,7 @@ object RewriterCoreMacros {
         makeCallWithName(c)
 
     def detchoiceMacro(c : blackbox.Context)(q : c.Expr[Strategy]) : c.Expr[Strategy] =
-        makeThisCallWithName(c)
+        makeCallWithName(c, "this.lessPlusWithName")
 
     def logMacro(c : blackbox.Context)(s : c.Expr[Strategy], msg : c.Expr[String], emitter : c.Expr[Emitter]) : c.Expr[Strategy] =
         makeCallWithName(c)
@@ -54,7 +54,7 @@ object RewriterCoreMacros {
         makeCallWithName(c)
 
     def nondetchoiceMacro(c : blackbox.Context)(q : c.Expr[Strategy]) : c.Expr[PlusStrategy] =
-        makeThisCallWithName(c)
+        makeCallWithName(c, "this.plusWithName")
 
     def oneMacro(c : blackbox.Context)(s : c.Expr[Strategy]) : c.Expr[Strategy] =
         makeCallWithName(c)
@@ -78,7 +78,7 @@ object RewriterCoreMacros {
         makeCallWithName(c, "this.rulefsWithName")
 
     def seqMacro(c : blackbox.Context)(q : c.Expr[Strategy]) : c.Expr[Strategy] =
-        makeThisCallWithName(c)
+        makeCallWithName(c, "this.lessTimesWithName")
 
     def someMacro(c : blackbox.Context)(s : c.Expr[Strategy]) : c.Expr[Strategy] =
         makeCallWithName(c)

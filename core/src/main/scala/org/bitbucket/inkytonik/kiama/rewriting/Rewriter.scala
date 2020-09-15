@@ -103,7 +103,7 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.and
      */
     def and(name : String, s1 : Strategy, s2 : Strategy) : Strategy =
-        where(s1) < (name, test(s2) + (test(s2) <* fail))
+        where(s1).lessWithName(name, test(s2) + (test(s2) <* fail))
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
@@ -111,7 +111,7 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.attempt
      */
     def attempt(name : String, s : Strategy) : Strategy =
-        s <+ (name, id)
+        s.lessPlusWithName(name, id)
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
@@ -119,7 +119,7 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.bottomup
      */
     def bottomup(name : String, s : Strategy) : Strategy =
-        all(bottomup(s)) <* (name, s)
+        all(bottomup(s)).lessTimesWithName(name, s)
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
@@ -147,7 +147,7 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.doloop
      */
     def doloop(name : String, s : Strategy, r : Strategy) : Strategy =
-        s <* (name, loop(r, s))
+        s.lessTimesWithName(name, loop(r, s))
 
     /**
      * A unit for `topdownS`, `bottomupS` and `downupS`.  For example, `topdown(s)`
@@ -259,7 +259,7 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.ior
      */
     def ior(name : String, s1 : Strategy, s2 : Strategy) : Strategy =
-        (s1 <* attempt(s2)) <+ (name, s2)
+        (s1 <* attempt(s2)).lessPlusWithName(name, s2)
 
     /**
      * Construct a strategy that succeeds if the current term has at
@@ -315,7 +315,7 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.lastly
      */
     def lastly(name : String, s : Strategy, f : Strategy) : Strategy =
-        s < (name, where(f) + (where(f) <* fail))
+        s.lessWithName(name, where(f) + (where(f) <* fail))
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
@@ -353,7 +353,7 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.loopiter
      */
     def loopiter(name : String, i : Strategy, r : Strategy, s : Strategy) : Strategy =
-        i <* (name, loopnot(r, s))
+        i.lessTimesWithName(name, loopnot(r, s))
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
@@ -416,7 +416,7 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.not
      */
     def not(name : String, s : Strategy) : Strategy =
-        s < (name, fail + id)
+        s.lessWithName(name, fail + id)
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
@@ -444,7 +444,7 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.or
      */
     def or(name : String, s1 : Strategy, s2 : Strategy) : Strategy =
-        where(s1) < (name, attempt(test(s2)) + test(s2))
+        where(s1).lessWithName(name, attempt(test(s2)) + test(s2))
 
     /*
      * As for the version in `RewriterCore` without the `name` argument but
@@ -528,7 +528,7 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.restore
      */
     def restore(name : String, s : Strategy, rest : Strategy) : Strategy =
-        s <+ (name, rest <* fail)
+        s.lessPlusWithName(name, rest <* fail)
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
@@ -536,7 +536,7 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.restorealways
      */
     def restorealways(name : String, s : Strategy, rest : Strategy) : Strategy =
-        s < (name, rest + (rest <* fail))
+        s.lessWithName(name, rest + (rest <* fail))
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but

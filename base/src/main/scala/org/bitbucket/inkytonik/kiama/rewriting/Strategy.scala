@@ -66,7 +66,7 @@ abstract class Strategy(val name : String) extends (Any => Option[Any]) {
      * As for the other `<*` with the first argument specifying a name for
      * the constructed strategy.
      */
-    def <*(name : String, q : => Strategy) : Strategy =
+    def lessTimesWithName(name : String, q : => Strategy) : Strategy =
         mkStrategy(
             name,
             t1 =>
@@ -88,7 +88,7 @@ abstract class Strategy(val name : String) extends (Any => Option[Any]) {
      * As for the other `<+` with the first argument specifying a name for
      * the constructed strategy.
      */
-    def <+(name : String, q : => Strategy) : Strategy =
+    def lessPlusWithName(name : String, q : => Strategy) : Strategy =
         mkStrategy(
             name,
             (t1 : Any) =>
@@ -115,7 +115,7 @@ abstract class Strategy(val name : String) extends (Any => Option[Any]) {
      * As for the other `+` with the first argument specifying a name for
      * the constructed strategy.
      */
-    def +(name : String, q : => Strategy) : PlusStrategy =
+    def plusWithName(name : String, q : => Strategy) : PlusStrategy =
         new PlusStrategy(name, p, q)
 
     /**
@@ -130,7 +130,7 @@ abstract class Strategy(val name : String) extends (Any => Option[Any]) {
      * As for the other `<` with the first argument specifying a name for
      * the constructed strategy.
      */
-    def <(name : String, lr : => PlusStrategy) : Strategy =
+    def lessWithName(name : String, lr : => PlusStrategy) : Strategy =
         mkStrategy(
             name,
             t1 =>
