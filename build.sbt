@@ -70,9 +70,8 @@ val commonSettings =
             }
         },
 
-        libraryDependencies :=
+        libraryDependencies ++=
             Seq(
-                "org.scala-lang" % "scala-reflect" % scalaVersion.value,
                 "org.scalacheck" %% "scalacheck" % "1.14.3" % "test",
                 "org.scalatest" %% "scalatest" % "3.1.0" % "test",
                 "org.scalatestplus" %% "scalacheck-1-14" % "3.1.0.0" % "test"
