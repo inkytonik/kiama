@@ -275,17 +275,17 @@ class AttributionTests extends KiamaTests {
         val i1 = intercept[IllegalStateException] {
             direct(t)
         }
-        i1.getMessage shouldBe "Cycle detected in attribute evaluation 'direct' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
+        i1.getMessage shouldBe "Cycle detected in attribute evaluation at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
 
         val i2 = intercept[IllegalStateException] {
             indirect(t)
         }
-        i2.getMessage shouldBe "Cycle detected in attribute evaluation 'indirect' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
+        i2.getMessage shouldBe "Cycle detected in attribute evaluation at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
 
         val i3 = intercept[IllegalStateException] {
             indirect2(t)
         }
-        i3.getMessage shouldBe "Cycle detected in attribute evaluation 'indirect2' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
+        i3.getMessage shouldBe "Cycle detected in attribute evaluation at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
     }
 
     test("circularities are detected for uncached attributes") {
@@ -301,17 +301,17 @@ class AttributionTests extends KiamaTests {
         val i1 = intercept[IllegalStateException] {
             direct(t)
         }
-        i1.getMessage shouldBe "Cycle detected in attribute evaluation 'direct' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
+        i1.getMessage shouldBe "Cycle detected in attribute evaluation at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
 
         val i2 = intercept[IllegalStateException] {
             indirect(t)
         }
-        i2.getMessage shouldBe "Cycle detected in attribute evaluation 'indirect' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
+        i2.getMessage shouldBe "Cycle detected in attribute evaluation at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
 
         val i3 = intercept[IllegalStateException] {
             indirect2(t)
         }
-        i3.getMessage shouldBe "Cycle detected in attribute evaluation 'indirect2' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
+        i3.getMessage shouldBe "Cycle detected in attribute evaluation at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
     }
 
     test("circularities are detected for parameterised attributes") {
@@ -330,17 +330,17 @@ class AttributionTests extends KiamaTests {
         val i1 = intercept[IllegalStateException] {
             direct(1)(t)
         }
-        i1.getMessage shouldBe "Cycle detected in attribute evaluation 'direct' (1) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
+        i1.getMessage shouldBe "Cycle detected in attribute evaluation (1) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
 
         val i2 = intercept[IllegalStateException] {
             indirect(8)(t)
         }
-        i2.getMessage shouldBe "Cycle detected in attribute evaluation 'indirect' (8) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
+        i2.getMessage shouldBe "Cycle detected in attribute evaluation (8) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
 
         val i3 = intercept[IllegalStateException] {
             indirect2(9)(t)
         }
-        i3.getMessage shouldBe "Cycle detected in attribute evaluation 'indirect2' (9) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
+        i3.getMessage shouldBe "Cycle detected in attribute evaluation (9) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
     }
 
     test("circularities are detected for uncached parameterised attributes") {
@@ -356,17 +356,17 @@ class AttributionTests extends KiamaTests {
         val i1 = intercept[IllegalStateException] {
             direct(1)(t)
         }
-        i1.getMessage shouldBe "Cycle detected in attribute evaluation 'direct' (1) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
+        i1.getMessage shouldBe "Cycle detected in attribute evaluation (1) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
 
         val i2 = intercept[IllegalStateException] {
             indirect(8)(t)
         }
-        i2.getMessage shouldBe "Cycle detected in attribute evaluation 'indirect' (8) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
+        i2.getMessage shouldBe "Cycle detected in attribute evaluation (8) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
 
         val i3 = intercept[IllegalStateException] {
             indirect2(9)(t)
         }
-        i3.getMessage shouldBe "Cycle detected in attribute evaluation 'indirect2' (9) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
+        i3.getMessage shouldBe "Cycle detected in attribute evaluation (9) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
     }
 
     test("parameterised attribute keys compare correctly") {

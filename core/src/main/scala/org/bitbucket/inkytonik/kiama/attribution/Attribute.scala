@@ -14,18 +14,13 @@ package attribution
 /**
  * Common functionality for all attributes.
  */
-abstract class Attribute[T, U](val name : String) extends (T => U) {
+abstract class Attribute[T, U] extends (T => U) {
 
     /**
      * Report a cycle in the calculation of this attribute discovered when
      * evaluating the attribute on value `t`. Throws an `IllegalStateException`.
      */
     def reportCycle(t : T) : U =
-        throw new IllegalStateException(s"Cycle detected in attribute evaluation '$name' at $t")
-
-    /**
-     * The attribute's string representation is its name.
-     */
-    override def toString : String = name
+        throw new IllegalStateException(s"Cycle detected in attribute evaluation at $t")
 
 }

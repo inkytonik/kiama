@@ -33,35 +33,34 @@ trait CallbackRewriter extends Rewriter {
     def rewriting[T](oldTerm : T, newTerm : T) : T
 
     /**
-     * Produce a strategy named `n` that first runs the strategy s on the
+     * Produce a strategy that first runs the strategy s on the
      * current term. If `s` fails, then fail. Otherwise, pass the original
      * and new terms to the rewriting method and succeed with the term that
      * it returns.
      */
-    def dispatch(name : String, s : Strategy) : Strategy =
-        new Strategy(name) {
-            val body =
-                (t : Any) =>
-                    s(t) match {
-                        case None    => None
-                        case Some(u) => Some(rewriting(t, u))
-                    }
+    def dispatch(s : Strategy) : Strategy =
+        new Strategy {
+            def apply(t : Any) =
+                s(t) match {
+                    case None    => None
+                    case Some(u) => Some(rewriting(t, u))
+                }
         }
 
-    override def ruleWithName[T](n : String, f : T ==> T) : Strategy =
-        dispatch(n, super.ruleWithName[T](n, f))
+    override def rule[T](f : T ==> T) : Strategy =
+        dispatch(super.rule[T](f))
 
-    override def rulef(n : String, f : Any => Any) : Strategy =
-        dispatch(n, super.rulef(n, f))
+    override def rulef(f : Any => Any) : Strategy =
+        dispatch(super.rulef(f))
 
-    override def rulefsWithName[T](n : String, f : T ==> Strategy) : Strategy =
-        dispatch(n, super.rulefsWithName[T](n, f))
+    override def rulefs[T](f : T ==> Strategy) : Strategy =
+        dispatch(super.rulefs[T](f))
 
-    override def strategyWithName[T](n : String, f : T ==> Option[T]) : Strategy =
-        dispatch(n, super.strategyWithName(n, f))
+    override def strategy[T](f : T ==> Option[T]) : Strategy =
+        dispatch(super.strategy(f))
 
-    override def strategyf(n : String, f : Any => Option[Any]) : Strategy =
-        dispatch(n, super.strategyf(n, f))
+    override def strategyf(f : Any => Option[Any]) : Strategy =
+        dispatch(super.strategyf(f))
 
     /**
      * Product duplication with callback notification.

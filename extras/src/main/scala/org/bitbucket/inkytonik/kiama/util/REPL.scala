@@ -36,11 +36,6 @@ trait REPLBase[C <: REPLConfig] {
     val messaging = new Messaging(positions)
 
     /**
-     * Profiler for this compiler.
-     */
-    val profiler = new Profiler
-
-    /**
      * The entry point for this REPL.
      */
     def main(args : Array[String]) : Unit = {
@@ -89,13 +84,7 @@ trait REPLBase[C <: REPLConfig] {
 
                 // Enter interactive phase
                 config.output().emitln(banner)
-                if (config.profile.isDefined) {
-                    val dimensions = profiler.parseProfileOption(config.profile())
-                    profiler.profile(processlines(config), dimensions, config.logging())
-                } else if (config.time())
-                    profiler.time(processlines(config))
-                else
-                    processlines(config)
+                processlines(config)
 
                 config.output().emitln()
         }

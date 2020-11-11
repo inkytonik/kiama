@@ -14,11 +14,10 @@ package rewriting
 /**
  * Helper class to contain commonality of choice in non-deterministic
  * choice operator and then-else part of a conditional choice. Only
- * returned by the non-deterministic choice operator. The first argument
- * specifies a name for the constructed strategy. `p` and `q` are
+ * returned by the non-deterministic choice operator. `p` and `q` are
  * evaluated at most once.
  */
-class PlusStrategy(name : String, p : => Strategy, q : => Strategy) extends Strategy(name) {
+class PlusStrategy(p : => Strategy, q : => Strategy) extends Strategy {
 
     /**
      * The left alternative of the choice.
@@ -33,13 +32,12 @@ class PlusStrategy(name : String, p : => Strategy, q : => Strategy) extends Stra
     /**
      * The strategy itself (lazily computed).
      */
-    private lazy val s = left.lessPlusWithName(name, right)
+    private lazy val s = left <+ right
 
     /**
      * Implementation of this strategy. Just apply `s`.
      */
-    val body =
-        (t : Any) =>
-            s(t)
+    def apply(t : Any) =
+        s(t)
 
 }

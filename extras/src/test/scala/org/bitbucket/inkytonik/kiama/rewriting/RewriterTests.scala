@@ -2119,34 +2119,6 @@ class RewriterTests(val rewriter : Rewriter) extends KiamaTests with Generator {
         }
     }
 
-    // Strategy naming tests
-
-    val myrule1 = rule[Num] {
-        case Num(i) => Num(i + 1)
-    }
-
-    test("class-level rule has the correct name") {
-        myrule1.name shouldBe "myrule1"
-    }
-
-    test("rule in closure has the correct name") {
-        val myrule2 = rule[Num] {
-            case Num(i) => Num(i + 1)
-        }
-        myrule2.name shouldBe "myrule2"
-    }
-
-    val mystrategy1 = outermost(id)
-
-    test("class-level strategy has the correct name") {
-        mystrategy1.name shouldBe "mystrategy1"
-    }
-
-    test("strategy in closure has the correct name") {
-        val mystrategy2 = outermost(id)
-        mystrategy2.name shouldBe "mystrategy2"
-    }
-
     // Compilation tests
 
     test("rule that takes a basic type and returns the wrong basic type doesn't compile") {

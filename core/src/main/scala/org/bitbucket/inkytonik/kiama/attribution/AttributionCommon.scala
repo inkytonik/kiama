@@ -18,13 +18,11 @@ package attribution
  */
 trait AttributionCommon {
 
-    import scala.language.experimental.macros
-
     /**
      * A constant attribute of a node type `T` with value of type `U`. The
      * value is given by the computation `u` which is evaluated at most once.
      */
-    class ConstantAttribute[T, U](name : String, u : => U) extends Attribute[T, U](name) {
+    class ConstantAttribute[T, U](u : => U) extends Attribute[T, U] {
 
         /**
          * Lazily computed result of evaluating the attribute's computation.
@@ -44,13 +42,7 @@ trait AttributionCommon {
      * Define a constant attribute of `T` nodes of type `U` given by the value
      * `u`. `u` is evaluated at most once.
      */
-    def constant[T, U](u : => U) : Attribute[T, U] = macro AttributionCommonMacros.constantMacro[T, U]
-
-    /**
-     * As for the other `constant` with the first argument specifying a name for
-     * the constructed attribute.
-     */
-    def constant[T, U](name : String, u : => U) : Attribute[T, U] =
-        new ConstantAttribute[T, U](name, u)
+    def constant[T, U](u : => U) : Attribute[T, U] =
+        new ConstantAttribute[T, U](u)
 
 }

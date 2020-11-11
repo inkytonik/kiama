@@ -22,7 +22,6 @@ class PrologConfig(args : Seq[String]) extends REPLConfig(args) {
 
     import org.rogach.scallop.{ArgType, ValueConverter}
     import PrologTree.Program
-    import scala.reflect.runtime.universe.TypeTag
 
     /**
      * Convertor for database option.
@@ -39,8 +38,6 @@ class PrologConfig(args : Seq[String]) extends REPLConfig(args) {
                     case _ =>
                         Right(None)
                 }
-
-            val tag = implicitly[TypeTag[Program]]
 
         }
 

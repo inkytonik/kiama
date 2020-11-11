@@ -47,7 +47,7 @@ trait Cloner {
      */
     def lazyclone[T <: Product](
         t : T,
-        bu : Strategy => Strategy = everywherebu("everywherebu", _)
+        bu : Strategy => Strategy = everywherebu(_)
     ) : T = {
 
         import org.bitbucket.inkytonik.kiama.util.Memoiser.makeIdMemoiser

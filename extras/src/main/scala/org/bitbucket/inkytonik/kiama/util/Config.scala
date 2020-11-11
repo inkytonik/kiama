@@ -120,40 +120,6 @@ class Config(args : Seq[String]) extends ScallopConf(args) {
     )
 
     /**
-     * Profiling dimensions.
-     */
-    lazy val profile = opt[String](
-        "Kprofile",
-        descr = "Profiling dimensions (comma-separated)",
-        noshort = true,
-        hidden = true
-    )
-
-    /**
-     * Logging option. If profiling and this is set, print out events as they are generated.
-     */
-    lazy val logging = toggle(
-        "Klogging",
-        descrYes = "Print profile events dynamically",
-        descrNo = "Don't print profile events",
-        default = Some(false),
-        noshort = true,
-        hidden = true
-    )
-
-    /**
-     * Time option. If set, print out execution time report.
-     */
-    lazy val time = toggle(
-        "Ktime",
-        descrYes = "Report execution time",
-        descrNo = "Don't report execution time",
-        default = Some(false),
-        noshort = true,
-        hidden = true
-    )
-
-    /**
      * The zero or more filenames that were specified positionally after all of the options.
      */
     lazy val filenames = trailArg[List[String]]("files", descr = "Input files",

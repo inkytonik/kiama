@@ -14,10 +14,9 @@ package rewriting
 /**
  * Any-rewriting strategies. A strategy is a function that takes a term
  * of any type as input and either succeeds producing a new term (`Some`),
- * or fails (`None`). `name` is used to identify this strategy in debugging
- * output.
+ * or fails (`None`).
  */
-abstract class Strategy(val name : String) extends (Any => Option[Any]) {
+abstract class Strategy extends (Any => Option[Any]) {
 
     /**
      * Alias this strategy as `p` to make it easier to refer to in the
@@ -25,50 +24,22 @@ abstract class Strategy(val name : String) extends (Any => Option[Any]) {
      */
     p =>
 
-    import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
-    import scala.language.experimental.macros
-
     /**
-     * Make one of these strategies with the given name and body `f`.
+     * Make one of these strategies with the body `f`.
      */
-    def mkStrategy(name : String, f : Any => Option[Any]) : Strategy =
-        new Strategy(name) {
-            val body = f
+    def mkStrategy(f : Any => Option[Any]) : Strategy =
+        new Strategy {
+            def apply(t : Any) =
+                f(t)
         }
-
-    /**
-     * Implementation of this strategy. When applied to a term produce either
-     * a transformed term wrapped in `Some`, or `None`, representing a
-     * rewriting failure.
-     */
-    val body : Any => Option[Any]
-
-    /**
-     * Apply this strategy to a term. By default, just run the implementation
-     * body wrapped in profiling.
-     */
-    def apply(r : Any) : Option[Any] = {
-        val i = start(List("event" -> "StratEval", "strategy" -> this,
-            "subject" -> r))
-        val result = body(r)
-        finish(i, List("result" -> result))
-        result
-    }
 
     /**
      * Sequential composition. Construct a strategy that first applies
      * this strategy. If it succeeds, then apply `q` to the new subject
      * term. Otherwise fail. `q` is evaluated at most once.
      */
-    def <*(q : Strategy) : Strategy = macro RewriterCoreMacros.seqMacro
-
-    /**
-     * As for the other `<*` with the first argument specifying a name for
-     * the constructed strategy.
-     */
-    def lessTimesWithName(name : String, q : => Strategy) : Strategy =
+    def <*(q : => Strategy) : Strategy =
         mkStrategy(
-            name,
             t1 =>
                 p(t1) match {
                     case Some(t2) => q(t2)
@@ -82,15 +53,8 @@ abstract class Strategy(val name : String) extends (Any => Option[Any]) {
      * Otherwise, apply `q` to the original subject term. `q` is
      * evaluated at most once.
      */
-    def <+(q : Strategy) : Strategy = macro RewriterCoreMacros.detchoiceMacro
-
-    /**
-     * As for the other `<+` with the first argument specifying a name for
-     * the constructed strategy.
-     */
-    def lessPlusWithName(name : String, q : => Strategy) : Strategy =
+    def <+(q : => Strategy) : Strategy =
         mkStrategy(
-            name,
             (t1 : Any) =>
                 p(t1) match {
                     case Some(t2) => Some(t2)
@@ -109,14 +73,8 @@ abstract class Strategy(val name : String) extends (Any => Option[Any]) {
      * chosen between by the conditional choice.
      * `q` is evaluated at most once.
      */
-    def +(q : Strategy) : PlusStrategy = macro RewriterCoreMacros.nondetchoiceMacro
-
-    /**
-     * As for the other `+` with the first argument specifying a name for
-     * the constructed strategy.
-     */
-    def plusWithName(name : String, q : => Strategy) : PlusStrategy =
-        new PlusStrategy(name, p, q)
+    def +(q : => Strategy) : PlusStrategy =
+        new PlusStrategy(p, q)
 
     /**
      * Conditional choice: `c < l + r`. Construct a strategy that first
@@ -124,26 +82,13 @@ abstract class Strategy(val name : String) extends (Any => Option[Any]) {
      * `l` to the resulting term, otherwise it applies `r` to the original
      * subject term. `lr` is evaluated at most once.
      */
-    def <(lr : PlusStrategy) : Strategy = macro RewriterCoreMacros.condMacro
-
-    /**
-     * As for the other `<` with the first argument specifying a name for
-     * the constructed strategy.
-     */
-    def lessWithName(name : String, lr : => PlusStrategy) : Strategy =
+    def <(lr : => PlusStrategy) : Strategy =
         mkStrategy(
-            name,
             t1 =>
                 p(t1) match {
                     case Some(t2) => lr.left(t2)
                     case None     => lr.right(t1)
                 }
         )
-
-    /**
-     * Identify this strategy by its name.
-     */
-    override def toString : String =
-        name
 
 }

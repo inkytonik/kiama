@@ -51,11 +51,6 @@ trait CompilerBase[N, T <: N, C <: Config] extends ServerWithConfig[N, T, C] {
     val messaging = new Messaging(positions)
 
     /**
-     * Profiler for this compiler.
-     */
-    val profiler = new Profiler
-
-    /**
      * The entry point for this compiler.
      */
     def main(args : Array[String]) : Unit = {
@@ -103,14 +98,9 @@ trait CompilerBase[N, T <: N, C <: Config] extends ServerWithConfig[N, T, C] {
      * Run the compiler given a configuration.
      */
     def run(config : C) : Unit = {
-        if (config.server()) {
+        if (config.server())
             launch(config)
-        } else if (config.profile.isDefined) {
-            val dimensions = profiler.parseProfileOption(config.profile())
-            profiler.profile(compileFiles(config), dimensions, config.logging())
-        } else if (config.time()) {
-            profiler.time(compileFiles(config))
-        } else
+        else
             compileFiles(config)
     }
 

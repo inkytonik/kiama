@@ -195,12 +195,7 @@ class LambdaDriver extends ParsingREPL[LambdaTree.Exp] with Evaluator {
     }
 
     def process(source : Source, e : LambdaTree.Exp, config : REPLConfig) : Unit = {
-        val result =
-            if (config.profile.isDefined) {
-                val dimensions = profiler.parseProfileOption(config.profile())
-                profiler.profile(normal(e), dimensions, config.logging())
-            } else
-                normal(e)
+        val result = normal(e)
         config.output().emitln(result.getOrElse("reduction failed"))
     }
 

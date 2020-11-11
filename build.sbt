@@ -40,13 +40,11 @@ ThisBuild/resolvers ++=
         Resolver.sonatypeRepo("snapshots")
     )
 
-ThisBuild/incOptions := (ThisBuild/incOptions).value.withLogRecompileOnMacro(false)
-
 ThisBuild/logLevel := Level.Info
 
 ThisBuild/shellPrompt := {
     state =>
-        Project.extract(state).currentRef.project + " " + version.value +
+        Project.extract(state).currentRef.project + " " + version.value+
             " " + scalaVersion.value + "> "
 }
 
@@ -60,7 +58,7 @@ val commonSettings =
             val sourceDir = (sourceDirectory in Compile).value
             CrossVersion.partialVersion(scalaVersion.value) match {
                 case Some((2, 10)) =>
-                    Seq(sourceDir / "scala-2.10", sourceDir / "scala-2.not11", sourceDir / "scala-2.12-")
+                    Seq(sourceDir / "scala-2.not11", sourceDir / "scala-2.12-")
                 case Some((2, 11)) =>
                     Seq(sourceDir / "scala-2.11", sourceDir / "scala-2.11+", sourceDir / "scala-2.12-")
                 case Some((2, 12)) =>
@@ -74,6 +72,7 @@ val commonSettings =
 
         libraryDependencies :=
             Seq(
+                "org.scala-lang" % "scala-reflect" % scalaVersion.value,
                 "org.scalacheck" %% "scalacheck" % "1.14.3" % "test",
                 "org.scalatest" %% "scalatest" % "3.1.0" % "test",
                 "org.scalatestplus" %% "scalacheck-1-14" % "3.1.0.0" % "test"
@@ -136,7 +135,6 @@ val versionSettings =
     )
 
 // Project configuration:
-//   - base project containing macros and code that they need
 //   - core project containing main Kiama functionality, including its tests
 //   - extras project containing utilities, including their tests and examples
 //   - kiama (root) project aggregates base, core and extras
@@ -158,43 +156,12 @@ def setupSubProject(project : Project, projectName : String) : Project =
         versionSettings : _*
     )
 
-def baseLibraryDependencies (scalaVersion : String) : Seq[ModuleID] = {
-    val dsinfoVersion =
-        if (scalaVersion.startsWith("2.10"))
-            "0.3.0"
-        else
-            "0.4.0"
-    val dsprofileVersion =
-        if (scalaVersion.startsWith("2.10"))
-            "0.3.0"
-        else
-            "0.4.0"
-    Seq(
-        // Caching:
-        "com.google.guava" % "guava" % "21.0",
-        // DSL support:
-        "org.bitbucket.inkytonik.dsinfo" %% "dsinfo" % dsinfoVersion,
-        // Profiling:
-        "org.bitbucket.inkytonik.dsprofile" %% "dsprofile" % dsprofileVersion
-    )
-}
-
 val noPublishSettings =
     Seq(
         publish := {},
         publishLocal := {},
         publishSigned := {},
         publishLocalSigned := {}
-    )
-
-lazy val base =
-    setupSubProject(
-        project in file("base"),
-        "base"
-    ).settings(
-        noPublishSettings : _*
-    ).settings(
-        libraryDependencies ++= baseLibraryDependencies(scalaVersion.value),
     )
 
 val extrasProject = ProjectRef(file("."), "extras")
@@ -204,14 +171,16 @@ lazy val core =
         project in file("core"),
         "kiama"
     ).settings(
-        libraryDependencies ++= baseLibraryDependencies(scalaVersion.value),
+        libraryDependencies ++=
+            Seq(
+                // Caching:
+                "com.google.guava" % "guava" % "21.0"
+            ),
 
         console/initialCommands := """
             import org.bitbucket.inkytonik.kiama._
             import rewriting.Rewriter._
         """.stripMargin,
-        Compile/packageBin/mappings := (Compile/packageBin/mappings).value ++ (base/Compile/packageBin/mappings).value,
-        Compile/packageSrc/mappings := (Compile/packageSrc/mappings).value ++ (base/Compile/packageSrc/mappings).value,
 
         // Unidoc so we combine docs from base and core (but not extras)
         Compile/doc := (ScalaUnidoc/doc).value,
@@ -220,18 +189,12 @@ lazy val core =
         TestScalaUnidoc/unidoc/target := crossTarget.value / "test-api",
         ScalaUnidoc/unidoc/scalacOptions ++=
             Seq(
-                if (scalaVersion.value.startsWith("2.10"))
-                    "-Ymacro-no-expand"
-                else
-                    "-Ymacro-expand:none",
                 "-doc-source-url",
                     "https://github.com/inkytonik/kiama/blob/master€{FILE_PATH}.scala"
             ),
         TestScalaUnidoc/unidoc/scalacOptions := (ScalaUnidoc/unidoc/scalacOptions).value,
         ScalaUnidoc/unidoc/unidocProjectFilter := inAnyProject -- inProjects(extrasProject),
         TestScalaUnidoc/unidoc/unidocProjectFilter := (ScalaUnidoc/unidoc/unidocProjectFilter).value
-    ).dependsOn(
-        base % "compile-internal; test-internal"
     )
 
 lazy val extras =
@@ -261,10 +224,6 @@ lazy val extras =
             """.stripMargin,
         Compile/doc/scalacOptions ++=
             Seq(
-                if (scalaVersion.value.startsWith("2.10"))
-                    "-Ymacro-no-expand"
-                else
-                    "-Ymacro-expand:none",
                 "-doc-source-url",
                     "https://github.com/inkytonik/kiama/blob/master€{FILE_PATH}.scala"
             ),
@@ -275,7 +234,6 @@ lazy val extras =
         // Test/assembly/test := {},
         Test/assembly/assemblyJarName := s"${name.value}-assembly-${version.value}-tests.jar"
     ).dependsOn(
-        base % "compile-internal; test-internal",
         core % "compile; test->test"
     )
 

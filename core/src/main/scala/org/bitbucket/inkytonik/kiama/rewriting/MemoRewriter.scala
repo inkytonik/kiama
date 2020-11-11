@@ -18,13 +18,12 @@ package rewriting
 trait MemoRewriter extends Rewriter {
 
     import org.bitbucket.inkytonik.kiama.util.Memoiser.makeIdMemoiser
-    import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
 
     /*
      * Any-rewriting strategies that memoise their results by identity on
      * the subject term.
      */
-    abstract class MemoStrategy(name : String) extends Strategy(name) {
+    abstract class MemoStrategy extends Strategy {
 
         /**
          * Backing memo table.
@@ -32,11 +31,12 @@ trait MemoRewriter extends Rewriter {
         val memo = makeIdMemoiser[Any, Option[Any]]()
 
         /**
-         * Make one of these strategies with the given name and body `f`.
+         * Make one of these strategies with the body `f`.
          */
-        override def mkStrategy(name : String, f : Any => Option[Any]) : Strategy =
-            new MemoStrategy(name) {
-                val body = f
+        override def mkStrategy(f : Any => Option[Any]) : Strategy =
+            new MemoStrategy {
+                override def apply(t : Any) =
+                    f(t)
             }
 
         /**
@@ -44,16 +44,12 @@ trait MemoRewriter extends Rewriter {
          * it depends on itself.
          */
         override def apply(r : Any) : Option[Any] = {
-            val i = start(List("event" -> "StratEval", "strategy" -> this,
-                "subject" -> r, "subjectHash" -> r.##))
             memo.get(r) match {
                 case None =>
-                    val u = body(r)
+                    val u = apply(r)
                     memo.put(r, u)
-                    finish(i, List("cached" -> false, "result" -> u))
                     u
                 case Some(u) =>
-                    finish(i, List("cached" -> true, "result" -> u))
                     u
             }
         }
@@ -74,18 +70,19 @@ trait MemoRewriter extends Rewriter {
     }
 
     /**
-     * Make a memoising strategy with the given name and body `f`.
+     * Make a memoising strategy with the body `f`.
      */
-    override def mkStrategy(name : String, f : Any => Option[Any]) : Strategy =
-        new MemoStrategy(name) {
-            val body = f
+    override def mkStrategy(f : Any => Option[Any]) : Strategy =
+        new MemoStrategy {
+            override def apply(t : Any) =
+                f(t)
         }
 
     /**
      * Build a memoising strategy. Since all strategies here are memoised, this
      * method is the identity.
      */
-    override def memo(name : String, s : => Strategy) : Strategy =
+    override def memo(s : Strategy) : Strategy =
         s
 
 }
