@@ -168,6 +168,8 @@ class SemanticAnalyser(val tree : ObrTree) extends Attribution {
                     case _ =>
                         UnknownEntity()
                 }
+            case n =>
+                sys.error(s"defentity: unexpected IdnDef $n")
         }
 
     /**
@@ -211,6 +213,9 @@ class SemanticAnalyser(val tree : ObrTree) extends Attribution {
             // enclosing scope).
             case tree.parent(p) =>
                 env(p)
+
+            case n =>
+                sys.error(s"env: unexpected ObrNode $n")
 
         }
 
@@ -304,6 +309,9 @@ class SemanticAnalyser(val tree : ObrTree) extends Attribution {
 
                     case _                             => Set(UnknownType())
                 }
+
+            case e =>
+                sys.error(s"exptipe: unexpected Expression $e")
         }
 
     /**

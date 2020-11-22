@@ -97,6 +97,9 @@ trait NameResolution {
 
                     case tree.parent(p) =>
                         lookup(name)(p)
+
+                    case n =>
+                        sys.error(s"lookup: unexpected PicoJavaNode $n")
                 }
         }
 
@@ -129,6 +132,8 @@ trait NameResolution {
                         finddecl(b, name, b.BlockStmts)
                     case tree.parent(p) =>
                         localLookup(name)(p)
+                    case n =>
+                        sys.error(s"localLookup: unexpected PicoJavaNode $n")
                 }
         }
 

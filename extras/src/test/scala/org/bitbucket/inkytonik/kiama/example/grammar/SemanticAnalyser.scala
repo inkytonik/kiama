@@ -193,6 +193,9 @@ class SemanticAnalyser(tree : GrammarTree) extends Attribution {
             case n : NonTermUse =>
                 decl(n).map(nullable).getOrElse(false)
 
+            case n =>
+                sys.error(s"nullable: got unexpected GrammarNode $n")
+
         }
 
     /**
@@ -241,6 +244,9 @@ class SemanticAnalyser(tree : GrammarTree) extends Attribution {
             case n : NonTermUse =>
                 decl(n).map(first).getOrElse(Set())
 
+            case n =>
+                sys.error(s"first: got unexpected GrammarNode $n")
+
         }
 
     /**
@@ -262,6 +268,9 @@ class SemanticAnalyser(tree : GrammarTree) extends Attribution {
                     first(suffix).union(follow(rule(n).lhs))
                 else
                     first(suffix)
+
+            case n =>
+                sys.error(s"follow: got unexpected GrammarNode $n")
 
         }
 

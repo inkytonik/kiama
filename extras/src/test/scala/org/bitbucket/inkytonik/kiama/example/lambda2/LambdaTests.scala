@@ -49,8 +49,8 @@ class LambdaTests extends ParseTests {
                 else
                     "There were differences between 'errors' and 'errors2'\n" +
                         "errors:\n" + errors + "errors2:\n" + errors2
-            case NoSuccess(msg, _) =>
-                msg
+            case n : NoSuccess =>
+                n.message
         }
     }
 
@@ -166,8 +166,8 @@ class LambdaTests extends ParseTests {
         parsers.parseAll(parsers.exp, StringSource(term)) match {
             case Success(exp, _) =>
                 Right(evaluator.eval(exp))
-            case NoSuccess(msg, _) =>
-                Left(msg)
+            case n : NoSuccess =>
+                Left(n.message)
         }
     }
 

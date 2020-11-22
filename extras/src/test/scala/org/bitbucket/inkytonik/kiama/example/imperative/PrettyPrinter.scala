@@ -42,6 +42,8 @@ class PrettyPrinter extends org.bitbucket.inkytonik.kiama.output.PrettyPrinter {
             case Seqn(ss)    => group(braces(nest(line <> ssep(ss map toDoc, line)) <> line))
             case Asgn(v, e)  => toDoc(v) <+> "=" <+> toDoc(e) <> semi
             case While(e, b) => "while" <+> parens(toDoc(e)) <> group(nest(line <> toDoc(b)))
+            case _ =>
+                sys.error(s"toDoc: unexpected ImperativeNode $t")
         }
 
     /**

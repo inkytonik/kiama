@@ -191,19 +191,25 @@ trait Desugarer extends L0.Desugarer {
                 es.tail.foldLeft(es.head)(OrExp)
             }
 
-            // Extract the first (f) and rest (tl) cases.
-            val f +: tl = cases
+            // Avoid pattern-matching here because exhaustivity check has problems
+            if (cases.isEmpty)
+                sys.error("casesToIf: unexpectedly got zero cases")
+            else {
+                // Extract the first (f) and rest (tl) cases.
+                val f = cases.head
+                val tl = cases.tail
 
-            // Produce an IF which implements the first case in the THEN branch,
-            // the other cases as the ELSE-IFs, and the optional ELSE.
-            IfStatement(
-                condsToExp(f.conds),
-                f.block,
-                tl.map {
-                    case Case(es, b) => (condsToExp(es), b)
-                },
-                optelse
-            )
+                // Produce an IF which implements the first case in the THEN branch,
+                // the other cases as the ELSE-IFs, and the optional ELSE.
+                IfStatement(
+                    condsToExp(f.conds),
+                    f.block,
+                    tl.map {
+                        case Case(es, b) => (condsToExp(es), b)
+                    },
+                    optelse
+                )
+            }
 
         }
 

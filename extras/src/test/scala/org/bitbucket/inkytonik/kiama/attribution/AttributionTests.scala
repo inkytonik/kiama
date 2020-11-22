@@ -20,7 +20,7 @@ class AttributionTests extends KiamaTests {
 
     import org.bitbucket.inkytonik.kiama.relation.Tree
 
-    abstract class TestTree extends Product
+    sealed abstract class TestTree extends Product
     case class Pair(left : TestTree, right : TestTree) extends TestTree
     case class Leaf(value : Int) extends TestTree
     case class Unused(b : Boolean) extends TestTree
@@ -70,13 +70,14 @@ class AttributionTests extends KiamaTests {
             {
                 case Pair(l, r) =>
                     count = count + 1; maximum(l).max(maximum(r))
-                case Leaf(v) => v
+                case Leaf(v)   => v
+                case Unused(_) => 0
             }
 
         lazy val maximum =
             attr(maximumDef)
 
-        lazy val leafComputedDef : TestTree => Boolean =
+        lazy val leafComputedDef : Leaf => Boolean =
             {
                 case t @ Leaf(v) =>
                     leafComputed.hasBeenComputedAt(t)
@@ -183,7 +184,8 @@ class AttributionTests extends KiamaTests {
             UncachedAttribution.attr {
                 case Pair(l, r) =>
                     count = count + 1; maximum(l).max(maximum(r))
-                case Leaf(v) => v
+                case Leaf(v)   => v
+                case Unused(_) => 0
             }
 
         maximum(t) shouldBe 10
@@ -740,7 +742,7 @@ class AttributionTests extends KiamaTests {
         // Single attributes
         // Core of the single attribute tests was contributed by Fred Teunissen
 
-        trait AstBase extends Product
+        sealed trait AstBase extends Product
         case class Node(childs : AstBase*) extends AstBase
         case class Leaf(value : Int) extends AstBase
 

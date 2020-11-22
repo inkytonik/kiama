@@ -214,7 +214,9 @@ trait ParseTests extends KiamaTests {
                             s"""Parse succeeded with "$value" at ${in.format}""",
                             "NOT USED"
                         )
-                    case res @ NoSuccess(message, in) =>
+                    case res : NoSuccess =>
+                        val message = res.message
+                        val in = res.next
                         if (ok(res))
                             MatchResult(
                                 (in.position.line == line) && (in.position.column == column) && (message == expectedMsg),

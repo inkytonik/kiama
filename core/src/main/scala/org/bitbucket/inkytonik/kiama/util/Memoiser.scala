@@ -14,7 +14,7 @@ package util
 /**
  * The types of memoiser that can be created.
  */
-abstract class MemoiserType
+sealed abstract class MemoiserType
 
 /**
  * Value-based key comparison.

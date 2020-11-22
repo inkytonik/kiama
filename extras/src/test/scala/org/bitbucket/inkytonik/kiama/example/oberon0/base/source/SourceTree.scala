@@ -66,7 +66,7 @@ abstract class Expression extends SourceNode with PrettyExpression
 /**
  * Common interface for all identifier occurrences.
  */
-abstract class Identifier extends SourceNode {
+sealed abstract class Identifier extends SourceNode {
     def ident : String
 }
 

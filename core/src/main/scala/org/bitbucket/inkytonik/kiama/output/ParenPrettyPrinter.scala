@@ -133,6 +133,9 @@ trait ParenPrettyPrinter extends PrettyPrinter {
                 else
                     ed <> text(u.op)
 
+            case _ =>
+                sys.error(s"toParenDoc: unexpected PrettyExpression $e")
+
         }
 
     /**

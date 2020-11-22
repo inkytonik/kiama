@@ -731,7 +731,7 @@ class RewriterTests(val rewriter : Rewriter) extends KiamaTests with Generator {
      * means use ==.  Same means the result must be the same reference or, if
      * the values are not references, use ==.  NotSame is the opposite of Same.
      */
-    abstract class Expecting
+    sealed abstract class Expecting
     case object Equal extends Expecting
     case object Same extends Expecting
     case object NotSame extends Expecting

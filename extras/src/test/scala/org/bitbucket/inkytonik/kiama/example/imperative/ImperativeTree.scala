@@ -100,7 +100,7 @@ object ImperativeTree {
     /**
      * Binary expressions.
      */
-    abstract class Binary(l : Exp, r : Exp) extends Exp {
+    sealed abstract class Binary(l : Exp, r : Exp) extends Exp {
         override def vars : Set[Idn] = l.vars ++ r.vars
         override def divsbyzero : Int = l.divsbyzero + r.divsbyzero
         override def depth : Int = 1 + (l.depth).max(r.depth)

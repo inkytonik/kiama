@@ -47,10 +47,14 @@ trait TypeAnalyser extends L3.TypeAnalyser with SymbolTable {
                     error(a, "array indexing attempted on non-ARRAY")
 
                 case IndexExp(a, e) =>
-                    val ArrayType(s, _) = basetype(a)
-                    error(e, "index out of range",
-                        (basetype(e) == integerType) && isconst(e) &&
-                            ((value(e) < 0) || (value(e) >= s)))
+                    basetype(a) match {
+                        case ArrayType(s, _) =>
+                            error(e, "index out of range",
+                                (basetype(e) == integerType) && isconst(e) &&
+                                    ((value(e) < 0) || (value(e) >= s)))
+                        case _ =>
+                            sys.error(s"errorsDef: IndexType basetype is not ArrayType")
+                    }
 
                 case Assignment(l, _) if !isNotRecord(basetype(l)) =>
                     error(l, "can't assign to record")

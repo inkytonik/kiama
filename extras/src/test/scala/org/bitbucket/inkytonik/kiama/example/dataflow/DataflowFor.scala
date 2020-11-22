@@ -47,6 +47,7 @@ class DataflowFor(override val tree : DataflowTree) extends Dataflow(tree) {
                         case t @ For(_, s1, _, b) if s eq s1 => following(t) + b
                         case t @ For(_, c, s1, _) if s eq s1 => Set(c)
                         case t @ For(_, _, i, s1) if s eq s1 => Set(i)
+                        case _                               => Set()
                     }
             }
 

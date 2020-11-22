@@ -104,6 +104,8 @@ trait CCodeGenerator extends TypeAnalyser with base.CCodeGenerator with SymbolTa
                     case IdnDef(i) =>
                         CVarDecl(mangle(i), translate(t))
                 }
+            case _ =>
+                sys.error(s"translate: unexpected Declaration $d")
         }
 
     /**
@@ -143,6 +145,8 @@ trait CCodeGenerator extends TypeAnalyser with base.CCodeGenerator with SymbolTa
                     case IntegerValue(_, _, v) => CIntExp(v)
                     case _                     => CIdnExp(mangle(s))
                 }
+            case _ =>
+                sys.error(s"translate: unexpected Expression $e")
         }
 
 }

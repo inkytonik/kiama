@@ -38,6 +38,8 @@ class SemanticAnalyser(tree : TransformTree) extends Attribution {
                     prio(op)(p)
                 case p : Program =>
                     prioenv(p).getOrElse(op, 0)
+                case n =>
+                    sys.error(s"prio: unexpected TransformNode $n")
             }
         )
 
@@ -95,6 +97,8 @@ class SemanticAnalyser(tree : TransformTree) extends Attribution {
                         lookup(s)(p)
                     case p : Program =>
                         p.vars.find(_.name == s)
+                    case n =>
+                        sys.error(s"lookup: unexpected TransformNode $n")
                 }
         }
 

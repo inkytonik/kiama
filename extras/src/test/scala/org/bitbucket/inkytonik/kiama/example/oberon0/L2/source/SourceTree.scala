@@ -36,7 +36,7 @@ case class Case(conds : Vector[Condition], block : Block) extends Statement
 /**
  * Non-terminal type for case conditions.
  */
-abstract class Condition extends SourceNode
+sealed abstract class Condition extends SourceNode
 
 /**
  * A condition that matches a single value.

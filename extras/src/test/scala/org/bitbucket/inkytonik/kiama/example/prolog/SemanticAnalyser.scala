@@ -166,6 +166,8 @@ class SemanticAnalyser(tree : PrologTree) extends Attribution {
                 vars(p)
             case tree.parent(p) =>
                 varsin(p)
+            case n =>
+                sys.error(s"varsin: unexpected PrologNode $n")
         }
 
     /**

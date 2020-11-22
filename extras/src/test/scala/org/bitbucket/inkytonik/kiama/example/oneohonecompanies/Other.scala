@@ -50,6 +50,8 @@ class Other(tree : CompanyTree) extends Attribution {
                 salary(n) / numemp(n)
             case tree.parent(p) =>
                 averagesalary(p)
+            case n =>
+                sys.error(s"averagesalary: unexpected CompanyNode $n")
         }
 
     lazy val aboveaverage : Employee => Boolean =

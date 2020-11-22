@@ -178,12 +178,12 @@ object MiniJavaTree {
     /**
      * Common superclass of expressions.
      */
-    abstract class Expression extends MiniJavaNode with PrettyExpression
+    sealed abstract class Expression extends MiniJavaNode with PrettyExpression
 
     /**
      * Common interface for binary expressions.
      */
-    abstract class BinaryExpression(val op : String) extends Expression with PrettyBinaryExpression {
+    sealed abstract class BinaryExpression(val op : String) extends Expression with PrettyBinaryExpression {
         def left : Expression
         def right : Expression
         val fixity = Infix(LeftAssoc)
@@ -192,7 +192,7 @@ object MiniJavaTree {
     /**
      * Common interface for unary expressions.
      */
-    abstract class UnaryExpression(val op : String) extends Expression with PrettyUnaryExpression {
+    sealed abstract class UnaryExpression(val op : String) extends Expression with PrettyUnaryExpression {
         def exp : Expression
         override val priority = 1
         val fixity = Prefix

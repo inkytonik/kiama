@@ -43,6 +43,8 @@ trait NullObjects {
             // FIXME: need NTA case?
             case tree.parent(p) =>
                 unknownDecl(p)
+            case n =>
+                sys.error(s"unknownDecl: unexpected PicoJavaNode $n")
         }
 
 }

@@ -68,6 +68,8 @@ trait CCodeGenerator extends Translator {
                 CEmptyStmt()
             case Block(ds, ss) =>
                 CBlock((ds map translate).flatten, ss map translate)
+            case _ =>
+                sys.error(s"translate: unexpected Statement $s")
         }
 
 }

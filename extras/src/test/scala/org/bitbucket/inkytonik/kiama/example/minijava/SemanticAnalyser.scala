@@ -119,6 +119,8 @@ class SemanticAnalyser(val tree : MiniJavaTree) extends Attribution {
                     case decl : Var       => VariableEntity(decl)
                     case _                => UnknownEntity()
                 }
+            case n =>
+                sys.error(s"defentity: unexpected IdnDef $n")
         }
 
     /**
@@ -178,6 +180,9 @@ class SemanticAnalyser(val tree : MiniJavaTree) extends Attribution {
             // enclosing scope).
             case tree.parent(p) =>
                 env(p)
+
+            case n =>
+                sys.error(s"env: got unexpected MiniJavaNode $n")
 
         }
 

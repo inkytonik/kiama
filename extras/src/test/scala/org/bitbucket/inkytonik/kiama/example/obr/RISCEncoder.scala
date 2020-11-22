@@ -177,6 +177,8 @@ class RISCEncoder(labels : RISCLabels) extends Attribution {
                                     reg(p)
                             }
                     }
+                case n =>
+                    sys.error(s"reg: unexpected RISCNode $n")
             }
 
         resetcode()

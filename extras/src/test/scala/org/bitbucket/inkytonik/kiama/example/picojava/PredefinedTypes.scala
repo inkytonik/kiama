@@ -62,6 +62,8 @@ trait PredefinedTypes {
             // FIXME don't have NTA case, needed?
             case tree.parent(p) =>
                 booleanType(p)
+            case n =>
+                sys.error(s"booleanType: unexpected PicoJavaNode $n")
         }
 
 }

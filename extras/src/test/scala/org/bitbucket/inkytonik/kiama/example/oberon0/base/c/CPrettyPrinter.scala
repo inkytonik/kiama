@@ -70,6 +70,8 @@ trait CPrettyPrinter extends ParenPrettyPrinter {
             case CIntType()        => "int" <> space
             case CStrType()        => "char *"
             case CArrayType(_, et) => basetypeToDoc(et)
+            case _ =>
+                sys.error(s"basetypeDoc: unexpected CType $t")
         }
 
     def arraydimensToDoc(t1 : CArrayType) : Doc = {

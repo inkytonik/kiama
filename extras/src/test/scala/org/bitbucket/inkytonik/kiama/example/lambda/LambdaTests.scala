@@ -36,8 +36,8 @@ class LambdaTests extends ParseTests with Evaluator with Generator {
         parsers.parseAll(parsers.exp, StringSource(term)) match {
             case Success(exp, _) =>
                 Right(evaluate(exp))
-            case NoSuccess(msg, _) =>
-                Left(msg)
+            case n : NoSuccess =>
+                Left(n.message)
         }
     }
 

@@ -157,10 +157,13 @@ class Translator(tree : MiniJavaTree) extends Attribution {
          */
         def translateType(tipe : Type) : JVMType =
             tipe match {
-                case BooleanType()          => JVMBooleanType()
-                case IntType()              => JVMIntType()
-                case IntArrayType()         => JVMArrayType(JVMIntType())
-                case ClassType(IdnUse(idn)) => JVMClassType(idn)
+                case BooleanType()                           => JVMBooleanType()
+                case IntType()                               => JVMIntType()
+                case IntArrayType()                          => JVMArrayType(JVMIntType())
+                case ClassType(IdnUse(idn))                  => JVMClassType(idn)
+                case ReferenceType(Class(IdnDef(idn), _, _)) => JVMClassType(idn)
+                case _ =>
+                    sys.error(s"translateType: unexpected type $tipe")
             }
 
         /*
@@ -275,6 +278,8 @@ class Translator(tree : MiniJavaTree) extends Attribution {
                             Aload(0),
                             GetField(s"$className/$fieldName", translateType(field.tipe))
                         )
+                    case _ =>
+                        sys.error(s"loadField: Field found that is not in Class $field")
                 }
             }
 
@@ -319,6 +324,8 @@ class Translator(tree : MiniJavaTree) extends Attribution {
                         gen(idnuse, Aload(0))
                         translateExp(exp)
                         gen(stmt, PutField(s"$className/$fieldName", translateType(field.tipe)))
+                    case _ =>
+                        sys.error(s"storeField: Field found that is not in Class $field")
                 }
             }
 

@@ -118,7 +118,11 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
                     case p : ConstDecl  => Constant(i, p)
                     case p : TypeDecl   => UserType(i, p)
                     case p : VarDecl    => Variable(i, p.tipe)
+                    case _ =>
+                        sys.error(s"entityFromDecl: unexpected IdnDef parent $p")
                 }
+            case _ =>
+                sys.error(s"entityFromDecl: unexpected IdnDef $n")
         }
 
     /**

@@ -778,6 +778,8 @@ trait Rewriter {
                             case Some(ti @ (tix, tiy)) =>
                                 b += ti
                                 false
+                            case Some(ti) =>
+                                sys.error(s"oneMap: got non-pair $ti")
                             case None =>
                                 b += ct
                                 true
@@ -1012,7 +1014,7 @@ trait Rewriter {
          * its children.  Terms that are not of these types are not decomposable
          * (i.e., the children will be empty).
          */
-        def unapply(t : Any) : Option[(Any, Vector[Any])] = {
+        def unapply(t : Any) : Some[(Any, Vector[Any])] = {
             t match {
                 case r : Rewritable =>
                     Some((r, r.deconstruct.toVector))
@@ -1262,6 +1264,8 @@ trait Rewriter {
         mkStrategy({
             case (x, y) =>
                 where(oncetd(term(x)))(y)
+            case _ =>
+                None
         })
 
     /**
@@ -1272,6 +1276,8 @@ trait Rewriter {
         mkStrategy({
             case (x, y) =>
                 issubterm((y, x))
+            case _ =>
+                None
         })
 
     /**

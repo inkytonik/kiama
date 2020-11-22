@@ -118,6 +118,8 @@ trait TypeAnalyser extends NameAnalyser {
                     case t : Type => t
                     case _        => unknownType
                 }
+            case _ =>
+                unknownType
         }
 
     /**
