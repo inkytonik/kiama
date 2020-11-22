@@ -64,12 +64,20 @@ class RewriterClassTests extends KiamaTests {
             countall(p) shouldBe 11
         }
 
-        test("rewrite normal classes: counting all terms using a para") {
+        test("rewrite normal classes: counting all terms of a Term using a para") {
             val countfold =
                 para[Int] {
                     case (t, cs) => 1 + cs.sum
                 }
             countfold(p) shouldBe 11
+        }
+
+        test("rewrite normal classes: counting all terms of a non-Term using para") {
+            val countfold =
+                para[Int] {
+                    case (t, cs) => 1 + cs.sum
+                }
+            countfold("Hello") shouldBe 1
         }
 
         test("constructing a Rewritable with wrong args throws exception") {
