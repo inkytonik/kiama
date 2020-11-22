@@ -2,6 +2,10 @@
 
 This is a minor release to eliminate some unused code and a dependency.
 
+### Removals
+
+* Experimental and rarely-used support for profiling and tracing attribution and rewriting has been removed, because it was implemented using macros which won't work on Scala 3.
+
 ### Enhancements
 
 * `Config`: Remove an unused runtime type tag that was needed by an earlier version of the Scallop library. This also removes our dependency on the `scala-reflect` library. (Contributed by @b-studios.)
