@@ -207,7 +207,7 @@ trait Rewriter {
      * the difference between `List[Int]` and `List[String]`.
      */
     def query[T](f : T ==> Unit) : Strategy = {
-        val anyf = f.asInstanceOf[Any ==> Any]
+        val anyf = f.asInstanceOf[===>[Any]]
         mkStrategy(
             (t : Any) => {
                 val of = anyf andThen (_ => Some(t))
@@ -245,8 +245,8 @@ trait Rewriter {
      * will be imprecise for some types. E.g., it is not possible to tell
      * the difference between `List[Int]` and `List[String]`.
      */
-    def rule[T](f : T ==> T) : Strategy = {
-        val anyf = f.asInstanceOf[Any ==> Any]
+    def rule[T](f : ===>[T]) : Strategy = {
+        val anyf = f.asInstanceOf[===>[Any]]
         val of = anyf andThen (Some(_))
         mkStrategy(
             (t : Any) =>

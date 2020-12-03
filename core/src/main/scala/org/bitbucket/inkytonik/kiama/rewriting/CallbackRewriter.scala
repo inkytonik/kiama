@@ -47,7 +47,7 @@ trait CallbackRewriter extends Rewriter {
                 }
         }
 
-    override def rule[T](f : T ==> T) : Strategy =
+    override def rule[T](f : ===>[T]) : Strategy =
         dispatch(super.rule[T](f))
 
     override def rulef(f : Any => Any) : Strategy =
