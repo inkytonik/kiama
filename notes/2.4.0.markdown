@@ -12,4 +12,6 @@ This is a minor release to eliminate some unused code and a dependency.
 
 ### Other
 
+* [Issue 6](https://github.com/inkytonik/kiama/issues/6): avoid partial function warnings in IntelliJ IDEA (aleksandr-vin).
+
 * Move to scala 2.13.4, sbt 1.3.13.
