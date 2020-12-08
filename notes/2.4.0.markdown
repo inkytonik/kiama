@@ -1,10 +1,10 @@
-[Kiama](https://github.com/inkytonik/kiama) is a Scala library for language processing including attribute grammars, term rewriting, abstract state machines and pretty printing.
+[Kiama](https://github.com/inkytonik/kiama) is a Scala library for language processing including attribute grammars, term rewriting, abstract state machines, parsing, and pretty printing.
 
 This is a minor release to eliminate some unused code and a dependency.
 
 ### Removals
 
-* Experimental and rarely-used support for profiling and tracing attribution and rewriting has been removed, because it was implemented using macros which won't work on Scala 3.
+* Experimental and rarely-used support for profiling and tracing attribution and rewriting has been removed, because it was implemented using macros which won't work on Scala 3. This change also removes the dependencies on the `dsinfo` and `dsprofile` libraries.
 
 ### Enhancements
 
