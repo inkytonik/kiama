@@ -10,7 +10,7 @@ This is a minor release to eliminate some unused code and a dependency.
 
 * `Config`: Remove an unused runtime type tag that was needed by an earlier version of the Scallop library. This also removes our dependency on the `scala-reflect` library. (Contributed by b-studios.)
 
-* [Issue 6](https://github.com/inkytonik/kiama/issues/6): avoid partial function warnings in IntelliJ IDEA (Contributed by aleksandr-vin).
+* [Issue 6](https://github.com/inkytonik/kiama/issues/6): avoid partial function warnings in IntelliJ IDEA. (Contributed by aleksandr-vin.)
 
 ### Other
 
