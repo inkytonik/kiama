@@ -136,7 +136,7 @@ val versionSettings =
 // Project configuration:
 //   - core project containing main Kiama functionality, including its tests
 //   - extras project containing utilities, including their tests and examples
-//   - kiama (root) project aggregates base, core and extras
+//   - kiama (root) project aggregates core and extras
 
 def setupProject(project : Project, projectName : String) : Project =
     project.settings(
@@ -181,7 +181,7 @@ lazy val core =
             import rewriting.Rewriter._
         """.stripMargin,
 
-        // Unidoc so we combine docs from base and core (but not extras)
+        // Unidoc so we combine docs from core (but not extras)
         Compile/doc := (ScalaUnidoc/doc).value,
         Test/doc := (TestScalaUnidoc/doc).value,
         ScalaUnidoc/unidoc/target := crossTarget.value / "api",
