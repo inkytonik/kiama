@@ -24,6 +24,7 @@ https://github.com/inkytonik
 
 ## Latest News
 
+ * Dec 23, 2020: Version 2.4.0 released
  * Dec 18, 2019: Version 2.3.0 released
  * Apr 26, 2019: Version 2.2.1 released
  * Jun 23, 2018: Move Kiama source repo to Git
