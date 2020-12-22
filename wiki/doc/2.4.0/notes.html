@@ -1,0 +1,22 @@
+<p><a href="https://github.com/inkytonik/kiama">Kiama</a> is a Scala library for language processing including attribute grammars, term rewriting, abstract state machines, parsing, and pretty printing.</p>
+
+<p>This is a minor release to eliminate some unused code and a dependency.</p>
+
+<h3>Removals</h3>
+
+<ul>
+<li>Experimental and rarely-used support for profiling and tracing attribution and rewriting has been removed, because it was implemented using macros which won't work on Scala 3. This change also removes the dependencies on the <code>dsinfo</code> and <code>dsprofile</code> libraries.</li>
+</ul>
+
+<h3>Enhancements</h3>
+
+<ul>
+<li><p><code>Config</code>: Remove an unused runtime type tag that was needed by an earlier version of the Scallop library. This also removes our dependency on the <code>scala-reflect</code> library. (Contributed by b-studios.)</p></li>
+<li><p><a href="https://github.com/inkytonik/kiama/issues/6">Issue 6</a>: avoid partial function warnings in IntelliJ IDEA. (Contributed by aleksandr-vin.)</p></li>
+</ul>
+
+<h3>Other</h3>
+
+<ul>
+<li>Move to scala 2.13.4, sbt 1.4.5.</li>
+</ul>
