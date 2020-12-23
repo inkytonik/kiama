@@ -4,7 +4,7 @@ import scalariform.formatter.preferences._
 
 // Settings for entire build
 
-ThisBuild/version := "2.4.0"
+ThisBuild/version := "2.5.0-SNAPSHOT"
 
 ThisBuild/organization := "org.bitbucket.inkytonik.kiama"
 
