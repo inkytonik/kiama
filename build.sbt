@@ -30,6 +30,7 @@ ThisBuild/scalacOptions := {
         "-unchecked",
         "-Xcheckinit",
         "-Xfatal-warnings",
+        "-Xsource:3",
         lintOption
     )
 }
