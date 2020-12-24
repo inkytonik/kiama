@@ -155,7 +155,7 @@ lazy val core =
         libraryDependencies ++=
             Seq(
                 // Caching:
-                "com.google.guava" % "guava" % "21.0"
+                "com.google.guava" % "guava" % "30.1-jre"
             ),
 
         console/initialCommands := """
