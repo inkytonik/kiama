@@ -29,7 +29,7 @@ trait Analyser extends Attribution with SymbolTable {
     /**
      * Decorators on the analysed tree.
      */
-    lazy val decorators = new Decorators(tree)
+    final lazy val decorators = new Decorators(tree)
 
     /**
      * The semantic errors for the tree.

@@ -21,7 +21,7 @@ import org.rogach.scallop.ScallopConf
 class Config(args : Seq[String]) extends ScallopConf(args) {
 
     import org.bitbucket.inkytonik.kiama.util.{FileConsole, JLineConsole, StringConsole}
-    import org.rogach.scallop.{ArgType, ValueConverter}
+    import org.rogach.scallop.{ArgType, stringListConverter, ValueConverter}
 
     /**
      * The string emitter to use if a '--Koutput string' option is seen.

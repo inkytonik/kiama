@@ -2,6 +2,10 @@
 
 This is a minor release to FIXME.
 
+### Enhancements
+
+* Add build support for Scala 3.
+
 ### Other
 
 * Drop support for Scala 2.10 since some of our dependencies are no longer published for that version.

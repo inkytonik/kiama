@@ -21,6 +21,8 @@ import org.bitbucket.inkytonik.kiama.util.{
  * Configuration for the PicoJava compiler.
  */
 class PicojavaConfig(args : Seq[String]) extends Config(args) {
+    import org.rogach.scallop.flagConverter
+
     lazy val obfuscate = opt[Boolean]("obfuscate", descr = "Obfuscate the code")
 }
 

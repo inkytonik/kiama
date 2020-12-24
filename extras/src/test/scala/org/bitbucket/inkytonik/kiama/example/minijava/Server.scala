@@ -280,8 +280,6 @@ trait Server {
                     kindDeclToDoc(mjent.productPrefix, mjent.decl)
                 case p : Product =>
                     specialEntityToDoc(p.productPrefix)
-                case _ =>
-                    nest(line <> link(idndef, "???" <+> idn))
             }
 
         }

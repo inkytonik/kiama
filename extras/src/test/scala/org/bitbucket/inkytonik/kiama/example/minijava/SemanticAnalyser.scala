@@ -343,10 +343,6 @@ class SemanticAnalyser(val tree : MiniJavaTree) extends Attribution {
                         UnknownType()
                 }
 
-            // Default: we know nothing
-            case _ =>
-                UnknownType()
-
         }
 
     /**

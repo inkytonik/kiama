@@ -23,6 +23,8 @@ import org.bitbucket.inkytonik.kiama.util.{
  * Configuration for the Obr compiler.
  */
 class ObrConfig(args : Seq[String]) extends Config(args) {
+    import org.rogach.scallop.flagConverter
+
     lazy val targetPrint = opt[Boolean]("target", descr = "Print the target tree")
     lazy val riscPrint = opt[Boolean]("risc", 'a', descr = "Print the RISC tree")
     lazy val envPrint = opt[Boolean]("env", 's', descr = "Print the global environment")

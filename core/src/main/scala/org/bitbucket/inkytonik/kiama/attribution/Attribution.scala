@@ -348,7 +348,8 @@ class Attribution extends AttributionCommon {
 
                     IN_CIRCLE = true
                     visited.add(t)
-                    do {
+                    CHANGE = true
+                    while (CHANGE) {
 
                         // Evaluate the attribute occurrence once. Compare the value that is
                         // computed (newu) with the previous value (u). If they are the same,
@@ -363,7 +364,7 @@ class Attribution extends AttributionCommon {
                             memo.put(t, newu)
                         }
 
-                    } while (CHANGE)
+                    }
 
                     // The value of this attribute at t has been computed and cached.
                     computed.add(t)

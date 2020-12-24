@@ -45,6 +45,8 @@ trait Driver {
  * effect for some of the drivers.
  */
 class Oberon0Config(args : Seq[String]) extends Config(args) {
+    import org.rogach.scallop.flagConverter
+
     lazy val challenge = opt[Boolean]("challenge", 'x', descr = "Run in LDTA challenge mode")
     lazy val astPrint = opt[Boolean]("astPrint", 'a', descr = "Print the abstract syntax tree")
     lazy val astPrettyPrint = opt[Boolean]("astPrettyPrint", 'A', descr = "Pretty-print the abstract syntax tree")

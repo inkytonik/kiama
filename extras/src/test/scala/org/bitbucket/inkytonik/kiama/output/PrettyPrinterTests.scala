@@ -403,7 +403,7 @@ class PrettyPrinterTests extends org.bitbucket.inkytonik.kiama.util.PrettyPrinte
     }
 
     test("pretty any-print empty array") {
-        layout(any(Array())) shouldBe "Array()"
+        layout(any(Array[Int]())) shouldBe "Array()"
     }
 
     test("pretty any-print singleton array") {

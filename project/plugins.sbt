@@ -6,6 +6,7 @@ addSbtPlugin("com.eed3si9n" % "sbt-unidoc" % "0.4.3")
 addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.8.3")
 addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.1.2-1")
 addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.15.0")
+addSbtPlugin("ch.epfl.lamp" % "sbt-dotty" % "0.4.6")
 
 // Optional plugins:
 

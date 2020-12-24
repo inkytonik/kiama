@@ -143,7 +143,7 @@ class SemanticAnalyser(tree : GrammarTree) extends Attribution {
     /**
      * Non-terminal applied occurrences in a tree.
      */
-    val ntuses =
+    val ntuses : Grammar => List[NonTermUse] =
         attr(collect[List, NonTermUse] {
             case n : NonTermUse =>
                 n

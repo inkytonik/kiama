@@ -163,7 +163,13 @@ abstract class Machine(val name : String, emitter : Emitter = new OutputEmitter)
      * A parameterised item of abstract state machine state holding values
      * of type `U`, associated with parameters of type `T`.
      */
-    class ParamState[T, U](val psname : String) extends State[MutableMap[T, U]](psname) {
+    class ParamState[T, U](val sname : String) {
+
+        /**
+         * The value of this item of state.  `None` means undefined.
+         */
+        protected var _value : Option[MutableMap[T, U]] =
+            None
 
         /**
          * Is this state item undefined at `t` or not ?
@@ -211,7 +217,7 @@ abstract class Machine(val name : String, emitter : Emitter = new OutputEmitter)
             }
 
         /**
-         * Change this item of state to the value u at parameter `t`.  The
+         * Change this item of state to the value `u` at parameter `t`.  The
          * change occurs immediately.
          */
         def change(t : T, u : U) : Unit = {
@@ -220,6 +226,16 @@ abstract class Machine(val name : String, emitter : Emitter = new OutputEmitter)
                 case Some(m) => m += ((t, u))
             }
         }
+
+        /**
+         * Return the keys defined in this state. No keys are defined if
+         * this state item is not defined.
+         */
+        def keys : Iterable[T] =
+            _value match {
+                case None    => List()
+                case Some(m) => m.keys
+            }
 
     }
 

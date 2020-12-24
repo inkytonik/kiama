@@ -26,7 +26,7 @@ trait Source {
     /**
      * The content of the source.
      */
-    val content : String
+    def content : String
 
     /**
      * A map of line offsets into the source character sequence and a

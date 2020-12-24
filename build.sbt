@@ -9,7 +9,7 @@ ThisBuild/version := "2.5.0-SNAPSHOT"
 ThisBuild/organization := "org.bitbucket.inkytonik.kiama"
 
 ThisBuild/scalaVersion := "2.13.4"
-ThisBuild/crossScalaVersions := Seq("2.13.4", "2.12.12", "2.11.12")
+ThisBuild/crossScalaVersions := Seq("3.0.0-M2", "2.13.4", "2.12.12", "2.11.12")
 
 ThisBuild/scalacOptions := {
     // Turn on all lint warnings, except:
@@ -20,17 +20,29 @@ ThisBuild/scalacOptions := {
             "-Xlint:-stars-align,-nonlocal-return,_"
         else
             "-Xlint:-stars-align,_"
-    Seq(
-        "-deprecation",
-        "-feature",
-        "-language:higherKinds",
-        "-sourcepath", baseDirectory.value.getAbsolutePath,
-        "-unchecked",
-        "-Xcheckinit",
-        "-Xfatal-warnings",
-        "-Xsource:3",
-        lintOption
-    )
+    if (scalaVersion.value.startsWith("3"))
+        Seq(
+            "-deprecation",
+            "-feature",
+            "-language:higherKinds",
+            "-sourcepath", baseDirectory.value.getAbsolutePath,
+            "-unchecked",
+            "-Xfatal-warnings",
+            "-Xmigration"
+            // FIXME: should we have a -Xlint replacement?
+        )
+    else
+        Seq(
+            "-deprecation",
+            "-feature",
+            "-language:higherKinds",
+            "-sourcepath", baseDirectory.value.getAbsolutePath,
+            "-unchecked",
+            "-Xcheckinit",
+            "-Xfatal-warnings",
+            "-Xsource:3",
+            lintOption
+        )
 }
 
 ThisBuild/resolvers ++=
@@ -60,7 +72,7 @@ val commonSettings =
                     Seq(sourceDir / "scala-2.11", sourceDir / "scala-2.11+", sourceDir / "scala-2.12-")
                 case Some((2, 12)) =>
                     Seq(sourceDir / "scala-2.not11", sourceDir / "scala-2.11+", sourceDir / "scala-2.12-")
-                case Some((2, 13)) =>
+                case Some((2, 13) | (3, 0)) =>
                     Seq(sourceDir / "scala-2.not11", sourceDir / "scala-2.11+", sourceDir / "scala-2.13")
                 case version =>
                     sys.error(s"unexpected Scala version $version")

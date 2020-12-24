@@ -159,7 +159,7 @@ trait Rewriter {
         lazy val strat = s
 
         val cache =
-            CacheBuilder.newBuilder.build(
+            CacheBuilder.newBuilder.build[AnyRef, Option[Any]](
                 CacheLoader.from(
                     new Function[AnyRef, Option[Any]] {
                         def apply(t : AnyRef) : Option[Any] =

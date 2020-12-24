@@ -23,7 +23,7 @@ import org.bitbucket.inkytonik.kiama.attribution.Attribution
 
 trait PredefinedTypes {
 
-    self : Attribution with NameResolution =>
+    self : Attribution with NameResolution with TypeAnalyser with NullObjects =>
 
     import PicoJavaTree._
 
