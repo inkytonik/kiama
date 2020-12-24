@@ -9,16 +9,14 @@ ThisBuild/version := "2.5.0-SNAPSHOT"
 ThisBuild/organization := "org.bitbucket.inkytonik.kiama"
 
 ThisBuild/scalaVersion := "2.13.4"
-ThisBuild/crossScalaVersions := Seq("2.13.4", "2.12.12", "2.11.12", "2.10.7")
+ThisBuild/crossScalaVersions := Seq("2.13.4", "2.12.12", "2.11.12")
 
 ThisBuild/scalacOptions := {
     // Turn on all lint warnings, except:
     //  - stars-align: incorrectly reports problems if pattern matching of
     //    unapplySeq extractor doesn't match sequence directly
     val lintOption =
-        if (scalaVersion.value.startsWith("2.10"))
-            "-Xlint"
-        else if (scalaVersion.value.startsWith("2.13"))
+        if (scalaVersion.value.startsWith("2.13"))
             "-Xlint:-stars-align,-nonlocal-return,_"
         else
             "-Xlint:-stars-align,_"
@@ -58,8 +56,6 @@ val commonSettings =
         unmanagedSourceDirectories in Compile ++= {
             val sourceDir = (sourceDirectory in Compile).value
             CrossVersion.partialVersion(scalaVersion.value) match {
-                case Some((2, 10)) =>
-                    Seq(sourceDir / "scala-2.not11", sourceDir / "scala-2.12-")
                 case Some((2, 11)) =>
                     Seq(sourceDir / "scala-2.11", sourceDir / "scala-2.11+", sourceDir / "scala-2.12-")
                 case Some((2, 12)) =>
@@ -73,9 +69,10 @@ val commonSettings =
 
         libraryDependencies ++=
             Seq(
-                "org.scalacheck" %% "scalacheck" % "1.14.3" % "test",
-                "org.scalatest" %% "scalatest" % "3.1.0" % "test",
-                "org.scalatestplus" %% "scalacheck-1-14" % "3.1.0.0" % "test"
+                "org.scalacheck" %% "scalacheck" % "1.15.2" % "test",
+                "org.scalatest" %% "scalatest-funsuite" % "3.2.3" % "test",
+                "org.scalatest" %% "scalatest-shouldmatchers" % "3.2.3" % "test",
+                "org.scalatestplus" %% "scalacheck-1-15" % "3.2.3.0" % "test"
             ),
 
         // Formatting
@@ -120,20 +117,6 @@ val commonSettings =
         )
     )
 
-val versionSettings =
-    Seq(
-        libraryDependencies ++= {
-            CrossVersion.partialVersion(scalaVersion.value) match {
-                case Some((2, 10)) =>
-                    // Avoids "Class javax.annotation.Nullable not found - continuing with a stub."
-                    // and similar with 2.10 compiler
-                    Seq("com.google.code.findbugs" % "jsr305" % "3.0.2")
-                case _ =>
-                    Seq()
-            }
-        }
-    )
-
 // Project configuration:
 //   - core project containing main Kiama functionality, including its tests
 //   - extras project containing utilities, including their tests and examples
@@ -152,8 +135,6 @@ def setupSubProject(project : Project, projectName : String) : Project =
         ScalaUnidocPlugin
     ).settings(
         commonSettings : _*
-    ).settings(
-        versionSettings : _*
     )
 
 val noPublishSettings =

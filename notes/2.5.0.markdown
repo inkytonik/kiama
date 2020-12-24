@@ -1,0 +1,9 @@
+[Kiama](https://github.com/inkytonik/kiama) is a Scala library for language processing including attribute grammars, term rewriting, abstract state machines, parsing, and pretty printing.
+
+This is a minor release to FIXME.
+
+### Other
+
+* Drop support for Scala 2.10 since some of our dependencies are no longer published for that version.
+
+* Move to scalatest 3.2.3, scalacheck 1.15.2. Includes only depending on the ScalaTest modules that we use.
