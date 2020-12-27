@@ -12,4 +12,4 @@ This is a minor release to FIXME.
 
 * Move to scalatest 3.2.3, scalacheck 1.15.2. Includes only depending on the ScalaTest modules that we use.
 
-* Move to Guava 30.1, Scallop 4.0.1.
+* Move to sbt 1.4.6, Guava 30.1, Scallop 4.0.1.
