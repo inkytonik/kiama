@@ -167,7 +167,7 @@ lazy val core =
         libraryDependencies ++=
             Seq(
                 // Caching:
-                "com.google.guava" % "guava" % "30.1-jre"
+                "com.google.guava" % "guava" % "27.1-jre"
             ),
 
         console/initialCommands := """
@@ -200,8 +200,8 @@ lazy val extras =
                 // Command-line handling:
                 "org.rogach" %% "scallop" % "4.0.1",
                 // Language server protocol:
-                "org.eclipse.lsp4j" % "org.eclipse.lsp4j" % "0.8.1",
-                "com.google.code.gson" % "gson" % "2.7",
+                "org.eclipse.lsp4j" % "org.eclipse.lsp4j" % "0.10.0",
+                "com.google.code.gson" % "gson" % "2.8.2",
                 // REPLs:
                 "jline" % "jline" % "2.14.6"
             ),
