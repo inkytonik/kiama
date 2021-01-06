@@ -22,7 +22,7 @@ them manually when building from source.
 
   * Version 2.4.0 for Scala 2.10, 2.11, 2.12 and 2.13 (December 23, 2020)
     * [Release notes](doc/2.4.0/notes.html)
-    * [2.3.0 API documentation](http://www.javadoc.io/doc/org.bitbucket.inkytonik.kiama/kiama_2.13/2.4.0)
+    * [2.4.0 API documentation](http://www.javadoc.io/doc/org.bitbucket.inkytonik.kiama/kiama_2.13/2.4.0)
     * Compatible tools and libraries:
       * [Scala 2.10.x/2.11.x/2.12.x/2.13.x](http://www.scala-lang.org)
       * [Guava collections 21.0](https://github.com/google/guava)
