@@ -15,6 +15,7 @@ ThisBuild/scalacOptions := {
     // Turn on all lint warnings, except:
     //  - stars-align: incorrectly reports problems if pattern matching of
     //    unapplySeq extractor doesn't match sequence directly
+    //  - non-local-return: sometimes we just prefer to do this
     val lintOption =
         if (scalaVersion.value.startsWith("2.13"))
             "-Xlint:-stars-align,-nonlocal-return,_"
