@@ -35,11 +35,10 @@ object Filenames {
             else
                 ""
 
-        for (i <- 0 until prefix.length) {
-            if ((i == filename.length) || (filename(i) != prefix(i)))
-                return filename
-        }
-        dropIgnoreSep(prefix.length)
+        if (filename.startsWith(prefix))
+            dropIgnoreSep(prefix.length)
+        else
+            filename
 
     }
 

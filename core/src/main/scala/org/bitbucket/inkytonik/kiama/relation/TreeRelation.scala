@@ -75,18 +75,20 @@ object TreeRelation {
      * Return whether this node is a leaf node or not.
      */
     def isLeaf[T <: Product](t : T) : Boolean = {
-        for (desc <- t.productIterator) {
-            desc match {
+
+        def isOkLeafChild(a : Any) : Boolean =
+            a match {
                 case _ : Option[_] | _ : Either[_, _] | _ : Tuple1[_] |
                     _ : Tuple2[_, _] | _ : Tuple3[_, _, _] | _ : Tuple4[_, _, _, _] =>
-                // Do nothing
+                    true
                 case _ : Product =>
-                    return false
+                    false
                 case _ =>
-                // Do nothing
+                    true
             }
-        }
-        true
+
+        t.productIterator.forall(isOkLeafChild)
+
     }
 
     /**
