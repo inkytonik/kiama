@@ -123,7 +123,7 @@ class NominalRewriter extends Rewriter {
      * returning the components after freshening the bound name.
      */
     object Binding {
-        def unapply(b : Bind) : Option[(Name, Any)] = {
+        def unapply(b : Bind) : Some[(Name, Any)] = {
             val n = genName(b.name)
             Some((n, swap((n, b.name))(b.term)))
         }

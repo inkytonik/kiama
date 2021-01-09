@@ -113,7 +113,7 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp, LambdaConfig] {
      * Extractor for commands, splits the line into separate words.
      */
     object Command {
-        def unapply(line : String) : Option[Array[String]] = {
+        def unapply(line : String) : Some[Array[String]] = {
             Some(line split ' ')
         }
     }

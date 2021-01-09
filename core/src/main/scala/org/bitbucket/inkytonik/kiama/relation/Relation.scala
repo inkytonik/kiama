@@ -78,7 +78,7 @@ class Relation[T, U](
      */
     object pair {
 
-        def unapplySeq(t : T) : Option[(T, Seq[U])] =
+        def unapplySeq(t : T) : Some[(T, Seq[U])] =
             Some((t, apply(t)))
 
     }
@@ -133,7 +133,7 @@ class Relation[T, U](
      * matching works, such as `case relation(a, _*)` to match if there is
      * at least one element in the image and bind the first element to `a`.
      */
-    def unapplySeq(t : T) : Option[Vector[U]] =
+    def unapplySeq(t : T) : Some[Vector[U]] =
         Some(apply(t))
 
 }

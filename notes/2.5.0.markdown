@@ -8,6 +8,8 @@ This is a minor release to FIXME, dropping support for Scala 2.10.
 
 ### Enhancements
 
+* Irrefutable extractor patterns now return `Some` instead of `Option`. Most notably, `Relation.unapplySeq` now returns `Some[Vector[U]]` instead of `Option[Vector[U]]`. Similarly for `Relation.pair.unapplySeq`.
+
 * Add build support for Scala 3.
 
 ### Other
