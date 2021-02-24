@@ -9,7 +9,7 @@ ThisBuild/version := "2.5.0-SNAPSHOT"
 ThisBuild/organization := "org.bitbucket.inkytonik.kiama"
 
 ThisBuild/scalaVersion := "2.13.5"
-ThisBuild/crossScalaVersions := Seq("3.0.0-RC1", "2.13.5", "2.12.13", "2.11.12")
+ThisBuild/crossScalaVersions := Seq("3.0.0-M2", "2.13.5", "2.12.13", "2.11.12")
 
 ThisBuild/scalacOptions := {
     // Turn on all lint warnings, except:
@@ -83,9 +83,9 @@ val commonSettings =
         libraryDependencies ++=
             Seq(
                 "org.scalacheck" %% "scalacheck" % "1.15.2" % "test",
-                "org.scalatest" %% "scalatest-funsuite" % "3.2.4" % "test",
-                "org.scalatest" %% "scalatest-shouldmatchers" % "3.2.4" % "test",
-                "org.scalatestplus" %% "scalacheck-1-15" % "3.2.4.0" % "test"
+                "org.scalatest" %% "scalatest-funsuite" % "3.2.3" % "test",
+                "org.scalatest" %% "scalatest-shouldmatchers" % "3.2.3" % "test",
+                "org.scalatestplus" %% "scalacheck-1-15" % "3.2.3.0" % "test"
             ),
 
         // Formatting
