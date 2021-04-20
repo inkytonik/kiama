@@ -172,17 +172,10 @@ Kiama 1.x and 2.x:
 
 ## Mailing lists
 
-There are also two Google Groups for Kiama:
-
 * kiama (General announcements and discussions)
 
     * `http://groups.google.com/group/kiama`
     * `kiama@googlegroups.com`
-
-* kiama-commit (Commit messages and build problems)
-
-    * `http://groups.google.com/group/kiama-commit`
-    * `kiama-commit@googlegroups.com`
 
 ## Acknowledgements
 
