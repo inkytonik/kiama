@@ -10,8 +10,6 @@ Kiama is a Scala library for language processing.
 In the Kiama project we are investigating embedding of language processing formalisms such as grammars, parsers, rewriters and analysers into general-purpose programming languages.
 Learn about Kiama by reading our [research papers](https://github.com/inkytonik/kiama/blob/master/wiki/Research.md) starting with [Lightweight Language Processing in Kiama](https://doi.org/10.1007/978-3-642-18023-1_12).
 
-Kiama is a project of the Programming Languages and Verification Research Group in the Department of Computing at Macquarie University and is led by Tony Sloane (inkytonik on GMail and Twitter). Other participants at Macquarie are Dominic Verity, Matthew Roberts and the PLV group students.
-
 IMPORTANT NOTE: Kiama is a research project, so many details will change. Consult with us before you rely on it for serious work. We make no guarantees about the features or performance of the Kiama library if you do choose to use it.
 
 ## Contact
