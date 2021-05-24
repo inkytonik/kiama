@@ -16,4 +16,4 @@ This is a minor release to FIXME, dropping support for Scala 2.10.
 
 * Move to scalatest 3.2.3, scalacheck 1.15.2. Includes only depending on the ScalaTest modules that we use.
 
-* Move to Scala 2.12.13, sbt 1.4.6, Guava 30.1, Scallop 4.0.1.
+* Move to Scala 2.12.13, sbt 1.5.2, Guava 30.1, Scallop 4.0.1.
