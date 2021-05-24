@@ -77,8 +77,8 @@ class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
     import LambdaTree._
 
     lazy val exp : PackratParser[Exp] =
-        exp ~ factor ^^ App |
-            ("\\" ~> idn) ~ ("." ~> exp) ^^ Lam |
+        exp ~ factor ^^ App.apply |
+            ("\\" ~> idn) ~ ("." ~> exp) ^^ Lam.apply |
             factor |
             failure("expression expected")
 
@@ -89,7 +89,7 @@ class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
         "[0-9]+".r ^^ (s => Num(s.toInt))
 
     lazy val variable =
-        idn ^^ Var
+        idn ^^ Var.apply
 
     lazy val idn =
         "[a-zA-Z][a-zA-Z0-9]*".r

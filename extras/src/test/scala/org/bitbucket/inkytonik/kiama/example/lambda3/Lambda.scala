@@ -109,18 +109,18 @@ class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
     import org.bitbucket.inkytonik.kiama.rewriting.NominalTree.{Bind, Name, Trans}
 
     lazy val query : Parser[Query[_]] =
-        exp ~ ("===" ~> exp) ^^ EquivQuery |
-            ("fv" ~> exp) ^^ FreeNamesQuery |
-            name ~ ("#" ~> exp) ^^ FreshQuery |
-            ("[" ~> name) ~ ("-> " ~> exp <~ "]") ~ exp ^^ SubstQuery |
-            trans ~ exp ^^ SwapQuery |
-            exp ^^ EvalQuery
+        exp ~ ("===" ~> exp) ^^ EquivQuery.apply |
+            ("fv" ~> exp) ^^ FreeNamesQuery.apply |
+            name ~ ("#" ~> exp) ^^ FreshQuery.apply |
+            ("[" ~> name) ~ ("-> " ~> exp <~ "]") ~ exp ^^ SubstQuery.apply |
+            trans ~ exp ^^ SwapQuery.apply |
+            exp ^^ EvalQuery.apply
 
     lazy val trans : Parser[Trans] =
         "(" ~> name ~ ("<->" ~> name) <~ ")"
 
     lazy val exp : PackratParser[Exp] =
-        exp ~ factor ^^ App |
+        exp ~ factor ^^ App.apply |
             ("\\" ~> name) ~ ("." ~> exp) ^^ {
                 case n ~ e => Lam(Bind(n, e))
             } |
@@ -134,7 +134,7 @@ class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
         "[0-9]+".r ^^ (s => Num(s.toInt))
 
     lazy val variable =
-        name ^^ Var
+        name ^^ Var.apply
 
     lazy val name =
         "[a-zA-Z]+[0-9]+".r ^^ (

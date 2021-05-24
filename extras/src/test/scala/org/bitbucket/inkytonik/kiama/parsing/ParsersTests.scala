@@ -37,27 +37,27 @@ class ParsersTests extends ParseTests {
         parsers.regex("[0-9]+".r) ^^ (s => Node(s.toInt))
 
     test("arity 2 case class contructors can be used as parser actions") {
-        val p = node ~ node ^^ Tup2
+        val p = node ~ node ^^ Tup2.apply
         p("1 2") should parseTo(Tup2(Node(1), Node(2)))
     }
 
     test("arity 3 case class contructors can be used as parser actions") {
-        val p = node ~ node ~ node ^^ Tup3
+        val p = node ~ node ~ node ^^ Tup3.apply
         p("1 2 3") should parseTo(Tup3(Node(1), Node(2), Node(3)))
     }
 
     test("arity 4 case class contructors can be used as parser actions") {
-        val p = node ~ node ~ node ~ node ^^ Tup4
+        val p = node ~ node ~ node ~ node ^^ Tup4.apply
         p("1 2 3 4") should parseTo(Tup4(Node(1), Node(2), Node(3), Node(4)))
     }
 
     test("arity 5 case class contructors can be used as parser actions") {
-        val p = node ~ node ~ node ~ node ~ node ^^ Tup5
+        val p = node ~ node ~ node ~ node ~ node ^^ Tup5.apply
         p("1 2 3 4 5") should parseTo(Tup5(Node(1), Node(2), Node(3), Node(4), Node(5)))
     }
 
     test("arity 6 case class contructors can be used as parser actions") {
-        val p = node ~ node ~ node ~ node ~ node ~ node ^^ Tup6
+        val p = node ~ node ~ node ~ node ~ node ~ node ^^ Tup6.apply
         p("1 2 3 4 5 6") should parseTo(Tup6(Node(1), Node(2), Node(3), Node(4), Node(5), Node(6)))
     }
 

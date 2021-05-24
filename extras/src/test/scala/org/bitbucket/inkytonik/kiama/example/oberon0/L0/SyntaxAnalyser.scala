@@ -20,7 +20,6 @@ import org.bitbucket.inkytonik.kiama.util.Positions
 class SyntaxAnalyser(positions : Positions) extends base.SyntaxAnalyser(positions) {
 
     import base.source.{Declaration, Expression, Statement}
-    import scala.language.postfixOps
     import source.{
         AddExp,
         AndExp,
@@ -48,7 +47,7 @@ class SyntaxAnalyser(positions : Positions) extends base.SyntaxAnalyser(position
     }
 
     override def declarationsDef : Parser[Vector[Declaration]] =
-        (constdeclsection?) ~ (typedeclsection?) ~ (vardeclsection?) ^^ {
+        opt(constdeclsection) ~ opt(typedeclsection) ~ opt(vardeclsection) ^^ {
             case oc ~ ot ~ ov =>
                 Vector(oc, ot, ov).flatten.flatten
         }
@@ -57,19 +56,19 @@ class SyntaxAnalyser(positions : Positions) extends base.SyntaxAnalyser(position
         "CONST" ~> rep(constdecl)
 
     lazy val constdecl =
-        (idndef <~ "=") ~ (expression <~ ";") ^^ ConstDecl
+        (idndef <~ "=") ~ (expression <~ ";") ^^ ConstDecl.apply
 
     lazy val typedeclsection =
         "TYPE" ~> rep(typedecl)
 
     lazy val typedecl =
-        (idndef <~ "=") ~ (typedef <~ ";") ^^ TypeDecl
+        (idndef <~ "=") ~ (typedef <~ ";") ^^ TypeDecl.apply
 
     lazy val vardeclsection =
         "VAR" ~> rep(vardecl)
 
     lazy val vardecl =
-        (idndeflist <~ ":") ~ (typedef <~ ";") ^^ VarDecl
+        (idndeflist <~ ":") ~ (typedef <~ ";") ^^ VarDecl.apply
 
     lazy val idndeflist =
         rep1sep(idndef, ",")
@@ -81,54 +80,54 @@ class SyntaxAnalyser(positions : Positions) extends base.SyntaxAnalyser(position
         namedtypedef
 
     lazy val namedtypedef =
-        idnuse ^^ NamedType
+        idnuse ^^ NamedType.apply
 
     override def statementDef : Parser[Statement] =
         assignment |
             super.statementDef
 
     lazy val assignment =
-        lhs ~ (":=" ~> expression) ^^ Assignment
+        lhs ~ (":=" ~> expression) ^^ Assignment.apply
 
     lazy val lhs =
         lhsDef
 
     def lhsDef : PackratParser[Expression] =
-        idnuse ^^ IdnExp
+        idnuse ^^ IdnExp.apply
 
     lazy val expression : PackratParser[Expression] =
-        simpexp ~ ("=" ~> simpexp) ^^ EqExp |
-            simpexp ~ ("#" ~> simpexp) ^^ NeExp |
-            simpexp ~ ("<" ~> simpexp) ^^ LtExp |
-            simpexp ~ ("<=" ~> simpexp) ^^ LeExp |
-            simpexp ~ (">" ~> simpexp) ^^ GtExp |
-            simpexp ~ (">=" ~> simpexp) ^^ GeExp |
+        simpexp ~ ("=" ~> simpexp) ^^ EqExp.apply |
+            simpexp ~ ("#" ~> simpexp) ^^ NeExp.apply |
+            simpexp ~ ("<" ~> simpexp) ^^ LtExp.apply |
+            simpexp ~ ("<=" ~> simpexp) ^^ LeExp.apply |
+            simpexp ~ (">" ~> simpexp) ^^ GtExp.apply |
+            simpexp ~ (">=" ~> simpexp) ^^ GeExp.apply |
             simpexp
 
     lazy val simpexp : PackratParser[Expression] =
-        simpexp ~ ("+" ~> term) ^^ AddExp |
-            simpexp ~ ("-" ~> term) ^^ SubExp |
-            simpexp ~ ("OR" ~> term) ^^ OrExp |
+        simpexp ~ ("+" ~> term) ^^ AddExp.apply |
+            simpexp ~ ("-" ~> term) ^^ SubExp.apply |
+            simpexp ~ ("OR" ~> term) ^^ OrExp.apply |
             term
 
     lazy val term : PackratParser[Expression] =
-        term ~ ("*" ~> factor) ^^ MulExp |
-            term ~ ("DIV" ~> factor) ^^ DivExp |
-            term ~ ("MOD" ~> factor) ^^ ModExp |
-            term ~ ("&" ~> factor) ^^ AndExp |
+        term ~ ("*" ~> factor) ^^ MulExp.apply |
+            term ~ ("DIV" ~> factor) ^^ DivExp.apply |
+            term ~ ("MOD" ~> factor) ^^ ModExp.apply |
+            term ~ ("&" ~> factor) ^^ AndExp.apply |
             factor
 
     lazy val factor : PackratParser[Expression] =
         intexp |
             lhs |
             "+" ~> factor |
-            "-" ~> factor ^^ NegExp |
-            "~" ~> factor ^^ NotExp |
+            "-" ~> factor ^^ NegExp.apply |
+            "~" ~> factor ^^ NotExp.apply |
             "(" ~> expression <~ ")" |
             failure("expression expected")
 
     lazy val intexp =
-        constrainedInt ^^ IntExp
+        constrainedInt ^^ IntExp.apply
 
     override def keywordStrings : List[String] =
         "CONST" +: "DIV" +: "MOD" +: "OR" +: "TYPE" +: "VAR" +: super.keywordStrings

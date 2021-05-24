@@ -135,7 +135,7 @@ class Interpreter {
                 case TermGoal(l) =>
                     for (clause <- clauses) {
                         val c = rename(clause)
-                        val bdygoals = c.bdy map TermGoal
+                        val bdygoals = c.bdy map TermGoal.apply
                         glstack.push(UnifyGoal(l, c.hd) +: (bdygoals ++ gl.tail))
                     }
 

@@ -30,31 +30,31 @@ class SyntaxAnalyser(positions : Positions) extends L1.SyntaxAnalyser(positions)
 
     lazy val forStatement =
         "FOR" ~> forVar ~ (":=" ~> expression) ~ ("TO" ~> expression) ~ step ~
-            ("DO" ~> statementSequence <~ "END") ^^ ForStatement
+            ("DO" ~> statementSequence <~ "END") ^^ ForStatement.apply
 
     lazy val forVar =
-        idnuse ^^ IdnExp
+        idnuse ^^ IdnExp.apply
 
     lazy val step =
         "BY" ~> expression ^^ (e => Some(e)) |
             success(None)
 
     lazy val caseStatement =
-        ("CASE" ~> expression <~ "OF") ~ cases ~ optelse <~ "END" ^^ CaseStatement
+        ("CASE" ~> expression <~ "OF") ~ cases ~ optelse <~ "END" ^^ CaseStatement.apply
 
     lazy val cases =
         rep1sep(kase, "|") |
             failure("clause expected")
 
     lazy val kase =
-        conditions ~ (":" ~> statementSequence) ^^ Case
+        conditions ~ (":" ~> statementSequence) ^^ Case.apply
 
     lazy val conditions =
         rep1sep(condition, ",")
 
     lazy val condition =
-        expression ~ (".." ~> expression) ^^ MinMaxCond |
-            expression ^^ ValCond
+        expression ~ (".." ~> expression) ^^ MinMaxCond.apply |
+            expression ^^ ValCond.apply
 
     override def keywordStrings : List[String] =
         "BY" +: "CASE" +: "FOR" +: "OF" +: "STEP" +: "TO" +: super.keywordStrings

@@ -23,7 +23,7 @@ class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
     import source.{Block, Declaration, EmptyStmt, IdnDef, IdnUse, ModuleDecl, Statement}
 
     lazy val moduledecl =
-        "MODULE" ~> (idndef <~ ";") ~ block ~ (idnuse <~ ".") ^^ ModuleDecl
+        "MODULE" ~> (idndef <~ ";") ~ block ~ (idnuse <~ ".") ^^ ModuleDecl.apply
 
     // Statement sequences produce blocks, which is not strictly necessary
     // for the source language but it makes transformation easier since
@@ -60,10 +60,10 @@ class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
         success(EmptyStmt())
 
     lazy val idndef =
-        ident ^^ IdnDef
+        ident ^^ IdnDef.apply
 
     lazy val idnuse =
-        ident ^^ IdnUse
+        ident ^^ IdnUse.apply
 
     def keywordStrings : List[String] =
         List("BEGIN", "END", "MODULE")

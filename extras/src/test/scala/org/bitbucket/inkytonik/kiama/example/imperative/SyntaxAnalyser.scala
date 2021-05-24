@@ -20,32 +20,31 @@ import org.bitbucket.inkytonik.kiama.util.Positions
 class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
 
     import ImperativeTree._
-    import scala.language.postfixOps
 
     lazy val stmt : Parser[Stmt] =
         ";" ^^ (_ => Null()) | sequence | asgnStmt | whileStmt
 
     lazy val asgnStmt =
-        variable ~ ("=" ~> exp) <~ ";" ^^ Asgn
+        variable ~ ("=" ~> exp) <~ ";" ^^ Asgn.apply
 
     lazy val whileStmt =
-        ("while" ~> "(" ~> exp <~ ")") ~ stmt ^^ While
+        ("while" ~> "(" ~> exp <~ ")") ~ stmt ^^ While.apply
 
     lazy val sequence =
-        "{" ~> (stmt*) <~ "}" ^^ Seqn
+        "{" ~> rep(stmt) <~ "}" ^^ Seqn.apply
 
     lazy val exp : PackratParser[Exp] =
-        exp ~ ("+" ~> term) ^^ Add |
-            exp ~ ("-" ~> term) ^^ Sub |
+        exp ~ ("+" ~> term) ^^ Add.apply |
+            exp ~ ("-" ~> term) ^^ Sub.apply |
             term
 
     lazy val term : PackratParser[Exp] =
-        term ~ ("*" ~> factor) ^^ Mul |
-            term ~ ("/" ~> factor) ^^ Div |
+        term ~ ("*" ~> factor) ^^ Mul.apply |
+            term ~ ("/" ~> factor) ^^ Div.apply |
             factor
 
     lazy val factor : Parser[Exp] =
-        double | integer | variable | "-" ~> exp ^^ Neg | "(" ~> exp <~ ")"
+        double | integer | variable | "-" ~> exp ^^ Neg.apply | "(" ~> exp <~ ")"
 
     lazy val double =
         """[0-9]+\.[0-9]+""".r ^^ (s => Num(s.toDouble))
@@ -54,7 +53,7 @@ class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
         "[0-9]+".r ^^ (s => Num(s.toInt))
 
     lazy val variable =
-        idn ^^ Var
+        idn ^^ Var.apply
 
     lazy val idn =
         not(keyword) ~> "[a-zA-Z][a-zA-Z0-9]*".r

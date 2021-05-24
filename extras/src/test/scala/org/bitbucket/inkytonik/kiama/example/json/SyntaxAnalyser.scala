@@ -25,7 +25,7 @@ class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
         jobject | jarray | jstring | jnumber | jtrue | jfalse | jnull
 
     lazy val jobject =
-        "{" ~> repsep(jpair, ",") <~ "}" ^^ JObject
+        "{" ~> repsep(jpair, ",") <~ "}" ^^ JObject.apply
 
     lazy val jpair =
         jname ~ (":" ~> jvalue) ^^ {
@@ -33,7 +33,7 @@ class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
         }
 
     lazy val jname =
-        string ^^ JName
+        string ^^ JName.apply
 
     lazy val jarray =
         "[" ~> repsep(jvalue, ",") <~ "]" ^^ {
@@ -41,7 +41,7 @@ class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
         }
 
     lazy val jstring =
-        string ^^ JString
+        string ^^ JString.apply
 
     lazy val string =
         regex("\"[^\"]*\"".r) ^^ {

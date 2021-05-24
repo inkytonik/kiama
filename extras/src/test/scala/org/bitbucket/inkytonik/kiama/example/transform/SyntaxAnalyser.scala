@@ -22,7 +22,7 @@ class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
     import TransformTree._
 
     lazy val program =
-        rep(opdecl) ~ rep(vardecl) ~ exp ^^ Program
+        rep(opdecl) ~ rep(vardecl) ~ exp ^^ Program.apply
 
     lazy val opdecl : Parser[(String, Int)] =
         ("op" ~> op) ~ integer
@@ -31,15 +31,15 @@ class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
         regex("[-!@#$%^&*+_=:;<>,.?]+".r)
 
     lazy val vardecl =
-        "var" ~> ident ^^ VarDecl
+        "var" ~> ident ^^ VarDecl.apply
 
     lazy val exp : Parser[ExpR] =
-        factor ~ op ~ exp ^^ BinExpR |
-            factor ^^ Factor
+        factor ~ op ~ exp ^^ BinExpR.apply |
+            factor ^^ Factor.apply
 
     lazy val factor =
-        integer ^^ Num |
-            ident ^^ Var
+        integer ^^ Num.apply |
+            ident ^^ Var.apply
 
     lazy val integer =
         "[0-9]+".r ^^ (s => s.toInt)

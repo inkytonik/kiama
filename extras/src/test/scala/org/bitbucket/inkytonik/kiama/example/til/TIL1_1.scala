@@ -62,50 +62,49 @@ object TILTree {
 class TIL1_1Parsers(positions : Positions) extends ListParsers(positions) {
 
     import TILTree._
-    import scala.language.postfixOps
 
-    lazy val program = (statement*) ^^ Program
+    lazy val program = rep(statement) ^^ Program.apply
 
     lazy val statement : Parser[Stat] =
         declaration | assignment_statement | if_statement | while_statement |
             for_statement | read_statement | write_statement
 
-    lazy val declaration = "var" ~> identifier <~ ";" ^^ Decl
+    lazy val declaration = "var" ~> identifier <~ ";" ^^ Decl.apply
 
     lazy val assignment_statement =
-        identifier ~ (":=" ~> expression <~ ";") ^^ Assign
+        identifier ~ (":=" ~> expression <~ ";") ^^ Assign.apply
 
     lazy val if_statement =
-        ("if" ~> expression) ~ ("then" ~> (statement*)) ~ ("else" ~> (statement*) <~ "end") ^^ IfElse |
-            "if" ~> expression ~ ("then" ~> (statement*) <~ "end") ^^ IfThen
+        ("if" ~> expression) ~ ("then" ~> rep(statement)) ~ ("else" ~> rep(statement) <~ "end") ^^ IfElse.apply |
+            "if" ~> expression ~ ("then" ~> rep(statement) <~ "end") ^^ IfThen.apply
 
     lazy val while_statement =
-        ("while" ~> expression <~ "do") ~ (statement*) <~ "end" ^^ While
+        ("while" ~> expression <~ "do") ~ rep(statement) <~ "end" ^^ While.apply
 
     lazy val for_statement =
-        ("for" ~> identifier) ~ (":=" ~> expression) ~ ("to" ~> expression) ~ ("do" ~> (statement*) <~ "end") ^^ For
+        ("for" ~> identifier) ~ (":=" ~> expression) ~ ("to" ~> expression) ~ ("do" ~> rep(statement) <~ "end") ^^ For.apply
 
-    lazy val read_statement = "read" ~> identifier <~ ";" ^^ Read
+    lazy val read_statement = "read" ~> identifier <~ ";" ^^ Read.apply
 
-    lazy val write_statement = "write" ~> expression <~ ";" ^^ Write
+    lazy val write_statement = "write" ~> expression <~ ";" ^^ Write.apply
 
     lazy val expression : PackratParser[Exp] =
-        expression ~ ("=" ~> term) ^^ Eq |
-            expression ~ ("!=" ~> term) ^^ Ne |
+        expression ~ ("=" ~> term) ^^ Eq.apply |
+            expression ~ ("!=" ~> term) ^^ Ne.apply |
             term
 
     lazy val term : PackratParser[Exp] =
-        term ~ ("+" ~> factor) ^^ Add |
-            term ~ ("-" ~> factor) ^^ Sub |
+        term ~ ("+" ~> factor) ^^ Add.apply |
+            term ~ ("-" ~> factor) ^^ Sub.apply |
             factor
 
     lazy val factor : PackratParser[Exp] =
-        factor ~ ("*" ~> primary) ^^ Mul |
-            factor ~ ("/" ~> primary) ^^ Div |
+        factor ~ ("*" ~> primary) ^^ Mul.apply |
+            factor ~ ("/" ~> primary) ^^ Div.apply |
             primary
 
     lazy val primary =
-        identifier ^^ Var |
+        identifier ^^ Var.apply |
             integer |
             string |
             "(" ~> expression <~ ")"
@@ -118,13 +117,13 @@ class TIL1_1Parsers(positions : Positions) extends ListParsers(positions) {
         )
 
     lazy val identifier =
-        not(keyword) ~> "[a-zA-Z][a-zA-Z0-9]*".r ^^ Id
+        not(keyword) ~> "[a-zA-Z][a-zA-Z0-9]*".r ^^ Id.apply
 
     lazy val integer =
         "[0-9]+".r ^^ (s => Num(s.toInt))
 
     lazy val string =
-        """\"[^\"]+\"""".r ^^ Str
+        """\"[^\"]+\"""".r ^^ Str.apply
 
     override val whitespace : Parser[String] =
         """(\s|(//.*\n))*""".r

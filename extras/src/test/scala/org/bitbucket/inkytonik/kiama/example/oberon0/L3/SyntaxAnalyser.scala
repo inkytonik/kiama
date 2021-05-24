@@ -28,14 +28,14 @@ class SyntaxAnalyser(positions : Positions) extends L2.SyntaxAnalyser(positions)
         }
 
     lazy val procedureDeclaration =
-        ("PROCEDURE" ~> idndef) ~ (optformalParameters <~ ";") ~ block ~ idnuse ^^ ProcDecl
+        ("PROCEDURE" ~> idndef) ~ (optformalParameters <~ ";") ~ block ~ idnuse ^^ ProcDecl.apply
 
     lazy val optformalParameters : Parser[Vector[FPSection]] =
         "(" ~> repsep(fpsection, ";") <~ ")" |
             success(Vector())
 
     lazy val fpsection =
-        optvar ~ (idndeflist <~ ":") ~ typedef ^^ FPSection
+        optvar ~ (idndeflist <~ ":") ~ typedef ^^ FPSection.apply
 
     lazy val optvar =
         "VAR" ^^ (_ => VarMode()) |
@@ -46,7 +46,7 @@ class SyntaxAnalyser(positions : Positions) extends L2.SyntaxAnalyser(positions)
             super.statementDef
 
     lazy val procedureCall =
-        idnuse ~ optActualParameters ^^ Call
+        idnuse ~ optActualParameters ^^ Call.apply
 
     lazy val optActualParameters =
         "(" ~> repsep(expression, ",") <~ ")" |

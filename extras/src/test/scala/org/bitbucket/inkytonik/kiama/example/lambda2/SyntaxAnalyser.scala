@@ -22,7 +22,7 @@ class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
     import LambdaTree._
 
     lazy val exp : Parser[Exp] =
-        "\\" ~> idn ~ itype ~ ("." ~> exp) ^^ Lam |
+        "\\" ~> idn ~ itype ~ ("." ~> exp) ^^ Lam.apply |
             exp2
 
     lazy val itype =
@@ -30,18 +30,18 @@ class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
             "" ^^ (_ => NoType())
 
     lazy val exp2 : PackratParser[Exp] =
-        exp2 ~ op ~ exp1 ^^ Opn |
+        exp2 ~ op ~ exp1 ^^ Opn.apply |
             exp1
 
     lazy val exp1 : PackratParser[Exp] =
-        exp1 ~ exp0 ^^ App |
+        exp1 ~ exp0 ^^ App.apply |
             exp0
 
     lazy val exp0 =
-        number | idn ^^ Var | "(" ~> exp <~ ")"
+        number | idn ^^ Var.apply | "(" ~> exp <~ ")"
 
     lazy val ttype : Parser[Type] =
-        ttype0 ~ ("->" ~> ttype) ^^ FunType |
+        ttype0 ~ ("->" ~> ttype) ^^ FunType.apply |
             ttype0
 
     lazy val ttype0 : Parser[Type] =

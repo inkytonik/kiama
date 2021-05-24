@@ -20,25 +20,24 @@ import org.bitbucket.inkytonik.kiama.util.Positions
 class SyntaxAnalyser(positions : Positions) extends ListParsers(positions) {
 
     import DataflowTree._
-    import scala.language.postfixOps
 
     lazy val stm : Parser[Stm] =
         asgnStm | whileStm | ifStm | blockStm | returnStm
 
     lazy val asgnStm =
-        idn ~ ("=" ~> exp) ^^ Assign
+        idn ~ ("=" ~> exp) ^^ Assign.apply
 
     lazy val whileStm =
-        ("while" ~> "(" ~> exp <~ ")") ~ stm ^^ While
+        ("while" ~> "(" ~> exp <~ ")") ~ stm ^^ While.apply
 
     lazy val ifStm =
-        ("if" ~> "(" ~> exp <~ ")") ~ stm ~ ("else" ~> stm) ^^ If
+        ("if" ~> "(" ~> exp <~ ")") ~ stm ~ ("else" ~> stm) ^^ If.apply
 
     lazy val blockStm =
-        "{" ~> (stm*) <~ "}" ^^ Block
+        "{" ~> rep(stm) <~ "}" ^^ Block.apply
 
     lazy val returnStm =
-        "return" ~> exp ^^ Return
+        "return" ~> exp ^^ Return.apply
 
     lazy val exp =
         idn

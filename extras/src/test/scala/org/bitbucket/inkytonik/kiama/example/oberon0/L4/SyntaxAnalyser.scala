@@ -24,8 +24,8 @@ class SyntaxAnalyser(positions : Positions) extends L3.SyntaxAnalyser(positions)
     import source.{ArrayTypeDef, FieldExp, FieldIdn, Fields, IndexExp, RecordTypeDef}
 
     override def typedefDef : Parser[TypeDef] =
-        ("ARRAY" ~> expression) ~ ("OF" ~> typedef) ^^ ArrayTypeDef |
-            "RECORD" ~> fieldlists <~ "END" ^^ RecordTypeDef |
+        ("ARRAY" ~> expression) ~ ("OF" ~> typedef) ^^ ArrayTypeDef.apply |
+            "RECORD" ~> fieldlists <~ "END" ^^ RecordTypeDef.apply |
             super.typedefDef
 
     lazy val fieldlists =
@@ -41,12 +41,12 @@ class SyntaxAnalyser(positions : Positions) extends L3.SyntaxAnalyser(positions)
         rep1sep(ident, ",")
 
     override def lhsDef : PackratParser[Expression] =
-        lhs ~ ("." ~> fldidn) ^^ FieldExp |
-            lhs ~ ("[" ~> expression <~ "]") ^^ IndexExp |
+        lhs ~ ("." ~> fldidn) ^^ FieldExp.apply |
+            lhs ~ ("[" ~> expression <~ "]") ^^ IndexExp.apply |
             super.lhsDef
 
     lazy val fldidn =
-        ident ^^ FieldIdn
+        ident ^^ FieldIdn.apply
 
     override def keywordStrings : List[String] =
         "ARRAY" +: "OF" +: "RECORD" +: super.keywordStrings

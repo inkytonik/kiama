@@ -188,7 +188,7 @@ trait Desugarer extends L0.Desugarer {
              */
             def condsToExp(ns : Vector[Condition]) : Expression = {
                 val es = ns.map(condToExp)
-                es.tail.foldLeft(es.head)(OrExp)
+                es.tail.foldLeft(es.head)(OrExp.apply)
             }
 
             // Avoid pattern-matching here because exhaustivity check has problems

@@ -20,21 +20,20 @@ import org.bitbucket.inkytonik.kiama.util.Positions
 class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
 
     import PrologTree._
-    import scala.language.postfixOps
 
     lazy val program =
-        (clause+) ^^ Program
+        rep1(clause) ^^ Program.apply
 
     lazy val query =
         lit <~ "."
 
     lazy val clause =
-        lit ~ (":-" ~> lits) <~ "." ^^ Rule |
-            lit <~ "." ^^ Fact
+        lit ~ (":-" ~> lits) <~ "." ^^ Rule.apply |
+            lit <~ "." ^^ Fact.apply
 
     lazy val lit : Parser[Literal] =
-        atom ~ ("(" ~> terms <~ ")") ^^ Pred |
-            atom ^^ Atom
+        atom ~ ("(" ~> terms <~ ")") ^^ Pred.apply |
+            atom ^^ Atom.apply
 
     lazy val lits =
         rep1sep(lit | cut, ",")
@@ -47,7 +46,7 @@ class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
 
     lazy val term =
         lit |
-            varr ^^ Var |
+            varr ^^ Var.apply |
             integer |
             list
 

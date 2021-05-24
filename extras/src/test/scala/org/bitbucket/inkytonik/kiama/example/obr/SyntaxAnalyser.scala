@@ -22,7 +22,6 @@ class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
 
     import ObrTree._
     import scala.collection.immutable.HashSet
-    import scala.language.postfixOps
 
     override val whitespace : Parser[String] =
         """(\s|\(\*(?:.|[\n\r])*?\*\))*""".r
@@ -43,7 +42,7 @@ class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
             }
 
     lazy val parameterdecl : Parser[Declaration] =
-        idndef <~ ":" <~ "INTEGER" ^^ IntParam
+        idndef <~ ":" <~ "INTEGER" ^^ IntParam.apply
 
     lazy val declarations : Parser[Vector[Declaration]] =
         constantdecls ~ variabledecls ^^ { case cs ~ vs => cs ++ vs }
@@ -63,23 +62,23 @@ class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
             }
 
     lazy val constantdecl : Parser[Declaration] =
-        idndef ~ ("=" ~> signed) ^^ IntConst |
-            idndef <~ ":" <~ "EXCEPTION" ^^ ExnConst
+        idndef ~ ("=" ~> signed) ^^ IntConst.apply |
+            idndef <~ ":" <~ "EXCEPTION" ^^ ExnConst.apply
 
     lazy val variabledecl : Parser[Declaration] =
-        idndef <~ ":" <~ "BOOLEAN" ^^ BoolVar |
-            idndef <~ ":" <~ "INTEGER" ^^ IntVar |
-            idndef ~ (":" ~> "ARRAY" ~> integer <~ "OF" <~ "INTEGER") ^^ ArrayVar |
-            idndef ~ (":" ~> "RECORD" ~> (fielddecl+) <~ "END") ^^ RecordVar |
+        idndef <~ ":" <~ "BOOLEAN" ^^ BoolVar.apply |
+            idndef <~ ":" <~ "INTEGER" ^^ IntVar.apply |
+            idndef ~ (":" ~> "ARRAY" ~> integer <~ "OF" <~ "INTEGER") ^^ ArrayVar.apply |
+            idndef ~ (":" ~> "RECORD" ~> rep1(fielddecl) <~ "END") ^^ RecordVar.apply |
             // Extra clause to handle parsing the declaration of an enumeration variable
             idndef ~ (":" ~> "(" ~> rep1sep(idndef, ",") <~ ")") ^^
-            { case i ~ cs => EnumVar(i, cs map EnumConst) }
+            { case i ~ cs => EnumVar(i, cs map EnumConst.apply) }
 
     lazy val fielddecl =
         ident <~ ":" <~ "INTEGER" <~ ";"
 
     lazy val statementseq =
-        statement*
+        rep(statement)
 
     lazy val statement : Parser[Statement] =
         lvalue ~ mark(":=") ~ (expression <~ ";") ^^
@@ -88,24 +87,24 @@ class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
             iteration |
             trycatch |
             "EXIT" ~ ";" ^^ (_ => ExitStmt()) |
-            "RETURN" ~> expression <~ ";" ^^ ReturnStmt |
-            "RAISE" ~> idnuse <~ ";" ^^ RaiseStmt
+            "RETURN" ~> expression <~ ";" ^^ ReturnStmt.apply |
+            "RAISE" ~> idnuse <~ ";" ^^ RaiseStmt.apply
 
     lazy val conditional =
-        "IF" ~> expression ~ ("THEN" ~> statementseq) ~ optelseend ^^ IfStmt
+        "IF" ~> expression ~ ("THEN" ~> statementseq) ~ optelseend ^^ IfStmt.apply
 
     lazy val optelseend : Parser[Vector[Statement]] =
         "ELSE" ~> statementseq <~ "END" |
             "END" ^^^ Vector()
 
     lazy val iteration =
-        "LOOP" ~> statementseq <~ "END" ^^ LoopStmt |
-            "WHILE" ~> expression ~ ("DO" ~> statementseq <~ "END") ^^ WhileStmt |
+        "LOOP" ~> statementseq <~ "END" ^^ LoopStmt.apply |
+            "WHILE" ~> expression ~ ("DO" ~> statementseq <~ "END") ^^ WhileStmt.apply |
             "FOR" ~> idnuse ~ (":=" ~> expression) ~ ("TO" ~> expression) ~
-            ("DO" ~> statementseq <~ "END") ^^ ForStmt
+            ("DO" ~> statementseq <~ "END") ^^ ForStmt.apply
 
     lazy val trycatch =
-        mark("TRY") ~ statementseq ~ ((catchclause*) <~ "END") ^^
+        mark("TRY") ~ statementseq ~ (rep(catchclause) <~ "END") ^^
             {
                 case p ~ ss ~ cs =>
                     val body = positions.dupPos(p, TryBody(ss))
@@ -113,7 +112,7 @@ class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
             }
 
     lazy val catchclause =
-        ("CATCH" ~> idnuse <~ "DO") ~ statementseq ^^ Catch
+        ("CATCH" ~> idnuse <~ "DO") ~ statementseq ^^ Catch.apply
 
     lazy val expression : PackratParser[Expression] =
         expression ~ mark("=") ~ simplexp ^^
@@ -150,16 +149,16 @@ class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
         "TRUE" ^^ (_ => BoolExp(true)) |
             "FALSE" ^^ (_ => BoolExp(false)) |
             lvalue |
-            integer ^^ IntExp |
+            integer ^^ IntExp.apply |
             "(" ~> expression <~ ")" |
-            "~" ~> factor ^^ NotExp |
-            "-" ~> factor ^^ NegExp
+            "~" ~> factor ^^ NotExp.apply |
+            "-" ~> factor ^^ NegExp.apply
 
     lazy val lvalue : Parser[AssignTree] =
-        idnuse ~ ("[" ~> expression <~ "]") ^^ IndexExp |
+        idnuse ~ ("[" ~> expression <~ "]") ^^ IndexExp.apply |
             idnuse ~ mark(".") ~ ident ^^
             { case r ~ p ~ f => positions.dupPos(p, FieldExp(r, f)) } |
-            idnuse ^^ IdnExp
+            idnuse ^^ IdnExp.apply
 
     lazy val integer =
         "[0-9]+".r ^^ (s => s.toInt)
@@ -168,10 +167,10 @@ class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
         "-?[0-9]+".r ^^ (s => s.toInt)
 
     lazy val idndef =
-        ident ^^ IdnDef
+        ident ^^ IdnDef.apply
 
     lazy val idnuse =
-        ident ^^ IdnUse
+        ident ^^ IdnUse.apply
 
     lazy val ident =
         "[a-zA-Z][a-zA-Z0-9]*".r into (s => {

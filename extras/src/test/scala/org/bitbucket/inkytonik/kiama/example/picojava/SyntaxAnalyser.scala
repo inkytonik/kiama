@@ -28,39 +28,38 @@ import org.bitbucket.inkytonik.kiama.util.Positions
 class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
 
     import PicoJavaTree._
-    import scala.language.postfixOps
 
     lazy val program =
-        block ^^ Program
+        block ^^ Program.apply
 
     lazy val block : Parser[Block] =
-        "{" ~> (block_stmt*) <~ "}" ^^ Block
+        "{" ~> rep(block_stmt) <~ "}" ^^ Block.apply
     lazy val block_stmt =
         class_decl | var_decl | stmt
 
     lazy val class_decl =
-        "class" ~> IDENTIFIER ~ (xtends?) ~ block ^^ ClassDecl
+        "class" ~> IDENTIFIER ~ opt(xtends) ~ block ^^ ClassDecl.apply
     lazy val xtends =
-        "extends" ~> IDENTIFIER ^^ Use
+        "extends" ~> IDENTIFIER ^^ Use.apply
     lazy val var_decl =
-        name ~ IDENTIFIER <~ ";" ^^ VarDecl
+        name ~ IDENTIFIER <~ ";" ^^ VarDecl.apply
 
     lazy val stmt : Parser[Stmt] =
         assign_stmt | while_stmt
     lazy val assign_stmt =
-        name ~ ("=" ~> exp <~ ";") ^^ AssignStmt
+        name ~ ("=" ~> exp <~ ";") ^^ AssignStmt.apply
     lazy val while_stmt =
-        ("while" ~> "(" ~> exp <~ ")") ~ stmt ^^ WhileStmt
+        ("while" ~> "(" ~> exp <~ ")") ~ stmt ^^ WhileStmt.apply
 
     lazy val exp =
         boolean_literal | name
 
     lazy val name : PackratParser[Access] =
         name ~ ("." ~> IDENTIFIER) ^^ { case n ~ i => Dot(n, Use(i)) } |
-            IDENTIFIER ^^ Use
+            IDENTIFIER ^^ Use.apply
 
     lazy val boolean_literal =
-        ("true" | "false") ^^ BooleanLiteral
+        ("true" | "false") ^^ BooleanLiteral.apply
 
     lazy val IDENTIFIER =
         "[a-zA-Z][a-zA-Z0-9]*".r

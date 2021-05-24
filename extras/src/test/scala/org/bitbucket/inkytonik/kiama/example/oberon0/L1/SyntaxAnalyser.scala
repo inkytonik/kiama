@@ -29,7 +29,7 @@ class SyntaxAnalyser(positions : Positions) extends L0.SyntaxAnalyser(positions)
 
     lazy val ifStatement =
         "IF" ~> expression ~ ("THEN" ~> statementSequence) ~
-            elsifs ~ (optelse <~ "END") ^^ IfStatement
+            elsifs ~ (optelse <~ "END") ^^ IfStatement.apply
 
     lazy val elsifs =
         rep(elsif)
@@ -43,7 +43,7 @@ class SyntaxAnalyser(positions : Positions) extends L0.SyntaxAnalyser(positions)
 
     lazy val whileStatement =
         "WHILE" ~> expression ~ ("DO" ~> statementSequence <~ "END") ^^
-            WhileStatement
+            WhileStatement.apply
 
     override def keywordStrings : List[String] =
         "DO" +: "ELSE" +: "ELSIF" +: "IF" +: "THEN" +: "WHILE" +: super.keywordStrings

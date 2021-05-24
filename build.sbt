@@ -8,8 +8,8 @@ ThisBuild/version := "2.5.0-SNAPSHOT"
 
 ThisBuild/organization := "org.bitbucket.inkytonik.kiama"
 
-ThisBuild/scalaVersion := "2.13.5"
-ThisBuild/crossScalaVersions := Seq("3.0.0-M2", "2.13.5", "2.12.13", "2.11.12")
+ThisBuild/scalaVersion := "2.13.6"
+ThisBuild/crossScalaVersions := Seq("3.0.0", "2.13.6", "2.12.13")
 
 ThisBuild/scalacOptions := {
     // Turn on all lint warnings, except:
@@ -28,9 +28,7 @@ ThisBuild/scalacOptions := {
             "-language:higherKinds",
             "-sourcepath", baseDirectory.value.getAbsolutePath,
             "-unchecked",
-            "-Xfatal-warnings",
-            "-Xmigration"
-            // FIXME: should we have a -Xlint replacement?
+            "-Xfatal-warnings"
         )
     else
         Seq(
@@ -39,7 +37,6 @@ ThisBuild/scalacOptions := {
             "-language:higherKinds",
             "-sourcepath", baseDirectory.value.getAbsolutePath,
             "-unchecked",
-            "-Xcheckinit",
             "-Xfatal-warnings",
             "-Xsource:3",
             lintOption
@@ -66,8 +63,8 @@ ThisBuild/mainClass := None
 
 val commonSettings =
     Seq(
-        unmanagedSourceDirectories in Compile ++= {
-            val sourceDir = (sourceDirectory in Compile).value
+        Compile/unmanagedSourceDirectories ++= {
+            val sourceDir = (Compile/sourceDirectory).value
             CrossVersion.partialVersion(scalaVersion.value) match {
                 case Some((2, 11)) =>
                     Seq(sourceDir / "scala-2.11", sourceDir / "scala-2.11+", sourceDir / "scala-2.12-")
@@ -82,10 +79,10 @@ val commonSettings =
 
         libraryDependencies ++=
             Seq(
-                "org.scalacheck" %% "scalacheck" % "1.15.2" % "test",
-                "org.scalatest" %% "scalatest-funsuite" % "3.2.3" % "test",
-                "org.scalatest" %% "scalatest-shouldmatchers" % "3.2.3" % "test",
-                "org.scalatestplus" %% "scalacheck-1-15" % "3.2.3.0" % "test"
+                "org.scalacheck" %% "scalacheck" % "1.15.4" % "test",
+                "org.scalatest" %% "scalatest-funsuite" % "3.2.9" % "test",
+                "org.scalatest" %% "scalatest-shouldmatchers" % "3.2.9" % "test",
+                "org.scalatestplus" %% "scalacheck-1-15" % "3.2.9.0" % "test"
             ),
 
         // Formatting
@@ -199,7 +196,7 @@ lazy val extras =
         libraryDependencies ++=
             Seq(
                 // Command-line handling:
-                "org.rogach" %% "scallop" % "4.0.1",
+                "org.rogach" %% "scallop" % "4.0.3",
                 // Language server protocol:
                 "org.eclipse.lsp4j" % "org.eclipse.lsp4j" % "0.10.0",
                 "com.google.code.gson" % "gson" % "2.8.2",
