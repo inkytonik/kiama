@@ -12,6 +12,8 @@ This is a minor release to FIXME, dropping support for Scala 2.10.
 
 * Add build support for Scala 3.
 
+* Avoid `Constructor.getParameterCount` in Rewriter so that Android versions 7 and earlier are supported ([issue 28](https://github.com/inkytonik/kiama/issues/28)). Thanks to Benjamin Schulte (@MrStahlfelge) for the suggestion.
+
 ### Other
 
 * Move to scalatest 3.2.9, scalacheck 1.15.4. Includes only depending on the ScalaTest modules that we use.

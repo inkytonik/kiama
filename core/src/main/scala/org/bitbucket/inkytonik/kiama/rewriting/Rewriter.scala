@@ -383,7 +383,7 @@ trait Rewriter {
                 }
 
             def unboxPrimitives(ctor : Constructor[_], children : Array[AnyRef]) : Array[AnyRef] = {
-                val numChildren = ctor.getParameterCount()
+                val numChildren = ctor.getParameterTypes().length
                 val childrenTypes = ctor.getParameterTypes()
                 val newChildren = new Array[AnyRef](numChildren)
                 var i = 0
