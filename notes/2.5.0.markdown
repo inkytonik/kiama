@@ -1,6 +1,6 @@
 [Kiama](https://github.com/inkytonik/kiama) is a Scala library for language processing including attribute grammars, term rewriting, abstract state machines, parsing, and pretty printing.
 
-This is a minor release to FIXME, dropping support for Scala 2.10.
+This is a minor release to FIXME, dropping support for Scala 2.10, and adding support for Scala 3.
 
 ### Removals
 
@@ -10,12 +10,12 @@ This is a minor release to FIXME, dropping support for Scala 2.10.
 
 * Irrefutable extractor patterns now return `Some` instead of `Option`. Most notably, `Relation.unapplySeq` now returns `Some[Vector[U]]` instead of `Option[Vector[U]]`. Similarly for `Relation.pair.unapplySeq`.
 
-* Add build support for Scala 3.
-
 * Avoid `Constructor.getParameterCount` in Rewriter so that Android versions 7 and earlier are supported ([issue 28](https://github.com/inkytonik/kiama/issues/28)). Thanks to Benjamin Schulte (@MrStahlfelge) for the suggestion.
 
 ### Other
 
-* Move to scalatest 3.2.9, scalacheck 1.15.4. Includes only depending on the ScalaTest modules that we use.
+* Mostly move to scalatest 3.2.9, scalacheck 1.15.4. Includes only depending on the ScalaTest modules that we use.
 
-* Move to Scala 3.0.0, 2.13.6, 2.12.13, sbt 1.5.2, Guava 30.1, Scallop 4.0.3.
+* On Scala 2.11, we still use scalatest 3.2.3, scalacheck 1.15.2, since ScalaCheck is not published for 2.11 after 1.15.2 and later versions of the ScalaTest support for ScalaCheck are not published for 3.2.9 and 2.11.
+
+* Move to Scala 3.0.0, 2.13.6, 2.12.13, 2.11.12, sbt 1.5.2, Guava 30.1, Scallop 4.0.3.

@@ -9,7 +9,7 @@ ThisBuild/version := "2.5.0-SNAPSHOT"
 ThisBuild/organization := "org.bitbucket.inkytonik.kiama"
 
 ThisBuild/scalaVersion := "2.13.6"
-ThisBuild/crossScalaVersions := Seq("3.0.0", "2.13.6", "2.12.13")
+ThisBuild/crossScalaVersions := Seq("3.0.0", "2.13.6", "2.12.13", "2.11.12")
 
 ThisBuild/scalacOptions := {
     // Turn on all lint warnings, except:
@@ -61,11 +61,15 @@ ThisBuild/mainClass := None
 
 // Common project settings
 
+val thisCrossVersion = settingKey[Option[(Long, Long)]]("The version of Scala used for cross building.")
+
 val commonSettings =
     Seq(
+        thisCrossVersion := CrossVersion.partialVersion(scalaVersion.value),
+
         Compile/unmanagedSourceDirectories ++= {
             val sourceDir = (Compile/sourceDirectory).value
-            CrossVersion.partialVersion(scalaVersion.value) match {
+            thisCrossVersion.value match {
                 case Some((2, 11)) =>
                     Seq(sourceDir / "scala-2.11", sourceDir / "scala-2.11+", sourceDir / "scala-2.12-")
                 case Some((2, 12)) =>
@@ -77,13 +81,28 @@ val commonSettings =
             }
         },
 
-        libraryDependencies ++=
+        libraryDependencies ++= {
+            val scalaCheckVersion =
+                thisCrossVersion.value match {
+                    case Some((2, 11)) =>
+                        "1.15.2"
+                    case _ =>
+                        "1.15.4"
+                }
+            val scalaTestVersion =
+                thisCrossVersion.value match {
+                    case Some((2, 11)) =>
+                        "3.2.3"
+                    case _ =>
+                        "3.2.9"
+                }
             Seq(
-                "org.scalacheck" %% "scalacheck" % "1.15.4" % "test",
-                "org.scalatest" %% "scalatest-funsuite" % "3.2.9" % "test",
-                "org.scalatest" %% "scalatest-shouldmatchers" % "3.2.9" % "test",
-                "org.scalatestplus" %% "scalacheck-1-15" % "3.2.9.0" % "test"
-            ),
+                "org.scalacheck" %% "scalacheck" % scalaCheckVersion % "test",
+                "org.scalatest" %% "scalatest-funsuite" % scalaTestVersion % "test",
+                "org.scalatest" %% "scalatest-shouldmatchers" % scalaTestVersion % "test",
+                "org.scalatestplus" %% "scalacheck-1-15" % s"${scalaTestVersion}.0" % "test"
+            )
+        },
 
         // Formatting
         scalariformPreferences := scalariformPreferences.value
