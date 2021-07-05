@@ -43,8 +43,7 @@ trait REPLBase[C <: REPLConfig] {
     }
 
     /**
-     * Create the configuration for a particular run of the REPL. If supplied, use
-     * `emitter` instead of a standard output emitter.
+     * Create the configuration for a particular run of the REPL.
      */
     def createConfig(args : Seq[String]) : C
 
