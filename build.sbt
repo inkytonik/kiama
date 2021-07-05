@@ -9,7 +9,7 @@ ThisBuild/version := "2.5.0-SNAPSHOT"
 ThisBuild/organization := "org.bitbucket.inkytonik.kiama"
 
 ThisBuild/scalaVersion := "2.13.6"
-ThisBuild/crossScalaVersions := Seq("3.0.0", "2.13.6", "2.12.13", "2.11.12")
+ThisBuild/crossScalaVersions := Seq("3.0.0", "2.13.6", "2.12.14", "2.11.12")
 
 ThisBuild/scalacOptions := {
     // Turn on all lint warnings, except:
@@ -184,7 +184,7 @@ lazy val core =
         libraryDependencies ++=
             Seq(
                 // Caching:
-                "com.google.guava" % "guava" % "27.1-jre"
+                "com.google.guava" % "guava" % "30.1.1-jre"
             ),
 
         console/initialCommands := """
