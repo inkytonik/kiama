@@ -1,10 +1,10 @@
 [Kiama](https://github.com/inkytonik/kiama) is a Scala library for language processing including attribute grammars, term rewriting, abstract state machines, parsing, and pretty printing.
 
-This is a minor release to FIXME, dropping support for Scala 2.10, and adding support for Scala 3.
+This is a minor release with a couple of enhancements, dropping support for Scala 2.10, and adding support for Scala 3.
 
 ### Removals
 
-* Kiama is now supported for Scala versions 2.11 and later, since some of our dependencies are no longer published for 2.10.
+* Kiama is now only supported for Scala versions 2.11 and later, since some of our dependencies are no longer published for 2.10.
 
 ### Enhancements
 
@@ -12,10 +12,12 @@ This is a minor release to FIXME, dropping support for Scala 2.10, and adding su
 
 * Avoid `Constructor.getParameterCount` in Rewriter so that Android versions 7 and earlier are supported ([issue 28](https://github.com/inkytonik/kiama/issues/28)). Thanks to Benjamin Schulte (@MrStahlfelge) for the suggestion.
 
+* Kiama is now published for Scala 3.0.0.
+
 ### Other
 
 * Mostly move to scalatest 3.2.9, scalacheck 1.15.4. Includes only depending on the ScalaTest modules that we use.
 
-* On Scala 2.11, we still use scalatest 3.2.3, scalacheck 1.15.2, since ScalaCheck is not published for 2.11 after 1.15.2 and later versions of the ScalaTest support for ScalaCheck are not published for 3.2.9 and 2.11.
+* On Scala 2.11, we still use scalatest 3.2.3 and scalacheck 1.15.2, since ScalaCheck is not published for 2.11 after 1.15.2, and later versions of the ScalaTest support for ScalaCheck are not published for 3.2.9 and 2.11.
 
-* Move to Scala 3.0.0, 2.13.6, 2.12.13, 2.11.12, sbt 1.5.2, Guava 30.1, Scallop 4.0.3.
+* Move to Scala 3.0.0, 2.13.6, 2.12.14, 2.11.12, sbt 1.5.4, Guava 30.1.1, Scallop 4.0.3.
