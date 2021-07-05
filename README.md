@@ -22,6 +22,7 @@ https://github.com/inkytonik
 
 ## Latest News
 
+ * Jul 5, 2021: Version 2.5.0 released
  * Dec 23, 2020: Version 2.4.0 released
  * Dec 18, 2019: Version 2.3.0 released
  * Apr 26, 2019: Version 2.2.1 released
