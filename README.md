@@ -22,7 +22,7 @@ https://github.com/inkytonik
 
 ## Latest News
 
- * Sep 20, 2021: Moved wiki to [GitHub pages](https://inkytonik/kiama.github.io)
+ * Sep 20, 2021: Moved wiki to [GitHub pages](https://inkytonik.github.io/kiama)
  * Jul 5, 2021: Version 2.5.0 released
  * Dec 23, 2020: Version 2.4.0 released
  * Dec 18, 2019: Version 2.3.0 released
@@ -39,7 +39,7 @@ https://github.com/inkytonik
 
 ## Documentation
 
-Documentation about how to build, install and use Kiama can be found on the [Kiama docs pages](https://inkytonik/kiama.github.io).
+Documentation about how to build, install and use Kiama can be found on the [Kiama docs pages](https://inkytonik.github.io/kiama).
 
 The main documentation for Kiama takes the form of wiki pages covering library features and examples. The [User Manual](https://inkytonik.github.io/kiama/UserManual) is a good place to start.
 
