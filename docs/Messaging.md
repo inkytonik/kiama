@@ -1,6 +1,6 @@
 # Producing error messages using Kiama
 
-Up: [User Manual](UserManual.md), Prev: [Pretty-printing](PrettyPrinting.md), Next: [Read-eval-print Loops](ReadEvalPrintLoops.md)
+Up: [User Manual](UserManual), Prev: [Pretty-printing](PrettyPrinting), Next: [Read-eval-print Loops](ReadEvalPrintLoops)
 
 IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
 to Kiama 2.x, but not all. Please consult the 2.x release notes for the
@@ -13,7 +13,7 @@ time, for example for output.
 
 The following examples make particular use of the messaging module:
 
-  * [Lambda2](Lambda2.md)
+  * [Lambda2](Lambda2)
 
 ## Messaging
 
@@ -74,4 +74,4 @@ as `line.column`.
 3.43: application of non-function
 ```
 
-Up: [User Manual](UserManual.md), Prev: [Pretty-printing](PrettyPrinting.md), Next: [Read-eval-print Loops](ReadEvalPrintLoops.md)
+Up: [User Manual](UserManual), Prev: [Pretty-printing](PrettyPrinting), Next: [Read-eval-print Loops](ReadEvalPrintLoops)

@@ -8,7 +8,7 @@
 
 Kiama is a Scala library for language processing.
 In the Kiama project we are investigating embedding of language processing formalisms such as grammars, parsers, rewriters and analysers into general-purpose programming languages.
-Learn about Kiama by reading our [research papers](https://github.com/inkytonik/kiama/blob/master/wiki/Research.md) starting with [Lightweight Language Processing in Kiama](https://doi.org/10.1007/978-3-642-18023-1_12).
+Learn about Kiama by reading our [research papers](https://inkytonik.github.io/kiama/Research) starting with [Lightweight Language Processing in Kiama](https://doi.org/10.1007/978-3-642-18023-1_12).
 
 IMPORTANT NOTE: Kiama is a research project, so many details will change. Consult with us before you rely on it for serious work. We make no guarantees about the features or performance of the Kiama library if you do choose to use it.
 
@@ -22,6 +22,7 @@ https://github.com/inkytonik
 
 ## Latest News
 
+ * Sep 20, 2021: Moved wiki to [GitHub pages](https://inkytonik/kiama.github.io)
  * Jul 5, 2021: Version 2.5.0 released
  * Dec 23, 2020: Version 2.4.0 released
  * Dec 18, 2019: Version 2.3.0 released
@@ -38,15 +39,15 @@ https://github.com/inkytonik
 
 ## Documentation
 
-Documentation about how to build, install and use Kiama can be found on the [Kiama wiki](https://github.com/inkytonik/kiama/blob/master/wiki/Documentation.md).
+Documentation about how to build, install and use Kiama can be found on the [Kiama docs pages](https://inkytonik/kiama.github.io).
 
-The main documentation for Kiama takes the form of wiki pages covering library features and examples. The [User Manual](https://github.com/inkytonik/kiama/blob/master/wiki/UserManual.md) is a good place to start.
+The main documentation for Kiama takes the form of wiki pages covering library features and examples. The [User Manual](https://inkytonik.github.io/kiama/UserManual) is a good place to start.
 
-See the [Research wiki page](https://github.com/inkytonik/kiama/blob/master/wiki/Research.md) for links to papers and presentations about Kiama.
+See the [Research wiki page](https://inkytonik.github.io/kiama/Research) for links to papers and presentations about Kiama.
 
-For summary information about Kiama releases, including dependencies on other software and links to API documentation, see the [Releases wiki page](https://github.com/inkytonik/kiama/blob/master/wiki/Releases.md).
+For summary information about Kiama releases, including dependencies on other software and links to API documentation, see the [Releases wiki page](https://inkytonik.github.io/kiama/Releases).
 
-See the [Installation wiki page](https://github.com/inkytonik/kiama/blob/master/wiki/Installation.md) for instructions on how to install Kiama.
+See the [Installation wiki page](https://inkytonik.github.io/kiama/Installation) for instructions on how to install Kiama.
 
 ## Licensing
 
@@ -56,7 +57,7 @@ Kiama is distributed under the Mozilla Public License, v. 2.0. See the file LICE
 
 A traditional approach to language processing is to represent the data to be processed as a hierarchical structure (a tree).  Kiama provides different ways to operate on such trees to carry out typical language processing tasks.
 
-* [Context-sensitive attribute equations](https://github.com/inkytonik/kiama/blob/master/wiki/Attribution.md)
+* [Context-sensitive attribute equations](https://inkytonik.github.io/kiama/Attribution)
 
 Attribute equations define properties of tree nodes in terms of constants or the properties of other nodes.  In this example, the local and global minima of a binary tree (`locmin` and `globmin`) are defined using simple local equations.  Accessing an attribute (property) of a node is just a function call (also accessible via the arrow notation in Kiama 1.x).  The `attr` function provides caching and circularity checking to the equations.
 
@@ -88,7 +89,7 @@ Kiama version 2.x:
             case t              => locmin(t)
         }
 
-* [Dataflow Circular attribute equations](https://github.com/inkytonik/kiama/blob/master/wiki/Dataflow.md)
+* [Dataflow Circular attribute equations](https://inkytonik.github.io/kiama/Dataflow)
 
 Sometimes it is useful to define attributes using a mutual dependency.  With `attr` this approach would lead to an error since it would not be possible to calculate the values of such attributes. The `circular` function goes further by implementing mutually dependent attributes via an iteration to a fixed point. In this example, we are calculating variable liveness information for a imperative language statements using the standard data flow equations.
 
@@ -116,7 +117,7 @@ Kiama 2.x:
             s => succ(s) flatMap (in)
         )
 
-* [Rewrite rules and higher-order rewriting strategies](https://github.com/inkytonik/kiama/blob/master/wiki/Lambda2.md)
+* [Rewrite rules and higher-order rewriting strategies](https://inkytonik.github.io/kiama/Lambda2)
 
 While attributes provide a way to decorate a tree with information, rewriting is concerned with transforming trees, perhaps for translation or for optimisation. Kiama contains a strategy-based rewriting library heavily inspired by the [http://strategoxt.org/ Stratego] program transformation language. In this example, we are implementing an evaluation strategy for lambda calculus, using generic strategies such as innermost rewriting.
 
@@ -145,7 +146,7 @@ Kiama 1.x and 2.x:
     val s : Strategy =
         innermost(lambda)
 
-* [Pretty-printing](https://github.com/inkytonik/kiama/blob/master/wiki/PrettyPrinting.md)
+* [Pretty-printing](https://inkytonik.github.io/kiama/PrettyPrinting)
 
 Kiama's pretty-printing library provides a flexible way to describe how you want your output to be produced within constraint of line length. For example, the following describes how to pretty-print the constructs of a simple imperative language, where `group`, `nest` and `line` cooperate to produce nicely indented code that breaks lines  at sensible place when needed.
 

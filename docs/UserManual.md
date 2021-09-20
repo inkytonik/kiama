@@ -1,6 +1,6 @@
 # Kiama Language Processing Library
 
-Up: [Documentation](Documentation.md), Next: [Examples](Examples.md)
+Up: [Documentation](Documentation), Next: [Examples](Examples)
 
 Kiama is a [Scala](http://www.scala-lang.org) library for language
 processing. "Language" in this context refers to any structured
@@ -38,25 +38,25 @@ by Odersky, Spoon and Venners is highly recommended.
 
 The rest of this user manual contains the following sections:
 
-  * [an overview of the context in which the Kiama library facilities are used](Context.md)
+  * [an overview of the context in which the Kiama library facilities are used](Context)
   * Some discussion of how to get data into a form that Kiama can manipulate:
-    * [Parsing](Parsing.md)
+    * [Parsing](Parsing)
   * one section for each of the major processing paradigms supported by Kiama:
-    * [strategy-based rewriting](Rewriting.md)
-    * [attribute definition](Attribution.md)
-    * [tree relations](Relations.md)
-    * [abstract state machines](Machines.md)
-    * [pretty printing](PrettyPrinting.md)
+    * [strategy-based rewriting](Rewriting)
+    * [attribute definition](Attribution)
+    * [tree relations](Relations)
+    * [abstract state machines](Machines)
+    * [pretty printing](PrettyPrinting)
 
-[Examples](Examples.md) are also available, ranging from simple illustrations of
+[Examples](Examples) are also available, ranging from simple illustrations of
 usage to more complex language implementations and processing tasks.
 New users should read the user manual and then consult the examples
 for more detail.
 
 More research-oriented material in the form of papers, talks and slides can be
-found on the [Research](Research.md) page.
+found on the [Research](Research) page.
 
 API documentation can be found by searching for Kiama on [javadoc.io](https://www.javadoc.io).
-Alternatively, links to the API documentation for specific releases can be found on the [Releases](Releases.md) page.
+Alternatively, links to the API documentation for specific releases can be found on the [Releases](Releases) page.
 
-Up: [Documentation](Documentation.md), Next: [Examples](Examples.md)
+Up: [Documentation](Documentation), Next: [Examples](Examples)

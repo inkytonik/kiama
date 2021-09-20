@@ -1,6 +1,6 @@
 # Example: Simple imperative language
 
-Up: [Examples](Examples.md), Prev: [Dataflow](Dataflow.md), Next: [Lambda](Lambda.md)
+Up: [Examples](Examples), Prev: [Dataflow](Dataflow), Next: [Lambda](Lambda)
 
 IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
 to Kiama 2.x, but not all. Please consult the 2.x release notes for the
@@ -10,7 +10,7 @@ for 2.x that will eventually replace these pages.
 This example contains an abstract syntax tree structure for a simple
 imperative programming language, a parser that creates instances of
 the abstract syntax from textual representations of imperative
-language programs and a [read-eval-print loop](ReadEvalPrintLoops.md) that
+language programs and a [read-eval-print loop](ReadEvalPrintLoops) that
 inputs programs and prints their tree representations. The imperative
 language is mostly used to implement tests of the Kiama rewriting
 library, so there is also quite a bit of test-related scaffolding.
@@ -57,7 +57,7 @@ type Idn = String
 
 File: [org.bitbucket.inkytonik.kiama.example.imperative.Imperative.scala](https://github.com/inkytonik/kiama/blob/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/imperative/Imperative.scala)
 
-The parser is written using Kiama's [parsing combinator library](Parsing.md).
+The parser is written using Kiama's [parsing combinator library](Parsing).
 Lazy values are used to enable the parsers to be defined in any order.
 
 A whole parse is a parse of a single statement that consumes all of the
@@ -135,8 +135,8 @@ lazy val keyword : Parser[String] =
 File: [org.bitbucket.inkytonik.kiama.example.imperative.PrettyPrinter.scala](https://github.com/inkytonik/kiama/blob/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/imperative/PrettyPrinter.scala)
 
 The example includes a simple pretty-printer that uses Kiama's
-[pretty-printing library](PrettyPrinting.md).  See the end of the
-[pretty-printing library documentation](PrettyPrinting.md) for a
+[pretty-printing library](PrettyPrinting).  See the end of the
+[pretty-printing library documentation](PrettyPrinting) for a
 description of the imperative pretty printer.
 
 ## Read-eval-print loop
@@ -144,7 +144,7 @@ description of the imperative pretty printer.
 File: [org.bitbucket.inkytonik.kiama.example.imperative.Imperative.scala](https://github.com/inkytonik/kiama/blob/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/imperative/Imperative.scala)
 
 Kiama provides some basic facilities to make it easy to define
-[read-eval-print loops (REPLs)](ReadEvalPrintLoops.md). In the imperative
+[read-eval-print loops (REPLs)](ReadEvalPrintLoops). In the imperative
 example the main REPL parses program text and prints the resulting
 tree representations. (See [Running](#markdown-header-running) for an example execution.)
 
@@ -270,4 +270,4 @@ Workshop 2007 paper about the
 sbt 'test-only org.bitbucket.inkytonik.kiama.rewriting.UniplateTests'
 ```
 
-Up: [Examples](Examples.md), Prev: [Dataflow](Dataflow.md), Next: [Lambda](Lambda.md)
+Up: [Examples](Examples), Prev: [Dataflow](Dataflow), Next: [Lambda](Lambda)

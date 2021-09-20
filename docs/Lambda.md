@@ -1,6 +1,6 @@
 # Example: Simple rewriting-based evaluation of lambda calculus
 
-Up: [Examples](Examples.md), Prev: [Imperative](Imperative.md), Next: [Lambda2](Lambda2.md)
+Up: [Examples](Examples), Prev: [Imperative](Imperative), Next: [Lambda2](Lambda2)
 
 IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
 to Kiama 2.x, but not all. Please consult the 2.x release notes for the
@@ -59,8 +59,8 @@ case class Sub (m : Exp, x : Idn, n : Exp) extends Exp
 
 File: [org.bitbucket.inkytonik.kiama.example.lambda.Lambda.scala](https://github.com/inkytonik/kiama/blob/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda/Lambda.scala)
 
-The [parser](Parsing.md) is a simple application of Scala's [parser combinators](ParserCombs.md).
-(See the [Imperative](Imperative.md) example for more explanation of a similar parser.)
+The [parser](Parsing) is a simple application of Scala's [parser combinators](ParserCombs).
+(See the [Imperative](Imperative) example for more explanation of a similar parser.)
 
 ```
 lazy val start =
@@ -226,4 +226,4 @@ Some simple tests of lambda calculus evaluation.
 sbt 'test-only org.bitbucket.inkytonik.kiama.example.lambda.LambdaTests'
 ```
 
-Up: [Examples](Examples.md), Prev: [Imperative](Imperative.md), Next: [Lambda2](Lambda2.md)
+Up: [Examples](Examples), Prev: [Imperative](Imperative), Next: [Lambda2](Lambda2)

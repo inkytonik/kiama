@@ -1,6 +1,6 @@
 # Processing collections with Kiama
 
-Up: [Context](Context.md), Prev: [Case Classes](CaseClasses.md), Next: [Rewritable](Rewritable.md)
+Up: [Context](Context), Prev: [Case Classes](CaseClasses), Next: [Rewritable](Rewritable)
 
 IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
 to Kiama 2.x, but not all. Please consult the 2.x release notes for the
@@ -11,15 +11,15 @@ It is often the case that data to be processed by Kiama is formed using Scala
 [collection classes](http://www.scala-lang.org/docu/files/collections-api/collections.html),
 such as sets, vectors and maps.
 
-Structures encoded using collections can be [rewritten](Rewriting.md) or
-can have [attribute values](Attribution.md) defined for them.
+Structures encoded using collections can be [rewritten](Rewriting) or
+can have [attribute values](Attribution) defined for them.
 
 Attribution is defined as usual by attributes that are independent of
 the data structure.
 
 Rewriting of collections is currently supported for any collection
 that is `GenTraversable` or is a `Map`, relying on the `foreach` method
-to gain access to elements of the collection. Also, the [Rewritable](Rewritable.md)
+to gain access to elements of the collection. Also, the [Rewritable](Rewritable)
 class provides an interface that can be used to implement rewriting
 of arbitrary structures.
 
@@ -59,7 +59,7 @@ support to parallel collections.
 ## Collections and `Attributable` node properties
 
 Collections interact in a special way with the node properties provided
-by the [Attributable](Attribution.md#markdown-header-attributable) class. Specifically,
+by the [Attributable](Attribution#markdown-header-attributable) class. Specifically,
 if a collection is present in the tree structure, it will be ignored
 when it comes to determining node parents and children. The motivation
 is that usually you don't want to attach attributes to the collections
@@ -72,4 +72,4 @@ the `C` nodes, even though the list is actually holding them. The `C` nodes
 will have their `parent` properties set to the `P` node, not the list.
 Similarly, the `P` node will have the `C` nodes in its `children` property.
 
-Up: [Context](Context.md), Prev: [Case Classes](CaseClasses.md), Next: [Rewritable](Rewritable.md)
+Up: [Context](Context), Prev: [Case Classes](CaseClasses), Next: [Rewritable](Rewritable)

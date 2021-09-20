@@ -1,6 +1,6 @@
 # How to write read-eval-print loops using Kiama
 
-Up: [User Manual](UserManual.md), Prev: [Messaging](Messaging.md), Next: [Profiling](Profiling.md)
+Up: [User Manual](UserManual), Prev: [Messaging](Messaging), Next: [Profiling](Profiling)
 
 IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
 to Kiama 2.x, but not all. Please consult the 2.x release notes for the
@@ -17,9 +17,9 @@ Kiama provides simple support in the `org.bitbucket.inkytonik.kiama.util` packag
 REPLs of various kinds. The following examples make particular use of
 the REPL support:
 
-  * [Imperative](Imperative.md)
-  * [Lambda](Lambda.md)
-  * [Lambda2](Lambda2.md)
+  * [Imperative](Imperative)
+  * [Lambda](Lambda)
+  * [Lambda2](Lambda2)
 
 ## The `REPL` trait
 
@@ -69,7 +69,7 @@ providing a `processline` implementation you should provide:
 
   * `def start : Parser[T]`
 
-> A [parser](Parsing.md) that returns a value of type T.
+> A [parser](Parsing) that returns a value of type T.
 
   * `def process (t : T) : Unit`
 
@@ -122,4 +122,4 @@ connectInput in run := true
 outputStrategy in run := Some (StdoutOutput)
 ```
 
-Up: [User Manual](UserManual.md), Prev: [Messaging](Messaging.md)
+Up: [User Manual](UserManual), Prev: [Messaging](Messaging)

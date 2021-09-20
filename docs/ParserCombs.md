@@ -1,6 +1,6 @@
 # Constructing parsers using combinators
 
-Up: [Parsing](Parsing.md), Prev: [Parser input](ParserInput.md)
+Up: [Parsing](Parsing), Prev: [Parser input](ParserInput)
 
 Like any combinator-based approach to parsing, Scala's library starts
 with simple parsers and uses functions to combine them into more
@@ -8,7 +8,7 @@ complicated ones. The most common ways to construct parsers are
 covered here. See the Kiama library API documentation for `Parsers`
 for a complete list.
 
-See also [Parsing](Parsing.md) and [ParserInput](ParserInput.md) for general information about
+See also [Parsing](Parsing) and [ParserInput](ParserInput) for general information about
 defining and using parser combinators.
 
 ## Simple parsers
@@ -257,11 +257,11 @@ lazy val xtends     = "extends" ~> IDENTIFIER
 A collection of combinators and methods facilitate specification of
 repeated constructs.
 
-| `rep (p)` | repeat `p` zero or more times |
-|:----------------|:------------------------------|
-| `repsep (p, sep)` | repeat `p` zero or more times separated by `sep` |
-| `rep1 (p)` | repeat `p` one or more times  |
-| `rep1sep (p, sep)` | repeat `p` one or more times separated by `sep` |
+| `rep (p)`          | repeat `p` zero or more times                    |
+| :----------------- | :----------------------------------------------- |
+| `repsep (p, sep)`  | repeat `p` zero or more times separated by `sep` |
+| `rep1 (p)`         | repeat `p` one or more times                     |
+| `rep1sep (p, sep)` | repeat `p` one or more times separated by `sep`  |
 
 The parsers created by these combinators return vectors of the result
 produced by `p`. In the separator versions, the results of `sep` are
@@ -464,7 +464,7 @@ Similarly, for `getFinish`.
 
 See the API documentation for `Positions` for more information.
 
-Kiama's [Messaging](Messaging.md) module is designed to work with
+Kiama's [Messaging](Messaging) module is designed to work with
 values that have positions.
 All you need to do is pass such a value
 to the `message` method and the position information will be used
@@ -488,4 +488,4 @@ For example, Kiama provides the `constrainedInt` parser which parses
 a string of digits but only succeeds if the numeric value will fit
 into an `Int` (as determined by the operation `stringToInt`).
 
-Up: [Parsing](Parsing.md), Prev: [Parser input](ParserInput.md)
+Up: [Parsing](Parsing), Prev: [Parser input](ParserInput)

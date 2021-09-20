@@ -1,8 +1,8 @@
 # Parser basics, inputs and results
 
-Up: [Parsing](Parsing.md), Next: [Parser combinators](ParserCombs.md)
+Up: [Parsing](Parsing), Next: [Parser combinators](ParserCombs)
 
-See also [Parsing](Parsing.md) and [Parser combinators](ParserCombs.md) for general information about defining
+See also [Parsing](Parsing) and [Parser combinators](ParserCombs) for general information about defining
 and using parser combinators.
 
 Most parsers for use with Kiama will operate on character input.
@@ -118,4 +118,4 @@ Note that the printable representation of a `Failure` includes the
 location of the failure, so it is almost always better to print the
 entire `Failure` than just its message.
 
-Up: [Parsing](Parsing.md), Next: [Parser combinators](ParserCombs.md)
+Up: [Parsing](Parsing), Next: [Parser combinators](ParserCombs)

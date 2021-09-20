@@ -1,6 +1,6 @@
 # Example: More advanced implementation of lambda calculus
 
-Up: [Examples](Examples.md), Prev: [Lambda](Lambda.md), Next: [Oberon0](Oberon0.md)
+Up: [Examples](Examples), Prev: [Lambda](Lambda), Next: [Oberon0](Oberon0)
 
 IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
 to Kiama 2.x, but not all. Please consult the 2.x release notes for the
@@ -10,8 +10,8 @@ for 2.x that will eventually replace these pages.
 An implementation of simply-typed
 [lambda calculus](http://en.wikipedia.org/wiki/Lambda_calculus) with a
 selection of evaluation mechanisms. Name and type analysis are
-implemented using [Attribution](Attribution.md) and the evaluation mechanisms are
-implemented using [Rewriting](Rewriting.md). A [read-eval-print loop](ReadEvalPrintLoops.md)
+implemented using [Attribution](Attribution) and the evaluation mechanisms are
+implemented using [Rewriting](Rewriting). A [read-eval-print loop](ReadEvalPrintLoops)
 enables expressions to be parsed, semantically checked and then evaluated
 with a user-selected mechanism.
 
@@ -20,7 +20,7 @@ with a user-selected mechanism.
 File: [org.bitbucket.inkytonik.kiama.example.lambda2.LambdaTree.scala](https://github.com/inkytonik/kiama/blob/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/LambdaTree.scala)
 
 Programs for this example consist of expressions represented by the
-`Exp` type. `Exp` extends [Attributable](Attribution.md#markdown-header-attributable)
+`Exp` type. `Exp` extends [Attributable](Attribution#markdown-header-attributable)
 so that later we can define attributes for expressions.
 
 ```
@@ -127,7 +127,7 @@ File: [org.bitbucket.inkytonik.kiama.example.lambda2.PrettyPrinter.scala](https:
 
 The result of an expression evaluation is pretty printed using a
 straight-forward functional application of Kiama's
-[pretty-printing library](PrettyPrinting.md).
+[pretty-printing library](PrettyPrinting).
 
 ```
 object PrettyPrinter extends org.bitbucket.inkytonik.kiama.output.PrettyPrinter {
@@ -204,8 +204,8 @@ object PrettyPrinter extends org.bitbucket.inkytonik.kiama.output.PrettyPrinter 
 
 File: [org.bitbucket.inkytonik.kiama.example.lambda2.SyntaxAnalyser.scala](https://github.com/inkytonik/kiama/blob/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/SyntaxAnalyser.scala)
 
-The [parser](Parsing.md) is a simple application of Scala's [parser combinators](ParserCombs.md).
-(See the [Imperative](Imperative.md) example for more explanation of a similar parser.)  Types are optional
+The [parser](Parsing) is a simple application of Scala's [parser combinators](ParserCombs).
+(See the [Imperative](Imperative) example for more explanation of a similar parser.)  Types are optional
 in the lambda expressions, controlled by the setting of `typecheck` which can be set by
 the user in the REPL.
 
@@ -277,7 +277,7 @@ declared and their types.
 We define the `env` attribute of an expression to be a list of the
 variables that are in scope at that expression and their types. `env`
 depends on the context of the expression, so it is defined by a
-[childAttr](Attribution.md#markdown-header-attribute-definitions) definition.
+[childAttr](Attribution#markdown-header-attribute-definitions) definition.
 
 ```
 val env : Exp => List[(Idn,Type)] =
@@ -437,7 +437,7 @@ def lookup (name : Idn) : Exp => Option[Lam] =
 File: [org.bitbucket.inkytonik.kiama.example.lambda2.Evaluators.scala](https://github.com/inkytonik/kiama/blob/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/Evaluators.scala)
 
 The example includes a number of different evaluation mechanisms
-defined by [rewrite rules](Rewriting.md). The evaluation strategies used
+defined by [rewrite rules](Rewriting). The evaluation strategies used
 are heavily based on the Stratego ones given in
 [Building Interpreters with Rewriting Strategies](http://doi.acm.org/10.1145/291251.289425),
 Eelco Dolstra and Eelco Visser, LDTA 2002.  The following sections give an overview
@@ -658,7 +658,7 @@ that share and update results as evaluation proceeds.
 
 File: [org.bitbucket.inkytonik.kiama.example.lambda2.Lambda.scala](https://github.com/inkytonik/kiama/blob/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/Lambda.scala)
 
-The example code includes a [read-eval-print loop](ReadEvalPrintLoops.md)
+The example code includes a [read-eval-print loop](ReadEvalPrintLoops)
 that reads an expression from the user, parses the expression,
 performs semantic analysis on the tree and then evaluates it.
 Different evaluation mechanisms can be chosen using the `:eval`
@@ -706,4 +706,4 @@ Some simple tests of lambda calculus evaluation using all of the strategies.
 sbt 'test-only org.bitbucket.inkytonik.kiama.example.lambda2.LambdaTests'
 ```
 
-Up: [Examples](Examples.md), Prev: [Lambda](Lambda.md), Next: [Oberon0](Oberon0.md)
+Up: [Examples](Examples), Prev: [Lambda](Lambda), Next: [Oberon0](Oberon0)

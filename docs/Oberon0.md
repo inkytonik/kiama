@@ -1,6 +1,6 @@
 # Example: An Oberon0 compiler
 
-Up: [Examples](Examples.md), Prev: [Lambda2](Lambda2.md)
+Up: [Examples](Examples), Prev: [Lambda2](Lambda2)
 
 IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
 to Kiama 2.x, but not all. Please consult the 2.x release notes for the
@@ -19,4 +19,4 @@ The example makes extensive use of attribution, pretty printing and rewriting.
 It also uses Scala's traits and mixin facility to define components of the
 compiler and assemble them to create the challenge artefacts.
 
-Up: [Examples](Examples.md), Prev: [Lambda2](Lambda2.md)
+Up: [Examples](Examples), Prev: [Lambda2](Lambda2)

@@ -1,6 +1,6 @@
 # Overview of Kiama's support for abstract state machines
 
-Up: [User Manual](UserManual.md), Prev: [Relations](Relations.md), Next: [Pretty-printing](PrettyPrinting.md)
+Up: [User Manual](UserManual), Prev: [Relations](Relations), Next: [Pretty-printing](PrettyPrinting)
 
 IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
 to Kiama 2.x, but not all. Please consult the 2.x release notes for the
@@ -413,4 +413,4 @@ RISC exec: RD(1)
 RISC.R(28) := 3
 ```
 
-Up: [User Manual](UserManual.md), Prev: [Attribution](Attribution.md), Next: [Pretty-printing](PrettyPrinting.md)
+Up: [User Manual](UserManual), Prev: [Attribution](Attribution), Next: [Pretty-printing](PrettyPrinting)

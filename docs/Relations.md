@@ -1,11 +1,11 @@
 # Kiama's relations
 
-Up: [User Manual](UserManual.md), Prev: [Attribution](Attribution.md), Next: [Machines](Machines.md)
+Up: [User Manual](UserManual), Prev: [Attribution](Attribution), Next: [Machines](Machines)
 
 This page provides an overview of Kiama's support for
 _relations_.
 Relations are particularly useful when exploring tree structures, such as in attribute grammar equations.
-For information about Kiama's attribute grammar features, see [Attribution](Attribution.md).
+For information about Kiama's attribute grammar features, see [Attribution](Attribution).
 
 All of the Kiama examples use relations as of Kiama 2.0.
 
@@ -34,7 +34,7 @@ This code will bind `e` to `Fork(Leaf(1),Fork(Leaf(2),Leaf(1)))`.
 When defining processing for trees of this form, we need to be able to understand the relationships between nodes.
 For example, `e` is the parent of `a` and `d`, `b` is the previous node at the same level as `c`, and so on.
 Understanding these relationships is necessary since two nodes that are equal values such as `a` and `c` (which are both `Leaf(1)`) may have different attribute values because they are at different places in the tree.
-For example, consider an attribute that gives a node's depth (i.e., the distance of the node from the root). 
+For example, consider an attribute that gives a node's depth (i.e., the distance of the node from the root).
 In our example, Node `a` is at depth 1, but node `c` is at depth 2.
 
 Kiama relations help record these sorts of relationships between nodes.
@@ -43,13 +43,13 @@ Tree relations can be used in pattern matching so that context can be used to gu
 ## Relations in the nodes
 
 Before we discuss how Kiama relations work, it is worth thinking about the obvious approach: store relational information in the tree nodes.
-For example, it is a relatively easy matter to add a `parent` field to each node that points to the parent of that node. 
+For example, it is a relatively easy matter to add a `parent` field to each node that points to the parent of that node.
 Or perhaps it should be an option so that we can represent the case when the parent is not there (i.e., the node is the root of the tree).
 
 Kiama 1.x worked in this way, but deficiencies were apparent.
 First, the classes that represent nodes somehow have to have a parent field, not to mention fields that represent other relations such as previous, next, etc.
 Ideally we would be able to use Kiama on classes that come from third parties, but putting relations in the classes requires us to modify those classes or extend them.
-Second, even if we were prepared to modify or extend the classes, we still run into problems when performing operations such as rewriting where node sharing is common. 
+Second, even if we were prepared to modify or extend the classes, we still run into problems when performing operations such as rewriting where node sharing is common.
 If a node in the input of a rewrite is also present in the output of that rewrite, it could have different parents in those two structures, so a single parent field is not sufficient.
 
 ## Tree relations
@@ -96,7 +96,7 @@ Similarly, there are operations `child`, `firstChild`, `lastChild`, `prev`, `nex
 
 ## Using relational tree operations as patterns
 
-While the relational tree operations can be called directly, the easiest way to use them is via pattern matching. 
+While the relational tree operations can be called directly, the easiest way to use them is via pattern matching.
 Any relation can be used as a pattern that succeeds if the relation contains related nodes that match sub-patterns.
 For example, if you want to do something if a node has a parent and something else if it doesn't use the pattern `tree.parent(p)` as follows.
 
@@ -109,7 +109,7 @@ For example, if you want to do something if a node has a parent and something el
    }
 ```
 
-Similarly, the pattern `tree.next(x)` will succeed if `n` is not the last node at its level, binding `x` to the next node. 
+Similarly, the pattern `tree.next(x)` will succeed if `n` is not the last node at its level, binding `x` to the next node.
 
 Arbitrary sub-patterns can be used to discriminate contexts further.
 The pattern `tree.next(x : Leaf)` is the same as in the previous example, but will fail if the next node is not a `Leaf` node.
@@ -150,17 +150,17 @@ where `SemanticAnalyser` has the form:
 
 ```
 class SemanticAnalyser(tree : Tree[RepminTree,RepminTree]) {
-    
-    val foo = 
+
+    val foo =
         attr {
             case tree.parent(p) =>
                 ...
             ... other cases ...
         }
-    
+
     ... other attributes ...
-    
+
 }
 ```
 
-Up: [User Manual](UserManual.md), Prev: [Attribution](Attribution.md), Next: [Machines](Machines.md)
+Up: [User Manual](UserManual), Prev: [Attribution](Attribution), Next: [Machines](Machines)

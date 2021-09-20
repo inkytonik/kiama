@@ -1,6 +1,6 @@
 # Converting text into structures that Kiama can process
 
-Up: [User Manual](UserManual.md), Prev: [Context](Context.md), Next: [Rewriting](Rewriting.md)
+Up: [User Manual](UserManual), Prev: [Context](Context), Next: [Rewriting](Rewriting)
 
 It is necessary to have a tree representation of the data that is
 to be manipulated in order to use Kiama's facilities. This
@@ -38,7 +38,7 @@ This chapter from the first edition of the book is freely [available](http://www
 More detailed information on using the parsing library with Kiama can be
 found in these pages:
 
-  * [Parser basics, inputs and results](ParserInput.md)
-  * [Constructing parsers](ParserCombs.md)
+  * [Parser basics, inputs and results](ParserInput)
+  * [Constructing parsers](ParserCombs)
 
-Up: [User Manual](UserManual.md), Prev: [Context](Context.md), Next: [Rewriting](Rewriting.md)
+Up: [User Manual](UserManual), Prev: [Context](Context), Next: [Rewriting](Rewriting)

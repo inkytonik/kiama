@@ -1,6 +1,6 @@
 # Kiama examples
 
-Up: [Documentation](Documentation.md), Prev: [User Manual](UserManual.md), Next: [Research](Research.md)
+Up: [Documentation](Documentation), Prev: [User Manual](UserManual), Next: [Research](Research)
 
 Running examples are provided in the Kiama distribution to illustrate
 use of the library. The examples usually solve smaller versions of
@@ -10,7 +10,7 @@ tasks.
 The following examples are available. Some are documented in more
 detail on separate pages.
 
-**[Dataflow](Dataflow.md)**
+**[Dataflow](Dataflow)**
 
 Computation of live variable information for a simplified imperative
 programming language. Makes use of reference attributes to define a
@@ -22,7 +22,7 @@ equations over this graph.
 Calculation of context-free grammar properties (nullability, FIRST and
 FOLLOW sets for grammar symbols) using Kiama's circular attributes.
 
-**[Imperative](Imperative.md)**
+**[Imperative](Imperative)**
 
 An imperative programming language used particularly to define tests
 for the rewriting components of Kiama.
@@ -39,12 +39,12 @@ functional language.
 Some simple processing of JSON structures using Scala's parser
 combinaors and Kiama's rewriting and pretty-printing modules.
 
-**[Lambda](Lambda.md)**
+**[Lambda](Lambda)**
 
 A simple version of lambda calculus, implemented using rewrite rules
 that encode explicit substitution and garbage collection.
 
-**[Lambda2](Lambda2.md)**
+**[Lambda2](Lambda2)**
 
 A more extended lambda calculus that includes rewrite rules that
 implement a variety of different evaluation strategies including
@@ -61,7 +61,7 @@ A compiler for a cut-down version of Java. Performs parsing, semantic analysis
 (using attribute grammars) and code generation to JVM byte code for processing
 by the Jasmine JVM assembler. Also includes a pretty-printer.
 
-**[Oberon0](Oberon0.md)**
+**[Oberon0](Oberon0)**
 
 A compiler for the Oberon-0 programming language defined in Niklaus
 Wirth's book
@@ -104,7 +104,7 @@ the JastAdd example to allow comparison between the two approaches.
 An interpreted implementation of a simple dialect of the Prolog logic
 programming language.
 
-**[Repmin](Attribution.md#markdown-header-repmin)**
+**[Repmin](Attribution#markdown-header-repmin)**
 
 An implementation of the classic Repmin problem that is often used to
 illustrate the basic capabilities of attribute grammar systems and was
@@ -134,4 +134,4 @@ higher-order attribute grammars to compute trees as attributes of
 trees and the use of attribute forwarding to automatically direct
 references from the original tree to a generated tree.
 
-Up: [Documentation](Documentation.md), Prev: [User Manual](UserManual.md), Next: [Research](Research.md)
+Up: [Documentation](Documentation), Prev: [User Manual](UserManual), Next: [Research](Research)

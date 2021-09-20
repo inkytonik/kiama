@@ -1,6 +1,6 @@
 # Processing arbitrary data with Kiama
 
-Up: [Context](Context.md), Prev: [Collections](Collections.md)
+Up: [Context](Context), Prev: [Collections](Collections)
 
 IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
 to Kiama 2.x, but not all. Please consult the 2.x release notes for the
@@ -13,8 +13,8 @@ Kiama.
 Rewriting is more problematic because Kiama needs to have access to
 the components of a value in order to be able to rewrite it in a
 generic fashion. Kiama has built-in support for rewriting of `Product`
-values (see [Case Classes](CaseClasses.md)), and `GenTraversable` or `Map` collections
-(see [Collections](Collections.md)), since the Scala library provides mechanisms for
+values (see [Case Classes](CaseClasses)), and `GenTraversable` or `Map` collections
+(see [Collections](Collections)), since the Scala library provides mechanisms for
 accessing their components.
 
 You can make other types of value rewritable by having them implement
@@ -49,4 +49,4 @@ See Kiama's `imperative` example (file
 [ASTNonCase.scala](https://github.com/inkytonik/kiama/blob/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/imperative/ASTNonCase.scala))
 for an example of how to define `Rewritable` instances.
 
-Up: [Context](Context.md), Prev: [Case Classes](CaseClasses.md)
+Up: [Context](Context), Prev: [Case Classes](CaseClasses)

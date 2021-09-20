@@ -1,6 +1,6 @@
 # Research papers and presentations about Kiama
 
-Up: [Documentation](Documentation.md), Prev: [Examples](Examples.md)
+Up: [Documentation](Documentation), Prev: [Examples](Examples)
 
 The following research papers have been published and presentations have been given about Kiama-related topics. The most recent resources are listed first in each category. Some of the conference papers or tutorials also have associated slides.
 
@@ -62,4 +62,4 @@ Sloane, A. M. String interpolation in Scala 2.10. Presentation at [ScalaSyd Febr
 
 Sloane, A. M. sbt-rats: Packrat Parser Generation for Scala. Presentation at [ScalaSyd August 8, 2012](http://www.meetup.com/scalasyd/events/75473012/). [Slides](https://speakerdeck.com/inkytonik/sbt-rats-packrat-parser-generation-for-scala). [Blog series](http://hootenannylas.blogspot.com.au/2013/02/string-interpolation-in-scala-210.html).
 
-Up: [Documentation](Documentation.md), Prev: [Examples](Examples.md)
+Up: [Documentation](Documentation), Prev: [Examples](Examples)

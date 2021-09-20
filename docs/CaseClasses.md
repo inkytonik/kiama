@@ -1,6 +1,6 @@
 # Overview of Kiama's support for attribute grammars
 
-Up: [Context](Context.md), Next: [Collections](Collections.md)
+Up: [Context](Context), Next: [Collections](Collections)
 
 The easiest choice of representation for a data structure that is to
 be manipulated by Kiama is one that comprises instances of Scala
@@ -122,12 +122,12 @@ collection nodes. Since they are implemented by case classes or objects
 there is no special processing required.
 
 Kiama also supports nodes that are collections that are not implemented
-as case classes or objects. See [Collections](Collections.md) for more information.
+as case classes or objects. See [Collections](Collections) for more information.
 
 ## What can you do
 
-Structures encoded using these approaches can be [rewritten](Rewriting.md)
-or can have [attribute values](Attribution.md) defined for them. Rewriting
+Structures encoded using these approaches can be [rewritten](Rewriting)
+or can have [attribute values](Attribution) defined for them. Rewriting
 really only makes sense if the structure is a tree, whereas
 attribution can also be applied to graph structures.
 
@@ -168,15 +168,15 @@ abstract class Stmt extends Product
 ```
 
 You may want to obtain more generic support for your tree nodes. The
-[Attributable](Attribution.md#markdown-header-attributable) class and object in Kiama's
+[Attributable](Attribution#markdown-header-attributable) class and object in Kiama's
 attribution module provides some useful facilities for this purpose.
 
 ## Positions
 
 It is common to want to attach position (coordinate) information to
 your structure to help with producing sensible messages. See
-[the Positions section of the Parser Combinator page](ParserCombs.md#markdown-header-positions) for a discussion of how to do this when using
-Scala parser combinators and [Messaging](Messaging.md) for information on how the
+[the Positions section of the Parser Combinator page](ParserCombs#markdown-header-positions) for a discussion of how to do this when using
+Scala parser combinators and [Messaging](Messaging) for information on how the
 positions can be used.
 
-Up: [Context](Context.md), Next: [Collections](Collections.md)
+Up: [Context](Context), Next: [Collections](Collections)

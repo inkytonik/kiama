@@ -1,7 +1,7 @@
 # Kiama release documentation
 
-See the [user manual](UserManual.md) for a tutorial-style description of
-Kiama features and usage and the [installation](Installation.md) manual
+See the [user manual](UserManual) for a tutorial-style description of
+Kiama features and usage and the [installation](Installation) manual
 for details of installation of binary releases or building from
 source.
 
@@ -15,7 +15,7 @@ is known to work, but other versions may also.
 
 The easiest way to use Kiama with your own Scala code is to build your
 project with [Scala simple-build-tool (sbt)](http://www.scala-sbt.org) (or a
-similar tool such as Maven).  See the [Installation](Installation.md) page for details.
+similar tool such as Maven).  See the [Installation](Installation) page for details.
 Since Kiama is built with sbt, a source build of Kiama will also automatically
 download the compatible tools and libraries so there is no need to download
 them manually when building from source.

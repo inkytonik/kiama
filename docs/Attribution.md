@@ -1,18 +1,18 @@
 # Overview of Kiama's support for attribute grammars
 
-Up: [User Manual](UserManual.md), Prev: [Rewriting](Rewriting.md), Next: [Relations](Relations.md)
+Up: [User Manual](UserManual), Prev: [Rewriting](Rewriting), Next: [Relations](Relations)
 
 This page provides an overview of Kiama's support for
 _attribute grammars_. For the context in which this part of the library
-operates, see [Context](Context.md). For a description of Kiama's support for relations, particularly in trees, and how they can be used in attribution, see [Relations](Relations.md).
+operates, see [Context](Context). For a description of Kiama's support for relations, particularly in trees, and how they can be used in attribution, see [Relations](Relations).
 
 Attribute grammars are used in the following
 examples.
 
-  * [Dataflow](Dataflow.md)
+  * [Dataflow](Dataflow)
   * ISWIM
-  * [Lambda2](Lambda2.md)
-  * [Oberon0](Oberon0.md)
+  * [Lambda2](Lambda2)
+  * [Oberon0](Oberon0)
   * Obr
   * OneOhOneCompanies
   * PicoJava
@@ -21,7 +21,7 @@ examples.
   * Transform
 
 More information about Kiama attribute grammars can be found via the
-[Research](Research.md) page.
+[Research](Research) page.
 
 ## Introduction
 
@@ -57,7 +57,7 @@ Extend that class to build a module that uses attribution.
 
 To get full support for pattern matching in
 attribute definitions it is best to use data structures constructed
-from instances of case classes as described in [Context](Context.md).
+from instances of case classes as described in [Context](Context).
 
 ## Repmin
 
@@ -275,7 +275,7 @@ use can be used to point directly to the associated declaration node.
 
 Reference attributes can be defined in Kiama just like other attribute
 values. Nothing special needs to be done to represent the reference;
-it's just a normal Scala reference. See the [Dataflow](Dataflow.md) example for
+it's just a normal Scala reference. See the [Dataflow](Dataflow) example for
 attributes that are defined by reference to represent the control flow
 of a program.
 
@@ -295,7 +295,7 @@ found. We say that `lookup` is a _parameterised attribute_ since its
 definition depends on the identifier that is being looked up.
 
 Kiama provides a `paramAttr` function to assist with defining
-parameterised attributes.  
+parameterised attributes.
 For example, the `lookup` attribute in the Kiama PicoJava example
 is defined as follows so that it is parameterised by a string
 name.
@@ -352,7 +352,7 @@ In this definition `v` (of type `V`) is the initial value of the
 attribute and the cases are used to define subsequent values in terms
 of other, possibly circular, attributes.
 
-See the [Dataflow](Dataflow.md) example for an illustration of the use of circular
+See the [Dataflow](Dataflow) example for an illustration of the use of circular
 attributes to define iterative dataflow equations to compute live
 variables for an imperative programming language.
 
@@ -479,4 +479,4 @@ is also updated at blocks to define nested scopes. Finally, it is
 accessed at identifier use nodes in order to check those uses against
 the environment at that point.
 
-Up: [User Manual](UserManual.md), Prev: [Rewriting](Rewriting.md), Next: [Machines](Machines.md)
+Up: [User Manual](UserManual), Prev: [Rewriting](Rewriting), Next: [Machines](Machines)

@@ -1,6 +1,6 @@
 # Example: Dataflow calculation for live variable analysis
 
-Up: [Examples](Examples.md), Next: [Imperative](Imperative.md)
+Up: [Examples](Examples), Next: [Imperative](Imperative)
 
 IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
 to Kiama 2.x, but not all. Please consult the 2.x release notes for the
@@ -190,4 +190,4 @@ while loop.
 sbt 'test-only org.bitbucket.inkytonik.kiama.example.dataflow.DataflowTests'
 ```
 
-Up: [Examples](Examples.md), Next: [Imperative](Imperative.md)
+Up: [Examples](Examples), Next: [Imperative](Imperative)

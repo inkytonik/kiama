@@ -1,6 +1,6 @@
 # Overview of Kiama's support for pretty printing
 
-Up: [User Manual](UserManual.md), Prev: [Machines](Machines.md), Next: [Messaging](Messaging.md)
+Up: [User Manual](UserManual), Prev: [Machines](Machines), Next: [Messaging](Messaging)
 
 IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
 to Kiama 2.x, but not all. Please consult the 2.x release notes for the
@@ -10,20 +10,20 @@ for 2.x that will eventually replace these pages.
 This page provides an overview of Kiama's support for _pretty
 printing_. Pretty printing is used in the following examples.
 
-  * [Imperative](Imperative.md)
+  * [Imperative](Imperative)
   * ISWIM
-  * [Lambda2](Lambda2.md)
-  * [Oberon0](Oberon0.md)
+  * [Lambda2](Lambda2)
+  * [Oberon0](Oberon0)
 
 Fragments from these examples are used as illustrations below.
 
 More information about Kiama pretty-printing can be found via the
-[Research](Research.md) page.
+[Research](Research) page.
 
 Kiama's pretty printing library is based on the paper
 ["Linear, bounded, functional pretty-printing"](http://journals.cambridge.org/abstract_S0956796808006990)
 by Swierstra and Chitil (Journal of Functional Programming, 19 (1),
-2008) which details various pretty printing libraries for Haskell. We
+1)    which details various pretty printing libraries for Haskell. We
 use the continuation-based form of pretty printer discussed in this
 paper.
 
@@ -514,7 +514,7 @@ depending on line width.
 
 As a more complex example, consider
 [pretty printing](https://github.com/inkytonik/kiama/blob/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/imperative/PrettyPrinter.scala)
-for the [Imperative](Imperative.md) language. We implement a function `show` that
+for the [Imperative](Imperative) language. We implement a function `show` that
 converts any imperative language abstract syntax tree node into a
 document. `show` uses `showbin` that abstracts documents for
 parenthesised applications of binary operators.  This is an
@@ -661,7 +661,7 @@ parenthesisation. The module uses algorithms published by Norman Ramsey
 in his paper
 ["Unparsing expressions with prefix and postfix operators"](http://onlinelibrary.wiley.com/doi/10.1002/(SICI)1097-024X(1998100)28:12%3C1327::AID-SPE195%3E3.0.CO;2-C/abstract)
 (Software: Practice and Experience, 28 (12), 1998).
-See the [Oberon0](Oberon0.md) example for an illustration.
+See the [Oberon0](Oberon0) example for an illustration.
 
 ## Output filters
 
@@ -682,4 +682,4 @@ indented by `n` spaces. Thus, `keepMaxIndent` can be used to summarise `s` by
 omitting information nested below a certain level. An optional extra argument
 can be used to specify alternatives to `"..."`.
 
-Up: [User Manual](UserManual.md), Prev: [Machines](Machines.md), Next: [Messaging](Messaging.md)
+Up: [User Manual](UserManual), Prev: [Machines](Machines), Next: [Messaging](Messaging)

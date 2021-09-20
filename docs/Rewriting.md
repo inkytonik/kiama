@@ -1,6 +1,6 @@
 # Overview of Kiama's support for strategy-based rewriting
 
-Up: [User Manual](UserManual.md), Prev: [Parsing](Parsing.md), Next: [Attribution](Attribution.md)
+Up: [User Manual](UserManual), Prev: [Parsing](Parsing), Next: [Attribution](Attribution)
 
 IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
 to Kiama 2.x, but not all. Please consult the 2.x release notes for the
@@ -9,14 +9,14 @@ for 2.x that will eventually replace these pages.
 
 This page provides an overview of Kiama's support for _strategy-based
 rewriting_. For the context in which this part of the library
-operates, see [Context](Context.md). Rewriting is used in the following examples.
+operates, see [Context](Context). Rewriting is used in the following examples.
 
-  * [Lambda](Lambda.md)
-  * [Lambda2](Lambda2.md)
-  * [Oberon0](Oberon0.md)
-  * [TIL](TIL.md)
+  * [Lambda](Lambda)
+  * [Lambda2](Lambda2)
+  * [Oberon0](Oberon0)
+  * [TIL](TIL)
 
-More information about Kiama rewriting can be found via the [Research](Research.md)
+More information about Kiama rewriting can be found via the [Research](Research)
 page.
 
 ## Introduction
@@ -53,7 +53,7 @@ The rewriting library uses `Term` to refer to the type of data that
 can be rewritten. This type is defined to be `Any`. Usually custom
 structures are implemented with case classes which are automatically
 supported by Kiama's generic traversals, as are traversable
-collections. See [Context](Context.md) for more information.
+collections. See [Context](Context) for more information.
 
 ## Strategies
 
@@ -517,11 +517,11 @@ appears more than once in the new term, you will probably want to
 clone it before inserting it into the new term.
 
 Cloning is particularly important if you are going to perform
-[attribution](Attribution.md) on the new structure, since attributes
+[attribution](Attribution) on the new structure, since attributes
 are associated with nodes. If a node appears more than once in
 the structure it will have the same attributes at each place,
 which is probably not what you want. Kiama's
-[Attributable](Attribution.md#markdown-header-attributable) trait provides
+[Attributable](Attribution#markdown-header-attributable) trait provides
 `clone` and `deepclone` operations that can be used to avoid
 this problem.
 
@@ -578,4 +578,4 @@ The `PositionalRewriter` extension of `CallbackRewriter` defines the
 terms. Terms that implement `scala.util.parsing.input.Positional` are
 recognised as having positions by this operation.
 
-Up: [User Manual](UserManual.md), Prev: [Parsing](Parsing.md), Next: [Attribution](Attribution.md)
+Up: [User Manual](UserManual), Prev: [Parsing](Parsing), Next: [Attribution](Attribution)
