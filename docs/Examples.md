@@ -1,6 +1,6 @@
 # Kiama examples
 
-Up: [Documentation](Documentation), Prev: [User Manual](UserManual), Next: [Research](Research)
+Up: [Documentation](index), Prev: [User Manual](UserManual), Next: [Research](Research)
 
 Running examples are provided in the Kiama distribution to illustrate
 use of the library. The examples usually solve smaller versions of
@@ -134,4 +134,4 @@ higher-order attribute grammars to compute trees as attributes of
 trees and the use of attribute forwarding to automatically direct
 references from the original tree to a generated tree.
 
-Up: [Documentation](Documentation), Prev: [User Manual](UserManual), Next: [Research](Research)
+Up: [Documentation](index), Prev: [User Manual](UserManual), Next: [Research](Research)

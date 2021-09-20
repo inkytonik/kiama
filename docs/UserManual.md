@@ -1,6 +1,6 @@
 # Kiama Language Processing Library
 
-Up: [Documentation](Documentation), Next: [Examples](Examples)
+Up: [Documentation](index), Next: [Examples](Examples)
 
 Kiama is a [Scala](http://www.scala-lang.org) library for language
 processing. "Language" in this context refers to any structured
@@ -59,4 +59,4 @@ found on the [Research](Research) page.
 API documentation can be found by searching for Kiama on [javadoc.io](https://www.javadoc.io).
 Alternatively, links to the API documentation for specific releases can be found on the [Releases](Releases) page.
 
-Up: [Documentation](Documentation), Next: [Examples](Examples)
+Up: [Documentation](index), Next: [Examples](Examples)
