@@ -41,13 +41,13 @@ https://github.com/inkytonik
 
 Documentation about how to build, install and use Kiama can be found on the [Kiama docs pages](https://inkytonik.github.io/kiama).
 
-The main documentation for Kiama takes the form of wiki pages covering library features and examples. The [User Manual](https://inkytonik.github.io/kiama/UserManual) is a good place to start.
+The main documentation for Kiama takes the form of pages covering library features and examples. The [User Manual](https://inkytonik.github.io/kiama/UserManual) is a good place to start.
 
-See the [Research wiki page](https://inkytonik.github.io/kiama/Research) for links to papers and presentations about Kiama.
+See the [Research page](https://inkytonik.github.io/kiama/Research) for links to papers and presentations about Kiama.
 
-For summary information about Kiama releases, including dependencies on other software and links to API documentation, see the [Releases wiki page](https://inkytonik.github.io/kiama/Releases).
+For summary information about Kiama releases, including dependencies on other software and links to API documentation, see the [Releases page](https://inkytonik.github.io/kiama/Releases).
 
-See the [Installation wiki page](https://inkytonik.github.io/kiama/Installation) for instructions on how to install Kiama.
+See the [Installation page](https://inkytonik.github.io/kiama/Installation) for instructions on how to install Kiama.
 
 ## Licensing
 
