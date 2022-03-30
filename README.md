@@ -167,7 +167,7 @@ Kiama 1.x and 2.x:
             case While(e, b) => "while" <+> parens(toDoc(e)) <> group(nest(line <> toDoc(b)))
         }
 
-    def binToDoc(l : ImperativeNode, op : String, r : Im****perativeNode) : Doc =
+    def binToDoc(l : ImperativeNode, op : String, r : ImperativeNode) : Doc =
         parens(toDoc(l) <+> op <+> toDoc (r))
 
 ## Mailing lists
