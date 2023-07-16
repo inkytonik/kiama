@@ -8,8 +8,8 @@ ThisBuild/version := "2.6.0-SNAPSHOT"
 
 ThisBuild/organization := "org.bitbucket.inkytonik.kiama"
 
-ThisBuild/scalaVersion := "2.13.6"
-ThisBuild/crossScalaVersions := Seq("3.0.0", "2.13.6", "2.12.14", "2.11.12")
+ThisBuild/scalaVersion := "2.13.7"
+ThisBuild/crossScalaVersions := Seq("3.1.0", "2.13.7", "2.12.18", "2.11.12")
 
 ThisBuild/scalacOptions := {
     // Turn on all lint warnings, except:
@@ -43,11 +43,8 @@ ThisBuild/scalacOptions := {
         )
 }
 
-ThisBuild/resolvers ++=
-    Seq(
-        Resolver.sonatypeRepo("releases"),
-        Resolver.sonatypeRepo("snapshots")
-    )
+ThisBuild/resolvers ++= Resolver.sonatypeOssRepos("releases")
+ThisBuild/resolvers ++= Resolver.sonatypeOssRepos("snapshots")
 
 ThisBuild/logLevel := Level.Info
 
@@ -74,7 +71,7 @@ val commonSettings =
                     Seq(sourceDir / "scala-2.11", sourceDir / "scala-2.11+", sourceDir / "scala-2.12-")
                 case Some((2, 12)) =>
                     Seq(sourceDir / "scala-2.not11", sourceDir / "scala-2.11+", sourceDir / "scala-2.12-")
-                case Some((2, 13) | (3, 0)) =>
+                case Some((2, 13) | (3, _)) =>
                     Seq(sourceDir / "scala-2.not11", sourceDir / "scala-2.11+", sourceDir / "scala-2.13")
                 case version =>
                     sys.error(s"unexpected Scala version $version")
