@@ -20,6 +20,20 @@ Since Kiama is built with sbt, a source build of Kiama will also automatically
 download the compatible tools and libraries so there is no need to download
 them manually when building from source.
 
+  * Version 2.5.1 for Scala 2.11, 2.12, 2.13, 3.0 and 3.1 (July 16, 2023)
+    * [Release notes](doc/2.5.1/notes.html)
+    * [2.5.1 API documentation](http://www.javadoc.io/doc/org.bitbucket.inkytonik.kiama/kiama_2.13/2.5.1)
+    * Compatible tools and libraries:
+      * [Scala 2.11.x/2.12.x/2.13.x/3.0.x/3.1.x](http://www.scala-lang.org)
+      * [Guava collections 32.2.1](https://github.com/google/guava)
+      * To use the read-eval-print loops:
+        * [JLine 2.14.6](https://github.com/jline/jline2)
+      * Command-line support in examples:
+        * [Scallop 4.0.3](https://github.com/scallop/scallop)
+      * To run Kiama tests:
+        * [ScalaCheck 1.15.2/1.15.4](https://www.scalacheck.org)
+        * [ScalaTest 3.2.3/3.2.9](http://scalatest.org)
+
   * Version 2.5.0 for Scala 2.11, 2.12, 2.13 and 3.0 (July 5, 2021)
     * [Release notes](doc/2.5.0/notes.html)
     * [2.5.0 API documentation](http://www.javadoc.io/doc/org.bitbucket.inkytonik.kiama/kiama_2.13/2.5.0)

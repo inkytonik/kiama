@@ -22,6 +22,7 @@ https://github.com/inkytonik
 
 ## Latest News
 
+ * Jul 16, 2023: Version 2.5.1 released
  * Sep 20, 2021: Moved wiki to [GitHub pages](https://inkytonik.github.io/kiama)
  * Jul 5, 2021: Version 2.5.0 released
  * Dec 23, 2020: Version 2.4.0 released
@@ -182,11 +183,11 @@ Kiama 1.x and 2.x:
 The main Kiama Project team is:
 
 * Tony Sloane
-* Matthew Roberts
-* Dominic Verity
 
 Other contributors have been:
 
+* Matthew Roberts
+* Dominic Verity
 * Len Hamey
 * Lennart Kats and Eelco Visser (some aspects of attribution)
 * Ben Mockler (the first version of the Oberon-0 example)

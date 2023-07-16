@@ -1,0 +1,16 @@
+[Kiama](https://github.com/inkytonik/kiama) is a Scala library for language processing including attribute grammars, term rewriting, abstract state machines, parsing, and pretty printing.
+
+This is a minor release that bumps versions for Scala and some libraries that have security issues.
+Thanks to datYori for the security bumps.
+
+### Other
+
+* Bump gson version from 2.8.2 to 2.8.9 (datYori).
+
+* Bump guava version from 30.1.1-jre to 32.1.1-jre (datYori).
+
+* Now tested using JDK 11.
+
+* Scala versions are now 3.1.3, 3.0.2, 2.13.7, 2.12.18, 2.11.12. These are the latest versions that do not require non-trivial Kiama code changes.
+
+* Move to sbt 1.9.2.
