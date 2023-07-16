@@ -13,7 +13,9 @@ package util
 
 object StringOps {
 
+    import scala.collection.immutable.{StringOps => IStringOps}
+
     def lines(s : String) : Iterator[String] =
-        s.lines
+        new IStringOps(s).lines
 
 }
