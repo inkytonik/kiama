@@ -1,6 +1,14 @@
 
 # Kiama
 
+## Status
+
+I am no longer actively developing Kiama and have limited time for support.
+It is possible that this version will not receive any more updates.
+I will try to respond to issues, but might not respond quickly and may not have time to make changes.
+
+## About
+
 [![License: MPL v2.0](https://img.shields.io/badge/License-MPL%20v2-blue.svg)](http://mozilla.org/MPL/2.0/)
 [![Sonatype Nexus (Releases)](https://img.shields.io/nexus/r/https/oss.sonatype.org/org.bitbucket.inkytonik.kiama/kiama_2.12.svg?label=Sonatype%20Nexus%20Release)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.bitbucket.inkytonik.kiama%22)
 [![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/https/oss.sonatype.org/org.bitbucket.inkytonik.kiama/kiama_2.12.svg?label=Sonatype%20Nexus%20Snapshot)]()
