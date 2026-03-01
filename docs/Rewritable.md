@@ -46,7 +46,7 @@ for some reason (e.g., wrong number or type), the `illegalArgs` method
 should be called.  By default, `illegalArgs` throws an `illegalArgumentException`.
 
 See Kiama's `imperative` example (file
-[ASTNonCase.scala](https://github.com/inkytonik/kiama/blob/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/imperative/ASTNonCase.scala))
+[ImperativeNonCaseTree.scala](/extras/src/test/scala/org/bitbucket/inkytonik/kiama/example/imperative/ImperativeNonCaseTree.scala))
 for an example of how to define `Rewritable` instances.
 
 Up: [Context](Context), Prev: [Case Classes](CaseClasses)

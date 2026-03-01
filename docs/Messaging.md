@@ -17,7 +17,7 @@ The following examples make particular use of the messaging module:
 
 ## Messaging
 
-File: [org.bitbucket.inkytonik.kiama.util.Messaging.scala](http://code.google.com/p/kiama/source/browse/library/src/main/scala/org/bitbucket/inkytonik/kiama/util/Messaging.scala)
+File: [org.bitbucket.inkytonik.kiama.util.Messaging.scala](/extras/src/main/scala/org/bitbucket/inkytonik/kiama/util/Messaging.scala)
 
 The `Messaging` object implements the messaging module. To store the
 messages it contains a list buffer, each item of which contains position
