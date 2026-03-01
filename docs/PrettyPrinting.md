@@ -4,8 +4,7 @@ Up: [User Manual](UserManual), Prev: [Machines](Machines), Next: [Messaging](Mes
 
 IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
 to Kiama 2.x, but not all. Please consult the 2.x release notes for the
-main differences. We are currently writing comprehensive documentation
-for 2.x that will eventually replace these pages.
+main differences.
 
 This page provides an overview of Kiama's support for _pretty
 printing_. Pretty printing is used in the following examples.
@@ -513,7 +512,7 @@ depending on line width.
 ## Functional pretty printing: the Imperative language
 
 As a more complex example, consider
-[pretty printing](/extras/src/test/scala/org/bitbucket/inkytonik/kiama/example/imperative/PrettyPrinter.scala)
+[pretty printing](https://github.com/inkytonik/kiama/blob/master/extras/src/test/scala/org/bitbucket/inkytonik/kiama/example/imperative/PrettyPrinter.scala)
 for the [Imperative](Imperative) language. We implement a function `show` that
 converts any imperative language abstract syntax tree node into a
 document. `show` uses `showbin` that abstracts documents for

@@ -4,8 +4,7 @@ Up: [User Manual](UserManual), Prev: [Pretty-printing](PrettyPrinting), Next: [R
 
 IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
 to Kiama 2.x, but not all. Please consult the 2.x release notes for the
-main differences. We are currently writing comprehensive documentation
-for 2.x that will eventually replace these pages.
+main differences.
 
 Kiama provides a simple messaging module to enable error messages to
 be produced during an analysis, stored and then processed at a later
@@ -17,7 +16,7 @@ The following examples make particular use of the messaging module:
 
 ## Messaging
 
-File: [org.bitbucket.inkytonik.kiama.util.Messaging.scala](/extras/src/main/scala/org/bitbucket/inkytonik/kiama/util/Messaging.scala)
+File: [org.bitbucket.inkytonik.kiama.util.Messaging.scala](https://github.com/inkytonik/kiama/blob/master/extras/src/main/scala/org/bitbucket/inkytonik/kiama/util/Messaging.scala)
 
 The `Messaging` object implements the messaging module. To store the
 messages it contains a list buffer, each item of which contains position

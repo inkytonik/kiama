@@ -4,8 +4,7 @@ Up: [User Manual](UserManual), Prev: [Parsing](Parsing), Next: [Attribution](Att
 
 IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
 to Kiama 2.x, but not all. Please consult the 2.x release notes for the
-main differences. We are currently writing comprehensive documentation
-for 2.x that will eventually replace these pages.
+main differences.
 
 This page provides an overview of Kiama's support for _strategy-based
 rewriting_. For the context in which this part of the library
@@ -213,7 +212,7 @@ returns a strategy, not a term.  The returned strategy is applied to the
 subject term.  Therefore, `rulefs` is most useful in situations where you
 want to match some pattern to bind some variables, then use those
 variables in another strategy.  See the
-File: [ParLazy.scala](/extras/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/ParLazy.scala)
+File: [ParLazy.scala](https://github.com/inkytonik/kiama/blob/master/extras/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/ParLazy.scala)
 of the lambda2 example for uses of `rulefs`.
 
 Stratego allows the use of concrete syntax in strategies. For example

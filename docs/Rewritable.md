@@ -4,8 +4,7 @@ Up: [Context](Context), Prev: [Collections](Collections)
 
 IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
 to Kiama 2.x, but not all. Please consult the 2.x release notes for the
-main differences. We are currently writing comprehensive documentation
-for 2.x that will eventually replace these pages.
+main differences.
 
 Any Scala reference value can have attributes defined for it using
 Kiama.
@@ -46,7 +45,7 @@ for some reason (e.g., wrong number or type), the `illegalArgs` method
 should be called.  By default, `illegalArgs` throws an `illegalArgumentException`.
 
 See Kiama's `imperative` example (file
-[ImperativeNonCaseTree.scala](/extras/src/test/scala/org/bitbucket/inkytonik/kiama/example/imperative/ImperativeNonCaseTree.scala))
+[ImperativeNonCaseTree.scala](https://github.com/inkytonik/kiama/blob/master/extras/src/test/scala/org/bitbucket/inkytonik/kiama/example/imperative/ImperativeNonCaseTree.scala))
 for an example of how to define `Rewritable` instances.
 
 Up: [Context](Context), Prev: [Case Classes](CaseClasses)

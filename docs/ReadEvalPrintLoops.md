@@ -4,8 +4,7 @@ Up: [User Manual](UserManual), Prev: [Messaging](Messaging), Next: [Profiling](P
 
 IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
 to Kiama 2.x, but not all. Please consult the 2.x release notes for the
-main differences. We are currently writing comprehensive documentation
-for 2.x that will eventually replace these pages.
+main differences.
 
 Some language processors operate most naturally as interactive
 software that reads user input, turns that input into a structured
@@ -23,7 +22,7 @@ the REPL support:
 
 ## The `REPL` trait
 
-File: [org.bitbucket.inkytonik.kiama.util.REPL.scala](/extras/src/main/scala/org/bitbucket/inkytonik/kiama/util/REPL.scala)
+File: [org.bitbucket.inkytonik.kiama.util.REPL.scala](https://github.com/inkytonik/kiama/blob/master/extras/src/main/scala/org/bitbucket/inkytonik/kiama/util/REPL.scala)
 
 The common interface for REPLs built using Kiama is provided by the
 `REPL` trait. It provides a `main` function that:
@@ -55,7 +54,7 @@ editing and history.
 
 ## `ParsingREPL`
 
-File: [org.bitbucket.inkytonik.kiama.util.REPL.scala](/extras/src/main/scala/org/bitbucket/inkytonik/kiama/util/REPL.scala)
+File: [org.bitbucket.inkytonik.kiama.util.REPL.scala](https://github.com/inkytonik/kiama/blob/master/extras/src/main/scala/org/bitbucket/inkytonik/kiama/util/REPL.scala)
 
 `REPL` provides a very general interface. Kiama also provides a number
 of more specialised instantiations of `REPL` for common situations.
@@ -77,7 +76,7 @@ providing a `processline` implementation you should provide:
 
 ## `GeneratingREPL`
 
-File: [org.bitbucket.inkytonik.kiama.util.REPLTests.scala](/extras/src/test/scala/org/bitbucket/inkytonik/kiama/util/REPLTests.scala)
+File: [org.bitbucket.inkytonik.kiama.util.REPLTests.scala](https://github.com/inkytonik/kiama/blob/master/extras/src/test/scala/org/bitbucket/inkytonik/kiama/util/REPLTests.scala)
 
 A less useful variant of `REPL` is `GeneratingREPL[T]` which provides
 a standard interface for REPLs that randomly generate program

@@ -4,8 +4,7 @@ Up: [Examples](Examples), Prev: [Dataflow](Dataflow), Next: [Lambda](Lambda)
 
 IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
 to Kiama 2.x, but not all. Please consult the 2.x release notes for the
-main differences. We are currently writing comprehensive documentation
-for 2.x that will eventually replace these pages.
+main differences.
 
 This example contains an abstract syntax tree structure for a simple
 imperative programming language, a parser that creates instances of
@@ -17,7 +16,7 @@ library, so there is also quite a bit of test-related scaffolding.
 
 ## Abstract syntax
 
-File: [org.bitbucket.inkytonik.kiama.example.imperative.Imperative.scala](/extras/src/test/scala/org/bitbucket/inkytonik/kiama/example/imperative/Imperative.scala)
+File: [org.bitbucket.inkytonik.kiama.example.imperative.Imperative.scala](https://github.com/inkytonik/kiama/blob/master/extras/src/test/scala/org/bitbucket/inkytonik/kiama/example/imperative/Imperative.scala)
 
 Programs for this example consist of a single statement of which
 some standard varieties are available.
@@ -55,7 +54,7 @@ type Idn = String
 
 ## Parsing
 
-File: [org.bitbucket.inkytonik.kiama.example.imperative.Imperative.scala](/extras/src/test/scala/org/bitbucket/inkytonik/kiama/example/imperative/Imperative.scala)
+File: [org.bitbucket.inkytonik.kiama.example.imperative.Imperative.scala](https://github.com/inkytonik/kiama/blob/master/extras/src/test/scala/org/bitbucket/inkytonik/kiama/example/imperative/Imperative.scala)
 
 The parser is written using Kiama's [parsing combinator library](Parsing).
 Lazy values are used to enable the parsers to be defined in any order.
@@ -132,7 +131,7 @@ lazy val keyword : Parser[String] =
 
 ## Pretty-printing
 
-File: [org.bitbucket.inkytonik.kiama.example.imperative.PrettyPrinter.scala](/extras/src/test/scala/org/bitbucket/inkytonik/kiama/example/imperative/PrettyPrinter.scala)
+File: [org.bitbucket.inkytonik.kiama.example.imperative.PrettyPrinter.scala](https://github.com/inkytonik/kiama/blob/master/extras/src/test/scala/org/bitbucket/inkytonik/kiama/example/imperative/PrettyPrinter.scala)
 
 The example includes a simple pretty-printer that uses Kiama's
 [pretty-printing library](PrettyPrinting).  See the end of the
@@ -141,7 +140,7 @@ description of the imperative pretty printer.
 
 ## Read-eval-print loop
 
-File: [org.bitbucket.inkytonik.kiama.example.imperative.Imperative.scala](/extras/src/test/scala/org/bitbucket/inkytonik/kiama/example/imperative/Imperative.scala)
+File: [org.bitbucket.inkytonik.kiama.example.imperative.Imperative.scala](https://github.com/inkytonik/kiama/blob/master/extras/src/test/scala/org/bitbucket/inkytonik/kiama/example/imperative/Imperative.scala)
 
 Kiama provides some basic facilities to make it easy to define
 [read-eval-print loops (REPLs)](ReadEvalPrintLoops). In the imperative
@@ -163,7 +162,7 @@ object Imperative extends ParsingREPL[Stmt] with Parser {
 
 ## Test scaffolding
 
-File: [org.bitbucket.inkytonik.kiama.example.imperative.Imperative.scala](/extras/src/test/scala/org/bitbucket/inkytonik/kiama/example/imperative/Imperative.scala)
+File: [org.bitbucket.inkytonik.kiama.example.imperative.Imperative.scala](https://github.com/inkytonik/kiama/blob/master/extras/src/test/scala/org/bitbucket/inkytonik/kiama/example/imperative/Imperative.scala)
 
 The main test scaffolding provided in this example is
 [ScalaCheck](http://code.google.com/p/scalacheck/) support for
@@ -225,7 +224,7 @@ compute similar metrics on expressions.
 
 ## Running
 
-File: [org.bitbucket.inkytonik.kiama.example.imperative.Imperative.scala](/extras/src/test/scala/org/bitbucket/inkytonik/kiama/example/imperative/Imperative.scala)
+File: [org.bitbucket.inkytonik.kiama.example.imperative.Imperative.scala](https://github.com/inkytonik/kiama/blob/master/extras/src/test/scala/org/bitbucket/inkytonik/kiama/example/imperative/Imperative.scala)
 
 To run the read-eval-print loop to parse programs and print their tree representations:
 
@@ -252,7 +251,7 @@ Hit ENTER to generate an instance:
 
 ## Tests
 
-File: [org.bitbucket.inkytonik.kiama.rewriting.RewriterTests.scala](/extras/src/test/scala/org/bitbucket/inkytonik/kiama/rewriting/RewriterTests.scala)
+File: [org.bitbucket.inkytonik.kiama.rewriting.RewriterTests.scala](https://github.com/inkytonik/kiama/blob/master/extras/src/test/scala/org/bitbucket/inkytonik/kiama/rewriting/RewriterTests.scala)
 
 A collection of tests that rewrite imperative language expressions and statements.
 
@@ -260,7 +259,7 @@ A collection of tests that rewrite imperative language expressions and statement
 sbt 'test-only org.bitbucket.inkytonik.kiama.rewriting.RewriterTests'
 ```
 
-File: [org.bitbucket.inkytonik.kiama.rewriting.UniplateTests.scala](/extras/src/test/scala/org/bitbucket/inkytonik/kiama/rewriting/UniplateTests.scala)
+File: [org.bitbucket.inkytonik.kiama.rewriting.UniplateTests.scala](https://github.com/inkytonik/kiama/blob/master/extras/src/test/scala/org/bitbucket/inkytonik/kiama/rewriting/UniplateTests.scala)
 
 A collection of rewriting tests based on examples in a Haskell
 Workshop 2007 paper about the
