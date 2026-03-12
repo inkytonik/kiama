@@ -112,7 +112,7 @@ class Tree[T <: AnyRef with Product, +R <: T](val originalRoot : R, shape : Tree
      * A version of `bottomup` that doesn't traverse bridges.
      */
     def bottomupNoBridges(s : Strategy) : Strategy =
-        rule[Bridge[_]] { case b => b } <+
+        rule[Any] { case b : Bridge[_] => b } <+
             (all(bottomupNoBridges(s)) <* s)
 
     /**
